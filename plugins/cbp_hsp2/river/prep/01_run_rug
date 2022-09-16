@@ -1,4 +1,7 @@
 #!/bin/bash
-
-cbp one_rug $scenario $segment
+scenario=$1
+segment=$2
+tmp_dir=$3
+clean=1
+cbp one_rug $scenario $segment $tmp_dir $clean
 

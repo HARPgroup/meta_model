@@ -1,0 +1,7 @@
+#!/bin/bash
+scenario=$1
+segment=$2
+tmp_dir=$3
+
+uci_name="$CBP_ROOT/tmp/uci/river/$scenario/${segment}.uci"
+hsp_uci_version $uci_name hsp2

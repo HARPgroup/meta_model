@@ -6,7 +6,7 @@ set MODEL_ROOT="/opt/model/meta_model"
 set model=$1
 set scenario=$2
 set segment=$3
-set path=$4
+set work_path=$4
 
 # Set up which modules to run
 set modules = "all"
@@ -22,10 +22,10 @@ set run_steps = ( prep run link analyze )
 if (${#argv} >= 6) then 
   set run_steps = ($6:as/,/ /)
 endif
-if ( $run_steps == "all" ) then
+if ( $run_steps[1] == "all" ) then
   set run_steps = ( prep run link analyze )
 endif
-
+echo $run_steps
 # Set up which scripts to run in each step
 # this will end up producing errors if misconfigured, and is seldom needed
 set script = "all"
@@ -33,13 +33,7 @@ if (${#argv} >= 7) then
   set script = ($7:as/,/ /)
 endif
 
-echo "model=$model"
-echo "scenario=$scenario"
-echo "segment=$segment"
-echo "path=$path"
-echo "modules=$modules"
-echo "run_steps=$run_steps"
-echo "script=$script"
+echo "Beginning Run model=$model, scenario=$scenario, segment=$segment, work_path=$work_path, modules=$modules, run_steps=$run_steps,script=$script"
 
 # load environment if not already loaded
 # todo: create function model_config to encapsulate this
@@ -54,22 +48,23 @@ if ( -d $model_plugins ) then
   foreach module ( $modules )
     # todo: put checks in to see if this module is enabled in the run
     foreach step ( $run_steps )
-      echo "Trying $model_plugins/$module/$step $scenario $segment $path"
-      if ( -d $model_plugins/$module/$step ) then 
+      set script_path = "$model_plugins/$module/$step"
+      if ( -d $script_path ) then 
         if ( $script  == "all" ) then
-          set plugins = `ls $model_plugins/$module/$step/`
+          set plugins = `ls $script_path`
         else 
-          set plugins = $script
+          set plugins = "$script"
         endif
         if ( ! ( "$plugins" == "" ) ) then
           foreach plugin ( $plugins ) 
-            echo "Running $model_plugins/$module/$step/$plugin $scenario $segment $path"
+            echo "Running: $model_plugins/$module/$step/$plugin $scenario $segment $work_path"
+            $model_plugins/$module/$step/$plugin $scenario $segment $work_path
           end
         else 
           echo "No model plugins found in $model_plugins/$module/$step/"
         endif
       else
-        echo "No moddules found for model type $model/$module"
+        echo "No step $step found in $model/$module"
       endif
     end
   end
