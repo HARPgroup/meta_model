@@ -1,0 +1,35 @@
+#!/bin/csh
+set scenario=$1
+set segment=$2
+set path=$3
+# load environment if not already loaded
+if (! $?SCRIPT_DIR) then
+  source $CBP_ROOT/config/control/script/${scenario}.con
+endif
+# todo: make these names more generic than HSP_VERSION?
+set model=$HSP_VERSION
+# set up places to look for plugins
+set model_plugins=$CBP_ROOT/plugins/$model
+set module = "river"
+set run_steps = ( prep run postproc analyze )
+# iterate through different component of the model execution cycle
+if ( -d $model_plugins/$module ) then
+# todo: put cheks in to see if this module is enabled in the run
+  foreach step ( $run_steps )
+    echo "Trying $model_plugins/$module/$step $scenario $segment $path"
+    if ( -d $model_plugins/$module/$step ) then 
+      set plugins = `ls $model_plugins/$module/$step/`
+      if ( ! ( "$plugins" == "" ) ) then
+        foreach plugin ( $plugins ) 
+          $model_plugins/$module/$step/$plugin $scenario $segment $path
+        end
+      else 
+        echo "No model plugins found in $model_plugins/$module/$step/"
+      endif
+    else
+      echo "No model plugins found for model type $model"
+    endif
+  end
+else
+  echo "No model definitions found for model type $model in $CBP_ROOT/plugins"
+endif
