@@ -1,0 +1,4 @@
+#!/bin/bash
+
+cbp one_rug $scenario $segment
+

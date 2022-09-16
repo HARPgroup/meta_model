@@ -1,0 +1,78 @@
+#!/bin/csh
+
+# @todo: dynamically find model_root
+set MODEL_ROOT="/opt/model/meta_model"
+# Get params
+set model=$1
+set scenario=$2
+set segment=$3
+set path=$4
+
+# Set up which modules to run
+set modules = "all"
+if (${#argv} >= 5) then
+  set modules = ($5:as/,/ /)
+endif
+if ( $modules == "all" ) then
+  set modules = ( land river )
+endif
+
+# Set Up Run Steps
+set run_steps = ( prep run link analyze )
+if (${#argv} >= 6) then 
+  set run_steps = ($6:as/,/ /)
+endif
+if ( $run_steps == "all" ) then
+  set run_steps = ( prep run link analyze )
+endif
+
+# Set up which scripts to run in each step
+# this will end up producing errors if misconfigured, and is seldom needed
+set script = "all"
+if (${#argv} >= 7) then 
+  set script = ($7:as/,/ /)
+endif
+
+echo "model=$model"
+echo "scenario=$scenario"
+echo "segment=$segment"
+echo "path=$path"
+echo "modules=$modules"
+echo "run_steps=$run_steps"
+echo "script=$script"
+
+# load environment if not already loaded
+# todo: create function model_config to encapsulate this
+if (! $?SCRIPT_DIR) then
+  source $CBP_ROOT/config/control/script/${scenario}.con
+endif
+
+# todo: set up places to look for plugins in various trees
+set model_plugins=$MODEL_ROOT/plugins/$model
+# iterate through different component of the model execution cycle
+if ( -d $model_plugins ) then
+  foreach module ( $modules )
+    # todo: put checks in to see if this module is enabled in the run
+    foreach step ( $run_steps )
+      echo "Trying $model_plugins/$module/$step $scenario $segment $path"
+      if ( -d $model_plugins/$module/$step ) then 
+        if ( $script  == "all" ) then
+          set plugins = `ls $model_plugins/$module/$step/`
+        else 
+          set plugins = $script
+        endif
+        if ( ! ( "$plugins" == "" ) ) then
+          foreach plugin ( $plugins ) 
+            echo "Running $model_plugins/$module/$step/$plugin $scenario $segment $path"
+          end
+        else 
+          echo "No model plugins found in $model_plugins/$module/$step/"
+        endif
+      else
+        echo "No moddules found for model type $model/$module"
+      endif
+    end
+  end
+else
+  echo "No model definitions found for model type $model in $MODEL_ROOT/plugins"
+endif
