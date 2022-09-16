@@ -3,7 +3,7 @@ set scenario=$1
 set segment=$2
 set tmp_dir=$3
 
-source $CBP_ROOT/config/script/$scenario 
+source $CBP_ROOT/config/control/script/${scenario}.con
 echo "Changing to  $CBP_ROOT/$MY_HOME/$SCRIPT_DIR"
 cd $CBP_ROOT/$MY_HOME/$SCRIPT_DIR
 ./bhatt_run_river_oneseg.csh $scenario $segment $tmp_dir

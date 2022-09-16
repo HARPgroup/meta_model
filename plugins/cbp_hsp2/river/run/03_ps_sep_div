@@ -1,0 +1,16 @@
+#!/bin/csh
+set scenario=$1
+set seg=$2
+set tmp_dir=$3
+set tree = $CBP_ROOT
+
+########## make stream wdms: copy the eos wdm then add upstream to it. ******
+
+cp -v $tree/config/blank_wdm/blank_ps_sep_rib_rpa_div_ams.wdm ps_sep_div_ams_$scenario'_'$seg'.wdm'
+echo $scenario, $seg | $tree/code/bin/combine_ps_sep_rib_rpa_div_ams_from_landsegs.exe
+if (-e problem) then
+  echo ' '
+  cat problem
+  exit
+endif
+
