@@ -1,0 +1,12 @@
+#!/bin/csh
+set scenario=$1
+set segment=$2
+set tempdir=$3
+
+if ( ! -f $tempdir/problem ) then
+  # all is good, clean up
+  # but do it safely.
+  tmpbase=`basename $tempdir`
+  cd $MODEL_ROOT/tmp/$user-scratch
+  rm -Rf $tempbase
+endif

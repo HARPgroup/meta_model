@@ -1,0 +1,4 @@
+#!/bin/csh
+dirnum=`echo "echo $((RANDOM+1))" | ks`
+tempdir="tmp/scratch/`printf "%04d" $dirnum`
+echo $tempdir

@@ -1,0 +1,9 @@
+#!/bin/csh
+set scenario=$1
+echo "Loading model configuration"
+
+if [ -z ${MODEL_ROOT+x} ]; then
+  echo "Variable MODEL_ROOT is undefined.  Exiting."
+  exit
+fi
+. csh2bash $MODEL_ROOT/config/control/script/${scenario}.con

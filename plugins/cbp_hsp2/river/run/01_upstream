@@ -1,9 +1,12 @@
 #!/bin/csh
 set scenario=$1
 set segment=$2
-set tmp_dir=$3
+set seg=$segment # backwards compat
+set tempdir=$3
 
-set tree = $CBP_ROOT
+set tree = $MODEL_ROOT
+source $MODEL_ROOT/config/control/script/${scenario}.con
+cd $tempdir
 
 ########## make stream wdms: copy the eos wdm then add upstream to it. ******
 

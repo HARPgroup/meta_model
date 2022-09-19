@@ -1,0 +1,22 @@
+#!/bin/csh
+set scenario=$1
+set segment=$2
+set seg=$segment # this is for backwards compatibility with scripts source
+set tempdir=$3
+
+
+source $MODEL_ROOT/config/control/script/${scenario}.con
+cd $tempdir
+
+set inp = $seg'.uci'
+set h5 = $seg'.h5'
+if (!(-e $inp)) then
+  echo 'HSPF UCI for segment ' $seg ' named'
+  echo $inp 'does not exist'
+  echo 'Did the prior step 04_get_uci complete?'
+  exit
+endif
+
+$HSP_EXEC run $h5
+
+# @todo: put in run execution checks like normal HSPF has

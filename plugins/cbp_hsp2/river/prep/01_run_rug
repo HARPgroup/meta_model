@@ -1,7 +1,13 @@
-#!/bin/bash
-scenario=$1
-segment=$2
-tmp_dir=$3
-clean=1
-cbp one_rug $scenario $segment $tmp_dir $clean
+#!/bin/csh
+set scenario=$1
+set segment=$2
+set tmp_dir=$3
+set clean=1
 
+set tree=$MODEL_ROOT
+# @todo: 
+# when running in scenario mode, we need to use scenario_rug.exe wherease this one uses rug.exe 
+# cbp one_rug $scenario $segment $tmp_dir $clean
+
+echo "Doing: echo $segment, $scenario | $tree/code/bin/rug.exe"
+echo $segment, $scenario | $tree/code/bin/rug.exe
