@@ -1,0 +1,18 @@
+#!/bin/csh
+# Run post-process extract routine
+set scenario=$1
+set segment=$2
+set tempdir=$3
+set tree = $MODEL_ROOT
+source $MODEL_ROOT/config/control/script/${scenario}.con
+
+echo "Exporting HYDR data for $seg"
+set ds="/RESULTS/RCHRES_R001/HYDR/table"
+set mod="hydr"
+set h5file = $seg'.h5'
+set csvfile = ${seg}_hydr'.csv'
+echo "Notice: Rscript $CBP_ROOT/run/export/export_hsp_h5.R $h5file $csvfile $ds"
+Rscript $MODEL_ROOT/run/export/export_hsp_h5.R $h5file $csvfile $ds
+Run conversion script to add Qout and other derived/alias columns
+echo "Notice (unit conversions): Rscript $CBP_ROOT/run/export/hsp_hydr_conversion.R $csvfile"
+Rscript $MODEL_ROOT/run/export/hsp_hydr_conversion.R $csvfile 
