@@ -4,7 +4,7 @@ set segment=$2
 set tempdir=$3
 set clean=0
 # we need more than the standard data here
-source $META_MODEL_ROOT/plugins/$MODEL/model_config
+source $META_MODEL_ROOT/models/$MODEL/model_config
 echo "Script dir:  $SCRIPT_DIR "
 set tempbase=`basename $tempdir`
 

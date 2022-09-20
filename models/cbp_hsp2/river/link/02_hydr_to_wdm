@@ -2,9 +2,11 @@
 # Run linking
 set scenario=$1
 set segment=$2
+set seg = $segment
 set tempdir=$3
 set tree = $MODEL_ROOT
 source $MODEL_ROOT/config/control/script/${scenario}.con
+cd $tempdir
 
 set cols = ( OVOL )
 set dsns = ( 111 )

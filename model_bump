@@ -1,0 +1,20 @@
+#!/bin/bash
+inpos=$1
+nextpos=$((inpos + 1))
+# if there are no files in the next slot, we just move this slots files up one
+# otherwise, we shuffle everything up 1 slot
+i=98
+while [ $i -ge $inpos ] ; do
+  j=`printf "%02g" $i`
+  echo "$j"; 
+  movers=`ls ${j}_* 2>/dev/null`
+  for onefile in $movers; do
+    num=${onefile:0:2}
+    newnum=$((10#$num + 1))
+    newindex=`printf "%02g" $newnum`
+    newfile=${onefile/$num/$newindex}
+    echo "Moving: $onefile $newfile"
+    mv $onefile $newfile
+  done
+  i=$((i - 1))
+done

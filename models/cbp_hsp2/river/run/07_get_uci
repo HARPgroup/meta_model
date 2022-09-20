@@ -15,7 +15,7 @@ echo "Workspace: cd $tempdir"
 cd $tempdir
 
 set inp = $MODEL_ROOT/tmp/uci/river/$scenario/$seg'.uci'
-cp -vip $inp .
+cp -vipf $inp .
 set inp = $seg'.uci'
 set h5 = $seg'.h5'
 if (!(-e $inp)) then

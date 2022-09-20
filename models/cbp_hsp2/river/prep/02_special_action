@@ -1,0 +1,20 @@
+#!/bin/csh
+set scenario=$1
+set segment=$2
+set seg=$segment # backwards compat
+set tempdir=$3
+
+set tree = $MODEL_ROOT
+# load all model config
+source $META_MODEL_ROOT/models/$MODEL/model_config 
+
+### Specialactions
+cd $MODEL_ROOT/$MY_HOME/$SCRIPT_DIR
+
+csh river_special_action.csh $scenario $seg `uuidgen`
+if (-e problem) then
+  echo ' '
+  cat problem
+  exit
+endif
+
