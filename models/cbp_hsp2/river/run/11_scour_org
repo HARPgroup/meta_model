@@ -16,4 +16,3 @@ mv $segment'_scr.out' $tree/output/hspf/river/out/$scenario/
 mv $segment'.out' $tree/output/hspf/river/out/$scenario/
 mv $segment'.ech' $tree/output/hspf/river/ech/$scenario/
 mv $segment'.wdm' $tree/tmp/wdm/river/$scenario/stream/
-rm ps_sep_div_ams_$scenario'_'$segment'.wdm'

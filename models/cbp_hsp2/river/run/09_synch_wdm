@@ -1,9 +1,18 @@
 #!/bin/csh
 # Run post-process extract routine
+set scenario=$1
+set segment=$2
+set seg=$segment # this is for backwards compatibility with scripts source
+set tempdir=$3
+# Load configuration
+source $META_MODEL_ROOT/models/$MODEL/model_config
+cd $tempdir
+
 echo "Exporting HYDR data for $seg"
 set ds="/RESULTS/RCHRES_R001/HYDR/table"
 set mod="hydr"
 set csvfile = ${seg}_hydr'.csv'
+set h5file = ${seg}.h5
 echo "Notice: Rscript $CBP_ROOT/run/export/export_hsp_h5.R $h5file $csvfile $ds"
 Rscript $CBP_ROOT/run/export/export_hsp_h5.R $h5file $csvfile $ds
 Run conversion script to add Qout and other derived/alias columns
@@ -25,9 +34,9 @@ mv $wdmcsv $CBP_EXPORT_DIR/river/$scenario/$mod/ -f
 chgrp $MODEL_FILES_GROUP $CBP_EXPORT_DIR/river/$scenario/$mod/$wdmcsv
 chmod 664 $wdmcsv
 # Remove message and h5 file to save space
-echo "Cleaning up $h5file"
-rm $h5file
-rm message.wdm
+#echo "Cleaning up $h5file"
+#rm $h5file
+#rm message.wdm
 # todo: add the call to run the river hsp2 summary script here
 echo "Notice(analyze): Rscript $CBP_ROOT/run/export/hsp_hydr_analysis.R $seg $scenario $CBP_EXPORT_DIR/river/$scenario/$mod/ $CBP_EXPORT_DIR/river/$scenario/$mod/images/ $MODEL_VERSION_CODE"
 Rscript $CBP_ROOT/run/export/hsp_hydr_analysis.R $seg $scenario $CBP_EXPORT_DIR/river/$scenario/$mod/ $CBP_EXPORT_DIR/river/$scenario/$mod/images/ $MODEL_VERSION_CODE
@@ -37,4 +46,5 @@ if ( $?START_YEAR ) then
   echo "${seg}.wdm,$START_YEAR,$END_YEAR,111" | wdm2text
   mv $seg'_0111.csv' $CBP_EXPORT_DIR/river/$scenario/stream/ -f
 endif
-mv $seg'.wdm' $tree/tmp/wdm/river/$scenario/stream/ -f
+cp $seg'.wdm' $tree/tmp/wdm/river/$scenario/stream/ -f
+

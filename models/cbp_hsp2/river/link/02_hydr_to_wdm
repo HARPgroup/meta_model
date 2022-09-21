@@ -4,14 +4,17 @@ set scenario=$1
 set segment=$2
 set seg = $segment
 set tempdir=$3
+#source $MODEL_ROOT/config/control/script/${scenario}.con
+source $META_MODEL_ROOT/models/$MODEL/model_config
 set tree = $MODEL_ROOT
-source $MODEL_ROOT/config/control/script/${scenario}.con
 cd $tempdir
 
+set csvfile = $tempdir/${seg}_hydr.csv
 set cols = ( OVOL )
 set dsns = ( 111 )
-set num = ${#cols[@]}
-while ( i <= num )
+set num = $#cols
+set i = 1
+while ( $i <= $num )
   set col = $cols[$i]
   set dsn = $dsns[$i]
   # Prep outflow data for export to river wdm
@@ -22,4 +25,5 @@ while ( i <= num )
   # copy here cause it is hardto send these paths to wdm_insert_one, need escape?
   cp /usr/local/lib/hspf/message.wdm ./
   echo ${seg}.wdm $wdmcsv $dsn 1 w message.wdm | wdm_insert_one
+  @ i++
 end

@@ -6,4 +6,4 @@ set tmp_dir=$3
 source $MODEL_ROOT/config/control/script/${scenario}.con
 echo "Changing to  $MODEL_ROOT/$MY_HOME/$SCRIPT_DIR"
 cd $MODEL_ROOT/$MY_HOME/$SCRIPT_DIR
-./bhatt_run_river_oneseg.csh $scenario $segment $tmp_dir
+./bhatt_run_river_oneseg.csh $scenario $segment $tmp_dir $MODEL_ROOT

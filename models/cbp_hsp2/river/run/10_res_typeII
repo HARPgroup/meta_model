@@ -3,7 +3,9 @@ set scenario=$1
 set segment=$2
 set tempdir=$3
 set tree = $MODEL_ROOT
-source $MODEL_ROOT/config/control/script/${scenario}.con
+
+# Load configuration
+source $META_MODEL_ROOT/models/$MODEL/model_config
 echo "Changing to  $MODEL_ROOT/$MY_HOME/$SCRIPT_DIR"
 cd $MODEL_ROOT/$MY_HOME/$SCRIPT_DIR
 

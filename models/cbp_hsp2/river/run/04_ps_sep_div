@@ -3,7 +3,9 @@ set scenario=$1
 set seg=$2
 set tempdir=$3
 set tree = $MODEL_ROOT
-source $MODEL_ROOT/config/control/script/${scenario}.con
+
+# Load configuration
+source $META_MODEL_ROOT/models/$MODEL/model_config
 
 cd $tempdir
 ########## make stream wdms: copy the eos wdm then add upstream to it. ******

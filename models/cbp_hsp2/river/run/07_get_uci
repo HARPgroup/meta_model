@@ -4,13 +4,8 @@ set segment=$2
 set seg=$segment # this is for backwards compatibility with scripts source
 set tempdir=$3
 
-
-source $MODEL_ROOT/config/control/script/${scenario}.con
-if (! $?HSP_EXEC) then       
-  echo "hsp_exec variable is undefined.  Check the scenario config file $MODEL_ROOT/config/control/script/${scenario}.con"
-  echo "hsp_exec variable is undefined." > problem
-  exit
-else
+# Load configuration
+source $META_MODEL_ROOT/models/$MODEL/model_config
 echo "Workspace: cd $tempdir"
 cd $tempdir
 

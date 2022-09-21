@@ -4,8 +4,8 @@ set segment=$2
 set seg=$segment # this is for backwards compatibility with scripts source
 set tempdir=$3
 
-
-source $MODEL_ROOT/config/control/script/${scenario}.con
+# Load configuration
+source $META_MODEL_ROOT/models/$MODEL/model_config
 cd $tempdir
 
 set inp = $seg'.uci'
