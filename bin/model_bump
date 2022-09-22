@@ -1,4 +1,14 @@
 #!/bin/bash
+if [ $# -lt 1 ]; then
+  echo "This will move all scripts above the target step up 1 position for scripts named as 01_*, 02_*, etc."
+  echo "Use: model_bump step"
+  echo "Ex: model_bump 06 "
+  echo "Given files: 05_do_nada, 06_run_foo, 07_run_bar"
+  echo "Will move '06_run_foo' to '07_run_foo' and '07_run_bar' to '08_run_bar'"
+  echo "File '05_do_nada' will be unchanged. "
+  echo "Note: You must be in the directory of the files desired to move"
+  exit
+fi
 inpos=$1
 nextpos=$((inpos + 1))
 # if there are no files in the next slot, we just move this slots files up one
@@ -8,7 +18,7 @@ while [ $i -ge $inpos ] ; do
   j=`printf "%02g" $i`
   movers=`ls ${j}_* 2>/dev/null`
   for onefile in $movers; do
-    echo "Found scripts at step $j"; 
+    echo "Found scripts at step $j"
     num=${onefile:0:2}
     newnum=$((10#$num + 1))
     newindex=`printf "%02g" $newnum`
