@@ -6,9 +6,9 @@ nextpos=$((inpos + 1))
 i=98
 while [ $i -ge $inpos ] ; do
   j=`printf "%02g" $i`
-  echo "$j"; 
   movers=`ls ${j}_* 2>/dev/null`
   for onefile in $movers; do
+    echo "Found scripts at step $j"; 
     num=${onefile:0:2}
     newnum=$((10#$num + 1))
     newindex=`printf "%02g" $newnum`

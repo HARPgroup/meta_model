@@ -12,7 +12,10 @@ if ( -e problem ) then
    cat problem
    exit
 endif
-mv $segment'_scr.out' $tree/output/hspf/river/out/$scenario/
-mv $segment'.out' $tree/output/hspf/river/out/$scenario/
-mv $segment'.ech' $tree/output/hspf/river/ech/$scenario/
-mv $segment'.wdm' $tree/tmp/wdm/river/$scenario/stream/
+# in the old scripts these "cp" were "mv"
+# but this makes little sense if we are just going to delete the temp
+# directory after a successful run. So, we use copy instead
+cp $segment'_scr.out' $tree/output/hspf/river/out/$scenario/
+cp $segment'.out' $tree/output/hspf/river/out/$scenario/
+cp $segment'.ech' $tree/output/hspf/river/ech/$scenario/
+cp $segment'.wdm' $tree/tmp/wdm/river/$scenario/stream/

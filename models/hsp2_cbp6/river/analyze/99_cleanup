@@ -10,7 +10,7 @@ source $META_MODEL_ROOT/models/$MODEL/model_config
 if ( ! -f $tempdir/problem ) then
   # all is good, clean up
   # but do it safely.
-  tmpbase=`basename $tempdir`
+  set tmpbase=`basename $tempdir`
   cd $MODEL_ROOT/tmp/$user-scratch
   rm -Rf $tempbase
   # Remove message and h5 file to save space

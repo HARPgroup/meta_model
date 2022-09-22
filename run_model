@@ -47,15 +47,20 @@ if ( -d $model_plugins ) then
         if ( $script  == "all" ) then
           set plugins = `ls $script_path`
         else 
-          set plugins = "$script"
+          set plugins = `ls $script_path/*$script*`
         endif
         if ( ! ( "$plugins" == "" ) ) then
           foreach plugin ( $plugins ) 
+            # in case we had a wildcard match script passed in
+            # we insure just the base name here. if it is already basename form
+            # it will return un-changed
+            set plugin = `basename $plugin` 
             echo "Running: $model_plugins/$module/$step/$plugin $scenario $segment $work_path"
             $model_plugins/$module/$step/$plugin $scenario $segment $work_path
             if ( -f $work_path/problem ) then
               if ( ! ( $IGNORE_PROBLEMS ) ) then
                 echo "Error: Problem found in step $model => $module / $step / $plugin "
+                echo "       See $work_path/problem "
               else 
                 mv $work_path/problem $work_path/problem.${step}.${plugin}
                 echo "Warning: Problem found in step $model => $module / $step / $plugin "

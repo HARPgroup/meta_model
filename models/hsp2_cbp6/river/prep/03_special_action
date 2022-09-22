@@ -9,9 +9,18 @@ set tree = $MODEL_ROOT
 source $META_MODEL_ROOT/models/$MODEL/model_config 
 
 ### Specialactions
+echo "cd $MODEL_ROOT/$MY_HOME/$SCRIPT_DIR"
 cd $MODEL_ROOT/$MY_HOME/$SCRIPT_DIR
 
 csh river_special_action.csh $scenario $seg `uuidgen`
+# this is an odd cd, since there can be lingering problem files
+# this will get tripped up in them.  Even tho the above command
+# for river_special_action creates and deletes a directory named
+# by a unique ID given by `uuidgen` 
+# thus, the only problem that *could* be found here is one from the previous step
+# which is the rug.exe step. 
+echo "cd $tempdir"
+cd $tempdir
 if (-e problem) then
   echo ' '
   cat problem
