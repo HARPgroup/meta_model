@@ -13,7 +13,9 @@ echo "Model work_path = $work_path"
 
 # @todo: handle command line switches for glaf arguments
 # -i, --IGNORE_PROBLEMS : set environment variable IGNORE_PROBLEMS
-
+if (! $?IGNORE_PROBLEMS) then
+  setenv IGNORE_PROBLEMS 0
+endif
 # Set up which modules to run
 # probably should NOT hard code these, instead 
 # relying on the model to configure this for us
