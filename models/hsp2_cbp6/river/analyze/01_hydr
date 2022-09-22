@@ -8,6 +8,10 @@ set tempdir=$3
 source $META_MODEL_ROOT/models/$MODEL/model_config
 cd $tempdir
 
+if (! $?MODEL_VERSION_CODE) then
+  echo "Variable MODEL_VERSION_CODE is not defined. Cannot push results to REST" >> problem
+  exit
+endif
 
 # todo: add the call to run the river hsp2 summary script here
 echo "Notice(analyze): Rscript $CBP_ROOT/run/export/hsp_hydr_analysis.R $seg $scenario $CBP_EXPORT_DIR/river/$scenario/$mod/ $CBP_EXPORT_DIR/river/$scenario/$mod/images/ $MODEL_VERSION_CODE"
