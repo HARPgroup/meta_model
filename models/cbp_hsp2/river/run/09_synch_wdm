@@ -13,38 +13,35 @@ set ds="/RESULTS/RCHRES_R001/HYDR/table"
 set mod="hydr"
 set csvfile = ${seg}_hydr'.csv'
 set h5file = ${seg}.h5
-echo "Notice: Rscript $CBP_ROOT/run/export/export_hsp_h5.R $h5file $csvfile $ds"
-Rscript $CBP_ROOT/run/export/export_hsp_h5.R $h5file $csvfile $ds
+echo "Notice: Rscript $MODEL_ROOT/run/export/export_hsp_h5.R $h5file $csvfile $ds"
+Rscript $MODEL_ROOT/run/export/export_hsp_h5.R $h5file $csvfile $ds
 Run conversion script to add Qout and other derived/alias columns
-echo "Notice (unit conversions): Rscript $CBP_ROOT/run/export/hsp_hydr_conversion.R $csvfile"
-Rscript $CBP_ROOT/run/export/hsp_hydr_conversion.R $csvfile 
+echo "Notice (unit conversions): Rscript $MODEL_ROOT/run/export/hsp_hydr_conversion.R $csvfile"
+Rscript $MODEL_ROOT/run/export/hsp_hydr_conversion.R $csvfile 
 # Prep outflow data for export to river wdm
 set wdmcsv = ${seg}_rovol'.csv'
-echo "Notice: Rscript $CBP_ROOT/run/export/csv_export_wdm_format.R $csvfile $wdmcsv ROVOL"
-Rscript $CBP_ROOT/run/export/csv_export_wdm_format.R $csvfile $wdmcsv ROVOL
+echo "Notice: Rscript $MODEL_ROOT/run/export/csv_export_wdm_format.R $csvfile $wdmcsv ROVOL"
+Rscript $MODEL_ROOT/run/export/csv_export_wdm_format.R $csvfile $wdmcsv ROVOL
 # Push ROVOL into wdm
 # copy here cause it is hardto send these paths to wdm_insert_one, need escape?
 cp /usr/local/lib/hspf/message.wdm ./
 echo ${seg}.wdm $wdmcsv 111 1 w message.wdm | wdm_insert_one
 # move all files to the model data archive
-mv $csvfile $CBP_EXPORT_DIR/river/$scenario/$mod/ -f
+cp $csvfile $CBP_EXPORT_DIR/river/$scenario/$mod/ -f
 chgrp $MODEL_FILES_GROUP $CBP_EXPORT_DIR/river/$scenario/$mod/$csvfile
 chmod 664 $csvfile
-mv $wdmcsv $CBP_EXPORT_DIR/river/$scenario/$mod/ -f
+cp $wdmcsv $CBP_EXPORT_DIR/river/$scenario/$mod/ -f
 chgrp $MODEL_FILES_GROUP $CBP_EXPORT_DIR/river/$scenario/$mod/$wdmcsv
 chmod 664 $wdmcsv
 # Remove message and h5 file to save space
 #echo "Cleaning up $h5file"
 #rm $h5file
 #rm message.wdm
-# todo: add the call to run the river hsp2 summary script here
-echo "Notice(analyze): Rscript $CBP_ROOT/run/export/hsp_hydr_analysis.R $seg $scenario $CBP_EXPORT_DIR/river/$scenario/$mod/ $CBP_EXPORT_DIR/river/$scenario/$mod/images/ $MODEL_VERSION_CODE"
-Rscript $CBP_ROOT/run/export/hsp_hydr_analysis.R $seg $scenario $CBP_EXPORT_DIR/river/$scenario/$mod/ $CBP_EXPORT_DIR/river/$scenario/$mod/images/ $MODEL_VERSION_CODE
 # export the flow data
 if ( $?START_YEAR ) then
   echo "echo ${seg}.wdm,$START_YEAR,$END_YEAR,111 | wdm2text"
   echo "${seg}.wdm,$START_YEAR,$END_YEAR,111" | wdm2text
-  mv $seg'_0111.csv' $CBP_EXPORT_DIR/river/$scenario/stream/ -f
+  cp $seg'_0111.csv' $CBP_EXPORT_DIR/river/$scenario/stream/ -f
 endif
-cp $seg'.wdm' $tree/tmp/wdm/river/$scenario/stream/ -f
+cp $seg'.wdm' $MODEL_ROOT/tmp/wdm/river/$scenario/stream/ -f
 

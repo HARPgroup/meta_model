@@ -10,7 +10,13 @@ else
   set work_path=`./plugins/$model/get_work_path`
 endif
 echo "Model work_path = $work_path"
+
+# @todo: handle command line switches for glaf arguments
+# -i, --IGNORE_PROBLEMS : set environment variable IGNORE_PROBLEMS
+
 # Set up which modules to run
+# probably should NOT hard code these, instead 
+# relying on the model to configure this for us
 set modules = "all"
 if (${#argv} >= 5) then
   set modules = ($5:as/,/ /)
@@ -20,6 +26,7 @@ if ( $modules == "all" ) then
 endif
 
 # Set Up Run Steps
+# see above, maybe this should not be hard-coded?
 set run_steps = ( prep run link analyze )
 if (${#argv} >= 6) then
   set run_steps = ($6:as/,/ /)

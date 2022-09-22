@@ -8,6 +8,9 @@ endif
 source $MODEL_ROOT/config/control/script/default.con
 # load model scenario specifics
 source $MODEL_ROOT/config/control/script/${scenario}.con
+set tspan = `cbp get_config hsp2_2022 river TIME`
+set START_YEAR = $tspan[1]
+set END_YEAR = $tspan[4]
 
 if (! $?HSP_EXEC) then
   echo "hsp_exec variable is undefined.  Check the scenario config file $MODEL_ROOT/config/control/script/${scenario}.con"

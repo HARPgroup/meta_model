@@ -1,9 +1,14 @@
 #!/bin/csh
+if (${#argv} < 3) then
+  echo "Use: run_model model_name scenario_name segment_id [module=all,land,river] [step=all,prep,run,link,analyze] [plugin=all,01_...]"
+  exit
+endif
 
 # @todo: dynamically find meta_model_root, i.e., this code base
 set META_MODEL_ROOT="/opt/model/meta_model"
 
-# Get params from comand arguments
+# Get params from command arguments
+# and set up list of modules and steps to run
 source $META_MODEL_ROOT/model_get_args
 echo $run_steps
 
@@ -26,6 +31,9 @@ setenv MODEL_BIN "$MODEL_BIN"
 setenv META_MODEL_ROOT "$META_MODEL_ROOT"
 setenv SCRIPT_DIR "$SCRIPT_DIR"
 setenv MODEL "$model"
+setenv START_YEAR "$START_YEAR"
+setenv END_YEAR "$END_YEAR"
+
 # iterate through different component of the model execution cycle
 if ( -d $model_plugins ) then
   foreach module ( $modules )
@@ -42,6 +50,16 @@ if ( -d $model_plugins ) then
           foreach plugin ( $plugins ) 
             echo "Running: $model_plugins/$module/$step/$plugin $scenario $segment $work_path"
             $model_plugins/$module/$step/$plugin $scenario $segment $work_path
+            if ( -f $work_path/problem ) then
+              if ( ! ( $IGNORE_PROBLEMS ) ) then
+                echo "Error: Problem found in step $model => $module / $step / $plugin "
+              else 
+                mv $work_path/problem $work_path/problem.${step}.${plugin}
+                echo "Warning: Problem found in step $model => $module / $step / $plugin "
+                echo "         Continuing, though this should be checked. "
+                echo "         See $work_path/problem.${step}.${plugin}"
+              endif
+            endif
           end
         else 
           echo "No model plugins found in $model_plugins/$module/$step/"
