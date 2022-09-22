@@ -8,7 +8,9 @@ endif
 source $MODEL_ROOT/config/control/script/default.con
 # load model scenario specifics
 source $MODEL_ROOT/config/control/script/${scenario}.con
-set tspan = `cbp get_config hsp2_2022 river TIME`
+setenv MODEL_VERSION_CODE $MODEL_VERSION_CODE
+echo "MODEL_VERSION_CODE = $MODEL_VERSION_CODE"
+set tspan = `cbp get_config ${scenario} river TIME`
 set START_YEAR = $tspan[1]
 set END_YEAR = $tspan[4]
 
@@ -16,7 +18,7 @@ if (! $?HSP_EXEC) then
   echo "hsp_exec variable is undefined.  Check the scenario config file $MODEL_ROOT/config/control/script/${scenario}.con"
   echo "hsp_exec variable is undefined." > problem
   exit
-else
+endif
 
 # Model bin pertains to locating scripts, which allows compatibility with p5 and p6
 if ( ! $?MODEL_BIN) then

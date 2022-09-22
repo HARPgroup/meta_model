@@ -4,10 +4,13 @@
 set model=$1
 set scenario=$2
 set segment=$3
+# get a default path
+set default_path=`$META_MODEL_ROOT/models/$model/get_work_path`
+set work_path = $default_path
 if (${#argv} >= 4) then
-  set work_path=$4
-else
-  set work_path=`./plugins/$model/get_work_path`
+  if ( ($argv[4] != "" ) && ($argv[4] != "auto" ) ) then
+    set work_path = $4
+  endif
 endif
 echo "Model work_path = $work_path"
 
