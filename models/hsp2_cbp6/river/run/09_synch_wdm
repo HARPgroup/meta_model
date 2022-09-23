@@ -43,5 +43,6 @@ if ( $?START_YEAR ) then
   echo "${seg}.wdm,$START_YEAR,$END_YEAR,111" | wdm2text
   cp $seg'_0111.csv' $CBP_EXPORT_DIR/river/$scenario/stream/ -f
 endif
+# Copty back tot the common space
 cp $seg'.wdm' $MODEL_ROOT/tmp/wdm/river/$scenario/stream/ -f
 

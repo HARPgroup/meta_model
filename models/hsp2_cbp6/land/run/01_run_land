@@ -1,0 +1,26 @@
+#!/bin/csh
+set scenario=$1
+set segment=$2
+set tempdir=$3
+# backward compat
+set seg=$segment
+set tree=$MODEL_ROOT
+source $MODEL_ROOT/config/control/script/${scenario}.con
+echo "Changing to $tempdir"
+#cd $MODEL_ROOT/$MY_HOME/$SCRIPT_DIR
+cd $tempdir
+
+$MODEL_ROOT/$MY_HOME/$SCRIPT_DIR/bhatt_run_land_oneseg.csh $scenario $segment $tempdir $MODEL_ROOT
+
+source $tree/run_bhatt/fragments/set_landuse
+source $tree/run_bhatt/fragments/set_icprb_hspf
+  
+foreach lu ($perlnds $implnds)
+  echo running $lu for segment $seg land scenario $scenario
+  set inp = $lu$seg'.h5'
+  echo "Calling $HSP_EXEC $inp "
+  $HSP_EXEC $inp
+  cp $lu$seg'.out' $tree/output/hspf/land/out/$lu/$scenario/ 
+  if (-e $lu$seg'.ech') mv $lu$seg'.ech' $tree/output/hspf/land/ech/$lu/$scenario/
+  cp $lu$seg'.wdm' $tree/tmp/wdm/land/$lu/$scenario/
+end
