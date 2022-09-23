@@ -1,0 +1,18 @@
+#!/bin/csh
+set scenario=$1
+set segment=$2
+set tempdir=$3
+set clean=0
+# we need more than the standard data here
+source $META_MODEL_ROOT/models/$MODEL/model_config
+echo "Script dir:  $SCRIPT_DIR "
+set tempbase=`basename $tempdir`
+
+# note: etm assumes that you are already inside the temp dir, or if you send the temp dir in
+#       that you want to create it, so we shiould change into it, then run without sending 
+#       directory arguments (5 and 6)
+echo "cd $tempdir" # e.g. run/standard, or run_bhat/OneCommandWSM_P6_STRLOAD_SCENCF
+echo "csh bhatt_run_etm_and_land_and_dat_simultaneously_oneseg.csh $scenario $segment $AVG_YEAR1 $AVG_YEAR2"
+# e.g. run/standard, or run_bhat/OneCommandWSM_P6_STRLOAD_SCENCF
+cd $tempdir
+csh $MODEL_ROOT/$MODEL_BIN/$SCRIPT_DIR/bhatt_run_etm_and_land_and_dat_simultaneously_oneseg.csh $scenario $segment $AVG_YEAR1 $AVG_YEAR2 $tempbase $MODEL_ROOT

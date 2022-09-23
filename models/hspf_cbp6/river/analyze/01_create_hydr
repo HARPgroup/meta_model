@@ -1,0 +1,24 @@
+#!/bin/csh
+# Run post-process extract routine
+set scenario=$1
+set segment=$2
+set seg=$segment # this is for backwards compatibility with scripts source
+set tempdir=$3
+# Load configuration
+source $META_MODEL_ROOT/models/$MODEL/model_config
+cd $tempdir
+
+set wdm=${segment}.wdm
+cp /usr/local/lib/hspf/message.wdm ./
+
+# create the basic wdm export of flow, ie. DSN 111
+# file name will be [segment]_0111.csv
+#   ex: JL1_7080_7190_0111.csv
+if ( $?START_YEAR ) then
+  echo "echo $wdm,$START_YEAR,$END_YEAR,111 | wdm2text"
+  echo "$wdm,$START_YEAR,$END_YEAR,111" | wdm2text
+endif
+set csvfile="${segment}_0111.csv"
+# TODO: convert this file into a _hydr compatible file
+
+rm message.wdm
