@@ -18,7 +18,10 @@ if ( $?START_YEAR ) then
   echo "echo $wdm,$START_YEAR,$END_YEAR,111 | wdm2text"
   echo "$wdm,$START_YEAR,$END_YEAR,111" | wdm2text
 endif
-set csvfile="${segment}_0111.csv"
-# TODO: convert this file into a _hydr compatible file
-
 rm message.wdm
+set csv_file="${segment}_0111.csv"
+set hydr_file="${segment}_hydr.csv"
+# TODO: convert this file into a _hydr compatible file
+Rscript $MODEL_ROOT/run/export/create_hspf_hydr.R $csv_file $hydr_file
+echo "cp $hydr_file $CBP_EXPORT_DIR/river/$scenario/"
+cp $hydr_file $CBP_EXPORT_DIR/river/$scenario/hydr/
