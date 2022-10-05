@@ -20,7 +20,7 @@ while ( $i <= $num )
   # Prep outflow data for export to river wdm
   set wdmcsv = ${seg}_${col}'.csv'
   echo "Notice: Rscript $MODEL_ROOT/run/export/csv_export_wdm_format.R $csvfile $wdmcsv $col"
-  Rscript $MODEL_ROOT/run/export/csv_export_wdm_format.R $csvfile $wdmcsv ROVOL
+  Rscript $MODEL_ROOT/run/export/csv_export_wdm_format.R $csvfile $wdmcsv OVOL3
   # Push ROVOL into wdm
   # copy here cause it is hardto send these paths to wdm_insert_one, need escape?
   cp /usr/local/lib/hspf/message.wdm ./
