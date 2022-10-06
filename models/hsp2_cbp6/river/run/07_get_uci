@@ -19,4 +19,5 @@ if (!(-e $inp)) then
   exit
 endif
 
+echo "$HSP_EXEC import_uci $inp $h5"
 $HSP_EXEC import_uci $inp $h5

@@ -15,5 +15,5 @@ endif
 
 # todo: add the call to run the river hsp2 summary script here
 echo "Notice(analyze): Rscript $MODEL_ROOT/run/export/hsp_hydr_analysis.R $seg $scenario $CBP_EXPORT_DIR/river/$scenario/hydr/ $CBP_EXPORT_DIR/river/$scenario/hydr/images/ $MODEL_VERSION_CODE"
-Rscript $MODEL_ROOT/run/export/hsp_hydr_analysis.R $seg $scenario $CBP_EXPORT_DIR/river/$scenario/hydr/ $CBP_EXPORT_DIR/river/$scenario/hydr/images/ $MODEL_VERSION_CODE
+Rscript $MODEL_ROOT/run/export/hsp_hydr_analysis.R $seg $scenario $CBP_EXPORT_DIR/river/$scenario/hydr/${segment}_hydr.csv $CBP_EXPORT_DIR/river/$scenario/hydr/images/ $MODEL_VERSION_CODE
 

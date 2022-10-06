@@ -10,7 +10,7 @@ set tree = $MODEL_ROOT
 cd $tempdir
 
 set csvfile = $tempdir/${seg}_hydr.csv
-set cols = ( OVOL )
+set cols = ( OVOL3 )
 set dsns = ( 111 )
 set num = $#cols
 set i = 1
@@ -20,8 +20,8 @@ while ( $i <= $num )
   # Prep outflow data for export to river wdm
   set wdmcsv = ${seg}_${col}'.csv'
   echo "Notice: Rscript $MODEL_ROOT/run/export/csv_export_wdm_format.R $csvfile $wdmcsv $col"
-  Rscript $MODEL_ROOT/run/export/csv_export_wdm_format.R $csvfile $wdmcsv OVOL3
-  # Push ROVOL into wdm
+  Rscript $MODEL_ROOT/run/export/csv_export_wdm_format.R $csvfile $wdmcsv $col
+  # Push into wdm
   # copy here cause it is hardto send these paths to wdm_insert_one, need escape?
   cp /usr/local/lib/hspf/message.wdm ./
   echo ${seg}.wdm $wdmcsv $dsn 1 w message.wdm | wdm_insert_one
