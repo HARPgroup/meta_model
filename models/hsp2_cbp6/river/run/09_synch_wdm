@@ -15,9 +15,6 @@ set csvfile = ${seg}_hydr'.csv'
 set h5file = ${seg}.h5
 echo "Notice: Rscript $MODEL_ROOT/run/export/export_hsp_h5.R $h5file $csvfile $ds"
 Rscript $MODEL_ROOT/run/export/export_hsp_h5.R $h5file $csvfile $ds
-Run conversion script to add Qout and other derived/alias columns
-echo "Notice (unit conversions): Rscript $MODEL_ROOT/run/export/hsp_hydr_conversion.R $csvfile"
-Rscript $MODEL_ROOT/run/export/hsp_hydr_conversion.R $csvfile 
 # Prep outflow data for export to river wdm
 set wdmcsv = ${seg}_rovol'.csv'
 echo "Notice: Rscript $MODEL_ROOT/run/export/csv_export_wdm_format.R $csvfile $wdmcsv ROVOL"
@@ -27,9 +24,6 @@ Rscript $MODEL_ROOT/run/export/csv_export_wdm_format.R $csvfile $wdmcsv ROVOL
 cp /usr/local/lib/hspf/message.wdm ./
 echo ${seg}.wdm $wdmcsv 111 1 w message.wdm | wdm_insert_one
 # move all files to the model data archive
-cp $csvfile $CBP_EXPORT_DIR/river/$scenario/$mod/ -f
-chgrp $MODEL_FILES_GROUP $CBP_EXPORT_DIR/river/$scenario/$mod/$csvfile
-chmod 664 $csvfile
 cp $wdmcsv $CBP_EXPORT_DIR/river/$scenario/$mod/ -f
 chgrp $MODEL_FILES_GROUP $CBP_EXPORT_DIR/river/$scenario/$mod/$wdmcsv
 chmod 664 $wdmcsv

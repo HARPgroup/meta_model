@@ -14,6 +14,12 @@ if (! $?MODEL_VERSION_CODE) then
 endif
 
 # todo: add the call to run the river hsp2 summary script here
-echo "Notice(analyze): Rscript $MODEL_ROOT/run/export/hsp_hydr_analysis.R $seg $scenario $CBP_EXPORT_DIR/river/$scenario/hydr/ $CBP_EXPORT_DIR/river/$scenario/hydr/images/ $MODEL_VERSION_CODE"
-Rscript $MODEL_ROOT/run/export/hsp_hydr_analysis.R $seg $scenario $CBP_EXPORT_DIR/river/$scenario/hydr/${segment}_hydr.csv $CBP_EXPORT_DIR/river/$scenario/hydr/images/ $MODEL_VERSION_CODE
+set script = "$MODEL_ROOT/run/export/summarize_river.R"
+set expath = "$CBP_EXPORT_DIR/river/$scenario/hydr"
+set data_file = "$expath/${segment}_hydr.csv"
+set img_path = "$expath/images"
+#echo "Rscript $MODEL_ROOT/run/export/hsp_hydr_analysis.R $seg $scenario $data_file $img_path $MODEL_VERSION_CODE"
+#Rscript $MODEL_ROOT/run/export/hsp_hydr_analysis.R $seg $scenario $data_file $img_path $MODEL_VERSION_CODE
 
+echo "Rscript $script $seg $scenario $data_file $img_path $MODEL_VERSION_CODE"
+Rscript $script $seg $scenario $data_file $img_path $MODEL_VERSION_CODE

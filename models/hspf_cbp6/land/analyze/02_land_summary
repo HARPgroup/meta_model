@@ -1,0 +1,21 @@
+#!/bin/csh
+# Run post-process extract routine
+set scenario=$1
+set segment=$2
+set seg=$segment # this is for backwards compatibility with scripts source
+set tempdir=$3
+# Load configuration
+source $META_MODEL_ROOT/models/$MODEL/model_config
+cd $tempdir
+
+if (! $?MODEL_VERSION_CODE) then
+  echo "Variable MODEL_VERSION_CODE is not defined. Cannot push results to REST" >> problem
+  exit
+endif
+set image_file_path=$CBP_EXPORT_DIR/land/$scenario/images
+
+source $MODEL_ROOT/run_bhatt/fragments/set_landuse
+foreach landuse ($perlnds $implnds)
+  Rscript $MODEL_ROOT/run/export/hsp_pwater.R $segment $scenario $landuse $output_file_path $image_file_path
+  Rscript $MODEL_ROOT/run/export/hsp_pwater_stats.R $segment $scenario $landuse $output_file_path $image_file_path
+end

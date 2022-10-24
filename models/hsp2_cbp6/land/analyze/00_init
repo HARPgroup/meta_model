@@ -1,0 +1,26 @@
+#!/bin/csh
+# Run post-process extract routine
+set scenario=$1
+set segment=$2
+set seg=$segment # this is for backwards compatibility with scripts source
+# temp space
+set tempdir=$3
+if ( ! -d $tempdir ) then
+  echo "Creating $tempdir"
+  mkdir $tempdir
+endif
+
+# Load configuration
+source $META_MODEL_ROOT/models/$MODEL/model_config
+
+# insure that we have all the required directories
+if ( ! ( -d $CBP_EXPORT_DIR/land ) ) then
+  mkdir $CBP_EXPORT_DIR/land
+endif
+if ( ! ( -d $CBP_EXPORT_DIR/land/$scenario ) ) then
+  mkdir $CBP_EXPORT_DIR/land/$scenario
+endif
+if ( ! (-d "$CBP_EXPORT_DIR/land/$scenario/eos" ) ) then 
+  mkdir $CBP_EXPORT_DIR/land/$scenario/eos
+endif
+
