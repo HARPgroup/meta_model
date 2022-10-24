@@ -23,4 +23,10 @@ endif
 if ( ! (-d "$CBP_EXPORT_DIR/land/$scenario/eos" ) ) then 
   mkdir $CBP_EXPORT_DIR/land/$scenario/eos
 endif
+if ( ! (-d "$CBP_EXPORT_DIR/land/$scenario/images" ) ) then 
+  mkdir $CBP_EXPORT_DIR/land/$scenario/images
+endif
+if ( ! (-d "$CBP_EXPORT_DIR/land/$scenario/pwater" ) ) then 
+  mkdir $CBP_EXPORT_DIR/land/$scenario/pwater
+endif
 
