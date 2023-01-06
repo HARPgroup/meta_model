@@ -8,6 +8,7 @@ set tempdir=$3
 source $META_MODEL_ROOT/models/$MODEL/model_config
 
 # insure that we have all the required directories
+echo "Checking for paths to save in $CBP_EXPORT_DIR"
 if ( ! ( -d $tempdir ) ) then
   echo "Creating $tempdir"
   mkdir $tempdir
@@ -15,9 +16,12 @@ endif
 if ( ! ( -d $CBP_EXPORT_DIR/river ) ) then
   mkdir $CBP_EXPORT_DIR/river
 endif
-if ( ! ( -d $CBP_EXPORT_DIR/river/hydr ) ) then
-  mkdir $CBP_EXPORT_DIR/river/hydr
+if ( ! ( -d $CBP_EXPORT_DIR/river/$scenario ) ) then
+  mkdir $CBP_EXPORT_DIR/river/$scenario
 endif
-if ( ! ( -d $CBP_EXPORT_DIR/river/hydr/images ) ) then
-  mkdir $CBP_EXPORT_DIR/river/hydr/images
+if ( ! ( -d $CBP_EXPORT_DIR/river/$scenario/hydr ) ) then
+  mkdir $CBP_EXPORT_DIR/river/$scenario/hydr
+endif
+if ( ! ( -d $CBP_EXPORT_DIR/river/$scenario/hydr/images ) ) then
+  mkdir $CBP_EXPORT_DIR/river/$scenario/hydr/images
 endif

@@ -27,3 +27,11 @@ while ( $i <= $num )
   echo ${seg}.wdm $wdmcsv $dsn 1 w message.wdm | wdm_insert_one
   @ i++
 end
+
+# We used to have this, but I think it is superfluous?
+# export the flow data
+#if ( $?START_YEAR ) then
+#  echo "echo ${seg}.wdm,$START_YEAR,$END_YEAR,111 | wdm2text"
+#  echo "${seg}.wdm,$START_YEAR,$END_YEAR,111" | wdm2text
+#  cp $seg'_0111.csv' $CBP_EXPORT_DIR/river/$scenario/stream/ -f
+#endif

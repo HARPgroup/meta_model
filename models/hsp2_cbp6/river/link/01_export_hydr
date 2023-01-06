@@ -16,3 +16,6 @@ set h5file = $seg'.h5'
 set csvfile = ${seg}_hydr'.csv'
 echo "Notice: Rscript $MODEL_ROOT/run/export/export_hsp_h5.R $h5file $csvfile $ds"
 Rscript $MODEL_ROOT/run/export/export_hsp_h5.R $h5file $csvfile $ds
+
+echo "Notice: Rscript $MODEL_ROOT/run/export/hsp_index_conversion.R $csvfile"
+Rscript $MODEL_ROOT/run/export/hsp_index_conversion.R $csvfile
