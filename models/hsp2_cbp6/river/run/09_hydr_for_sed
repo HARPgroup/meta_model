@@ -1,5 +1,8 @@
 #!/bin/csh
-# Run post-process extract routine
+# THis exports hydro dat from the hdf5 to a CSV for import into the river wdm
+# this is doen here because the sediment routine needs to have he hydro data 
+# in the WDM to complete.  It is later used by the next downstream
+# do NOT be tempted to move this to "link", as the sediment will fail!
 set scenario=$1
 set segment=$2
 set seg = $segment
