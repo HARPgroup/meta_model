@@ -8,7 +8,9 @@ if (${#argv} < 3) then
 endif
 
 # @todo: dynamically find meta_model_root, i.e., this code base
-set META_MODEL_ROOT="/opt/model/meta_model"
+if (! $?META_MODEL_ROOT ) then
+  set META_MODEL_ROOT="/opt/model/meta_model"
+endif
 
 # Get params from command arguments
 # and set up list of modules and steps to run

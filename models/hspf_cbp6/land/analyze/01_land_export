@@ -15,4 +15,6 @@ endif
 set image_file_path=$CBP_EXPORT_DIR/land/$scenario/images
 
 # START_YEAR and END_YEAR are set in model_config script
+# this is the wrong setup here. This export creates OM exports
+# which should be in a separate app or an optional step
 Rscript $MODEL_ROOT/run/export/wdm_export_flow.R $scenario $segment $START_YEAR $END_YEAR $CBP_EXPORT_DIR $MODEL_ROOT

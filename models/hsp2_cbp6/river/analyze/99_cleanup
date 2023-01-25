@@ -7,12 +7,17 @@ set tempdir=$3
 set tree = $MODEL_ROOT
 source $META_MODEL_ROOT/models/$MODEL/model_config
 
+#Moving the finalized hydr csv and any other csvs to the model export directory
+cd $tempdir
+set mod="hydr"
+mv *.csv $CBP_EXPORT_DIR/river/$scenario/hydr/ -f
+
 if ( ! -f $tempdir/problem ) then
   # all is good, clean up
   # but do it safely.
   set tmpbase=`basename $tempdir`
   cd $MODEL_ROOT/tmp/$user-scratch
-  rm -Rf $tempbase
+  rm -Rf $tmpbase
   # Remove message and h5 file to save space
   #echo "Cleaning up $h5file"
   #rm $h5file
