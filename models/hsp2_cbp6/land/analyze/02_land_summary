@@ -1,5 +1,7 @@
 #!/bin/csh
 # Run post-process extract routine
+# note: this was moved from the hspf model tree, since the expected files were not correct.
+#       in fact, this script was also incomplete, and did not set output_file_path, so it crashed the run
 set scenario=$1
 set segment=$2
 set seg=$segment # this is for backwards compatibility with scripts source
@@ -14,8 +16,10 @@ if (! $?MODEL_VERSION_CODE) then
 endif
 set image_file_path=$CBP_EXPORT_DIR/land/$scenario/images
 
+# load perlands and implnds variables
 source $MODEL_ROOT/run_bhatt/fragments/set_landuse
 foreach landuse ($perlnds $implnds)
+  set output_file_path="$CBP_EXPORT_DIR/land/$scenario/pwater/${landuse}${seg}_pwater.csv"
   Rscript $MODEL_ROOT/run/export/hsp_pwater.R $segment $scenario $landuse $output_file_path $image_file_path
   Rscript $MODEL_ROOT/run/export/hsp_pwater_stats.R $segment $scenario $landuse $output_file_path $image_file_path
 end
