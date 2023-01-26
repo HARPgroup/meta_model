@@ -3,12 +3,13 @@ if (${#argv} < 3) then
   echo "Use: run_model model_name scenario_name segment_id [module=all,land,river] [step=all,prep,run,link,analyze] [plugin=all,01_...]"
   echo "Environment Variables:"
   echo "  - MODEL_ROOT (required): the full path to the model executable."
-  echo "  - IGNORE_ERRORS (0/1 optional): Proceed regardless of errors, i.e. ignore 'problem' file creation."
+  echo "  - IGNORE_PROBLEMS (0/1 optional): Proceed regardless of errors, i.e. ignore 'problem' file creation."
   exit
 endif
 
 # @todo: dynamically find meta_model_root, i.e., this code base
 set META_MODEL_ROOT="/opt/model/meta_model"
+set IGNORE_PROBLEMS = 0
 
 # Get params from command arguments
 # and set up list of modules and steps to run
@@ -61,6 +62,7 @@ if ( -d $model_plugins ) then
               if ( ! ( $IGNORE_PROBLEMS ) ) then
                 echo "Error: Problem found in step $model => $module / $step / $plugin "
                 echo "       See $work_path/problem "
+                exit
               else 
                 mv $work_path/problem $work_path/problem.${step}.${plugin}
                 echo "Warning: Problem found in step $model => $module / $step / $plugin "
