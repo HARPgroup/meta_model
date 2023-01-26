@@ -10,27 +10,31 @@ source $META_MODEL_ROOT/models/$MODEL/model_config
 set tree = $MODEL_ROOT
 cd $tempdir
 
-# grab the eos WDM
-mv $tree/tmp/wdm/river/$scenario/eos/${seg}.wdm ./
-
 # export the flow data from DSN11 which should only be runoff since the ETM just ran
 # but stream_wdm.exe doesn't add the upstream flow until later in the "run" portion of this flow
-set wdmcsv = ${seg}_0011.csv
-if ( $?START_YEAR ) then
+if ( $?LOCAL_TRIBS ) then
+  # grab the eos WDM
+  cp $tree/tmp/wdm/river/$scenario/eos/${seg}.wdm ./
+
+  set wdmcsv = ${seg}_0011.csv
   echo "echo ${seg}.wdm,$START_YEAR,$END_YEAR,11 | wdm2text"
   echo "${seg}.wdm,$START_YEAR,$END_YEAR,11" | wdm2text
   cp $wdmcsv $CBP_EXPORT_DIR/river/$scenario/stream/$seg'_0010.csv' -f
+  echo "echo ${seg}.wdm,$START_YEAR,$END_YEAR,11 | wdm2text"
+  echo "${seg}.wdm,$START_YEAR,$END_YEAR,11" | wdm2text
+  cp $wdmcsv $CBP_EXPORT_DIR/river/$scenario/stream/$seg'_0010.csv' -f
+  echo "Adding DSN 11 to WDM as DSN 10"
+  cp /usr/local/lib/hspf/messa  echo "Adding DSN 11 to WDM as DSN 10"
+  cp /usr/local/lib/hspf/message.wdm ./
+  echo "echo ${seg}.wdm $wdmcsv 10 1 w message.wdm | wdm_insert_one"
+  echo ${seg}.wdm $wdmcsv 10 1 w message.wdm | wdm_insert_one
+
+  # now copy the eos wdm back
+  cp ${seg}.wdm $tree/tmp/wdm/river/$scenario/eos/
+
+  echo "Finished Adding runoff data to DSN 10"
+
 else
-  echo "Problem could not locate model START_YEAR and END_YEAR" > problem
-  exit
+  echo "LOCAL_TRIBS not enabled. All upstream and local inflow are in DSN 11" 
 endif
 
-echo "Adding DSN 11 to WDM as DSN 10"
-cp /usr/local/lib/hspf/message.wdm ./
-echo "echo ${seg}.wdm $wdmcsv 10 1 w message.wdm | wdm_insert_one"
-echo ${seg}.wdm $wdmcsv 10 1 w message.wdm | wdm_insert_one
-
-# now copy the eos wdm back
-cp ${seg}.wdm $tree/tmp/wdm/river/$scenario/eos/
-
-echo "Finished Adding runoff data to DSN 10"
