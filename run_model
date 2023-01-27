@@ -79,6 +79,16 @@ if ( -d $model_plugins ) then
       endif
     end
   end
+  if ( -f $work_path/problem ) then
+    continue
+  else
+    echo "Model run completed with errors.  Removing work path $work_path"
+    if [ "$work_path" == "" ]; then
+      echo "Work path $work_path is unset, cannot remove files"
+    else
+      rm -Rf $work_path
+    fi
+  fi
 else
   echo "No model definitions found for model type $model in $META_MODEL_ROOT/models"
 endif
