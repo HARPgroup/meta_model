@@ -1,0 +1,17 @@
+#!/bin/csh
+# Run post-process extract routine
+set scenario=$1
+set segment=$2
+set seg=$segment # this is for backwards compatibility with scripts source
+set tempdir=$3
+# Load configuration
+source $META_MODEL_ROOT/models/$MODEL/model_config
+cd $tempdir
+
+set mod="hydr"
+set hydrcsv=${seg}_hydr'.csv'
+echo "Notice: Rscript $MODEL_ROOT/run/export/hsp_hydr_conversion.R $hydrcsv"
+Rscript $MODEL_ROOT/run/export/hsp_hydr_conversion.R $hydrcsv
+
+#Moving csvs to export directory for access by analysis scripts
+mv *.csv $CBP_EXPORT_DIR/river/$scenario/$mod/ -f

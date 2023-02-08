@@ -12,7 +12,7 @@ if ( ! -f $tempdir/problem ) then
   # but do it safely.
   set tmpbase=`basename $tempdir`
   cd $MODEL_ROOT/tmp/$user-scratch
-  rm -Rf $tempbase
+  rm -Rf $tmpbase
   # Remove message and h5 file to save space
   #echo "Cleaning up $h5file"
   #rm $h5file
