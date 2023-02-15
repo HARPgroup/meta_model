@@ -49,8 +49,10 @@ if ( -d $model_plugins ) then
       if ( -d $script_path ) then 
         if ( $script  == "all" ) then
           set plugins = `ls $script_path`
+          set cleanup = 1 # normal run, remove temp dir afterwards if completes OK
         else 
           set plugins = `ls $script_path/*$script*`
+          set cleanup = 0 # step by step run, do not remove temp dir afterwards
         endif
         if ( ! ( "$plugins" == "" ) ) then
           foreach plugin ( $plugins ) 
@@ -84,13 +86,18 @@ if ( -d $model_plugins ) then
   if ( -f $work_path/problem ) then
     continue
   else
-    echo "Model run completed with errors.  Removing work path $work_path"
-    if [ "$work_path" == "" ]; then
-      echo "Work path $work_path is unset, cannot remove files"
+    echo "Model run completed without errors."
+    if ( $cleanup == 1 ) then
+      if ( "$work_path" == "" ) then
+        echo "Work path $work_path is unset, cannot remove files"
+      else
+        echo "Removing work path $work_path"
+        rm -Rf $work_path
+      endif
     else
-      rm -Rf $work_path
-    fi
-  fi
+      echo "Model cleanup NOT performed.  You will need to manuall remove emp dir $work_path"
+    endif 
+  endif
 else
   echo "No model definitions found for model type $model in $META_MODEL_ROOT/models"
 endif
