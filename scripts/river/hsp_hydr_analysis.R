@@ -34,7 +34,8 @@ river_seg <- argst[1]
 scenario_name <- argst[2]
 hydr_file_path <- argst[3]
 model_version <- argst[4]
-json_dir <- argst[5] #including / @ end of path
+rseg_ftype <- argst[5]
+json_dir <- argst[6] #including / @ end of path
 
 # The hydr file columns have been modifed with a conversion script, 
 # and ps and demand were added from the 'timeseries' in the h5
@@ -68,7 +69,7 @@ ds <- RomDataSource$new(site, rest_uname = rest_uname)
 ds$get_token(rest_pw)
 
 rseg_name=river_seg
-rseg_ftype='vahydro'
+#rseg_ftype='vahydro'
 
 riverseg<- RomFeature$new(
   ds,
@@ -136,8 +137,27 @@ model_constant_hydr_path <- RomProperty$new(
   ),
   TRUE
 )
-model_constant_hydr_path$propcode <- as.character(input_file_path)
+
+hydr_path_hourly <- gsub('d_wy','',hydr_file_path)
+
+model_constant_hydr_path$propcode <- as.character(hydr_path_hourly)
 model_constant_hydr_path$save(TRUE)
+
+
+model_constant_hydrd_path <- RomProperty$new(
+  ds, list(
+    varkey="om_class_textField", 
+    featureid=model_scenario$pid,
+    entity_type='dh_properties',
+    propname = 'hydrd_wy_file_path'
+  ),
+  TRUE
+)
+model_constant_hydrd_path$propcode <- as.character(hydr_file_path)
+model_constant_hydrd_path$save(TRUE)
+
+
+
 
 #Assumption
 imp_off = 1

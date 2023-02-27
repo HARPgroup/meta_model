@@ -34,8 +34,9 @@ river_seg <- argst[1]
 scenario_name <- argst[2]
 hydr_file_path <- argst[3] #call for the hydr_summ.csv!
 model_version <- argst[4]
-image_dir <- argst[5]
-json_dir <- argst[6] #include file at the end!
+rseg_ftype <- argst[5]
+image_dir <- argst[6]
+json_dir <- argst[7] #include file at the end!
 
 split <- strsplit(image_dir, split = "/")
 path_list_m2 <- as.list(split[[1]][-c(1,2,3)])
@@ -88,7 +89,7 @@ ds <- RomDataSource$new(site, rest_uname = rest_uname)
 ds$get_token(rest_pw)
 
 rseg_name=river_seg
-rseg_ftype='vahydro'
+#rseg_ftype='vahydro'
 
 riverseg<- RomFeature$new(
   ds,

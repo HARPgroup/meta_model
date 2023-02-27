@@ -11,7 +11,7 @@ cd $tempdir
 # move all files to the model data archive
 set mod="hydr"
 set h5file = $seg'.h5'
-cp *.csv $CBP_EXPORT_DIR/river/$scenario/$mod/ -f
+cp *hydr*.csv $CBP_EXPORT_DIR/river/$scenario/$mod/ -f
 chgrp $MODEL_FILES_GROUP $CBP_EXPORT_DIR/river/$scenario/$mod/$wdmcsv
 chmod 664 $CBP_EXPORT_DIR/river/$scenario/$mod/*.csv
 # Remove message and h5 file to save space

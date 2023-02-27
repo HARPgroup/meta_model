@@ -6,6 +6,7 @@ set seg=$segment # this is for backwards compatibility with scripts source
 set tempdir=$3
 # Load configuration
 source $META_MODEL_ROOT/models/$MODEL/model_config
+cd $tempdir
 
 if (! $?MODEL_VERSION_CODE) then
   echo "Variable MODEL_VERSION_CODE is not defined. Cannot push results to REST" >> problem
@@ -13,5 +14,5 @@ if (! $?MODEL_VERSION_CODE) then
 endif
 
 # todo: add the call to run the river hsp2 summary script here
-echo "Notice(analyze): Rscript $META_MODEL_ROOT/scripts/river/hsp_hydr_analysis.R $seg $scenario $CBP_EXPORT_DIR/river/$scenario/hydr/$seg_hydrd_wy.csv $MODEL_VERSION_CODE $CBP_EXPORT_DIR/river/$scenario/json/"
-Rscript $META_MODEL_ROOT/scripts/river/hsp_hydr_analysis.R $seg $scenario $CBP_EXPORT_DIR/river/$scenario/hydr/$seg_hydrd_wy.csv $MODEL_VERSION_CODE $CBP_EXPORT_DIR/river/$scenario/json/
+echo "Notice(analyze): Rscript $META_MODEL_ROOT/scripts/river/hsp_hydr_analysis.R $seg $scenario $CBP_EXPORT_DIR/river/$scenario/hydr/$seg'_hydrd_wy.csv' $MODEL_VERSION_CODE $RIVER_FTYPE $CBP_EXPORT_DIR/river/$scenario/json/"
+Rscript $META_MODEL_ROOT/scripts/river/hsp_hydr_analysis.R $seg $scenario $CBP_EXPORT_DIR/river/$scenario/hydr/$seg'_hydrd_wy.csv' $MODEL_VERSION_CODE $RIVER_FTYPE $CBP_EXPORT_DIR/river/$scenario/json/
