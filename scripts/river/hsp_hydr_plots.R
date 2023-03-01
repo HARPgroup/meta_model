@@ -88,13 +88,13 @@ input_file_path <- gsub(split[[1]][[9]],'',file_path_text)
 ds <- RomDataSource$new(site, rest_uname = rest_uname)
 ds$get_token(rest_pw)
 
-rseg_name=river_seg
+rseg_name=paste0(Sys.getenv("RIVER_PREFIX",river_seg))
 #rseg_ftype='vahydro'
 
 riverseg<- RomFeature$new(
   ds,
   list(
-    hydrocode=paste('vahydrosw_wshed_',rseg_name, sep = ''),
+    hydrocode=rseg_name,
     ftype=rseg_ftype,
     bundle='watershed'
   ),
