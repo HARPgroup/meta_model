@@ -12,15 +12,15 @@ cd $tempdir
 set h5file=$seg'.h5'
 set csvfile=${seg}_divr'.csv'
 set ds='/TIMESERIES/TS3007/table' #divr
-echo "Notice: Rscript $MODEL_ROOT/run/export/export_hsp_h5.R $h5file $csvfile $ds"
-Rscript $MODEL_ROOT/run/export/export_hsp_h5.R $h5file $csvfile $ds
+echo "Notice: Rscript $META_MODEL_ROOT/scripts/h5/export_hsp_h5.R $h5file $csvfile $ds"
+Rscript $META_MODEL_ROOT/scripts/h5/export_hsp_h5.R $h5file $csvfile $ds
 
 set csvfile=${seg}_diva'.csv'
 set ds='/TIMESERIES/TS3008/table' #diva
-echo "Notice: Rscript $MODEL_ROOT/run/export/export_hsp_h5.R $h5file $csvfile $ds"
-Rscript $MODEL_ROOT/run/export/export_hsp_h5.R $h5file $csvfile $ds
+echo "Notice: Rscript $META_MODEL_ROOT/scripts/h5/export_hsp_h5.R $h5file $csvfile $ds"
+Rscript $META_MODEL_ROOT/scripts/h5/export_hsp_h5.R $h5file $csvfile $ds
 
 set csvfile=${seg}_ps'.csv'
 set ds='/TIMESERIES/TS3000/table' #ps
-echo "Notice: Rscript $MODEL_ROOT/run/export/export_hsp_h5.R $h5file $csvfile $ds"
-Rscript $MODEL_ROOT/run/export/export_hsp_h5.R $h5file $csvfile $ds
+echo "Notice: Rscript $META_MODEL_ROOT/scripts/h5/export_hsp_h5.R $h5file $csvfile $ds"
+Rscript $META_MODEL_ROOT/scripts/h5/export_hsp_h5.R $h5file $csvfile $ds
