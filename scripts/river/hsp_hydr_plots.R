@@ -94,7 +94,7 @@ rseg_name=paste0(Sys.getenv("RIVER_PREFIX",river_seg))
 riverseg<- RomFeature$new(
   ds,
   list(
-    hydrocode=paste('vahydrosw_wshed_',rseg_name, sep = ''),
+    hydrocode=rseg_name,
     ftype=rseg_ftype,
     bundle='watershed'
   ),
