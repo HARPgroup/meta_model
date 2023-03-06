@@ -82,6 +82,8 @@ file_path_text = paste(hydr_file_path)
 split <- strsplit(file_path_text, split = "/")
 input_file_path <- gsub(split[[1]][[9]],'',file_path_text)
 
+print(paste("input_file_path: ",input_file_path,sep=""))
+
 ### Exporting to VAHydro
 ## Set up currently to output all the Qout values & the Qout
 
@@ -91,6 +93,9 @@ ds$get_token(rest_pw)
 
 rseg_name=river_seg
 # rseg_ftype='vahydro'
+
+print(paste("rseg_name: ",rseg_name,sep=""))
+print(paste("rseg_ftype: ",rseg_ftype,sep=""))
 
 riverseg<- RomFeature$new(
   ds,
