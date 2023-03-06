@@ -686,6 +686,6 @@ elfgen_huc(runid = scenario_name,
            ds = ds,
            save_directory = image_dir,
            save_url = save_url,
-           site = omsite)
+           site = "http://deq1.bse.vt.edu:81/d.dh/")
 
 
