@@ -34,9 +34,8 @@ river_seg <- argst[1]
 scenario_name <- argst[2]
 hydr_file_path <- argst[3] #call for the hydr_summ.csv!
 model_version <- argst[4]
-rseg_ftype <- argst[5]
-image_dir <- argst[6]
-json_dir <- argst[7] #include file at the end!
+image_dir <- argst[5]
+json_dir <- argst[6] #include file at the end!
 
 split <- strsplit(image_dir, split = "/")
 path_list_m2 <- as.list(split[[1]][-c(1,2,3)])
@@ -88,13 +87,13 @@ input_file_path <- gsub(split[[1]][[9]],'',file_path_text)
 ds <- RomDataSource$new(site, rest_uname = rest_uname)
 ds$get_token(rest_pw)
 
-rseg_name=paste0(Sys.getenv("RIVER_PREFIX",river_seg))
-#rseg_ftype='vahydro'
+rseg_name=river_seg
+rseg_ftype='vahydro'
 
 riverseg<- RomFeature$new(
   ds,
   list(
-    hydrocode=rseg_name,
+    hydrocode=paste('vahydrosw_wshed_',rseg_name, sep = ''),
     ftype=rseg_ftype,
     bundle='watershed'
   ),
@@ -104,28 +103,33 @@ riverseg<- RomFeature$new(
 model <- RomProperty$new(
   ds,
   list(
-    varkey="om_model_element", 
-    propname=riverseg$name,
     featureid=riverseg$hydroid, 
     entity_type="dh_feature", 
     propcode=model_version
   ), 
   TRUE
 )
-model$save(TRUE)
+if (is.na(model$pid)) {
+  model$propname = paste(riverseg$name, model_version)
+  model$varid = ds$get_vardef('om_water_model_node')$varid
+  model$save(TRUE)
+}
 
-model_scenario <- RomProperty$new( 
+
+model_scenario <- RomProperty$new(
   ds,
   list(
-    varkey="om_scenario", 
     featureid=model$pid, 
     entity_type="dh_properties", 
-    propname=scenario_name,
     propcode=scenario_name
   ), 
   TRUE
 )
-model_scenario$save(TRUE)
+if (is.na(model_scenario$pid)) {
+  model_scenario$propname = paste(scenario_name)
+  model_scenario$varid = ds$get_vardef('om_scenario')$varid
+  model_scenario$save(TRUE)
+}
 
 
 # Uploading constants to VaHydro:
@@ -448,7 +452,7 @@ if (imp_off == 0) {
   # max() syntax which is OK with max(c(df1, df2))
   # instead, we cbind them instead of the default which is an implicit rbind
   # ymx <- max(hydrpd$Qbaseline, hydrpd$Qout)
-      
+  
   ymx <- max(cbind(hydrpd$Qbaseline, hydrpd$Qout), na.rm = TRUE)
   plot(
     hydrpd$Qbaseline, ylim = c(0,ymx),  #Placeholders for xlim, come back to this and create xlim based on hydrpd
@@ -471,8 +475,8 @@ if (imp_off == 0) {
   )
   if (ymx == 0) {
     plot_label='No withdrawal or point source for this segment'
-   } else {
-      ymx <- 10
+  } else {
+    ymx <- 10
   }
   lines(hydrpd$ps_cumulative_mgd * 1.547,col='green')
   axis(side = 4)
@@ -508,7 +512,7 @@ if (imp_off == 0) {
     hydrpd$Qbaseline, ylim = c(0,ymx), #xlim = c(xmn, xmx),
     ylab="Flow/WD/PS (cfs)",
     xlab=paste("Model Flow Period",sdate,"to",edate,
-    main = plot_label)
+               main = plot_label)
   )
   lines(as.numeric(hydrpd$Qout,col='blue'))
   par(new = TRUE)
@@ -518,10 +522,10 @@ if (imp_off == 0) {
   ymx <- max(cbind((hydrpd$wd_cumulative_mgd) * 1.547, (hydrpd$ps_cumulative_mgd) * 1.547))
   if (ymx == 0) {
     plot_label='No withdrawal or point source for this segment'
-    } else {
-      ymx <- 10  # in order to plot the figure correctly 
-    }
-
+  } else {
+    ymx <- 10  # in order to plot the figure correctly 
+  }
+  
   
   plot(
     hydrpd$wd_cumulative_mgd * 1.547,col='red',
@@ -565,6 +569,7 @@ furl <- paste(
 hydrpd <- data.frame(hydrpd)
 png(fname, width = 700, height = 700)
 legend_text = c("Baseline Flow","Scenario Flow")
+ymn <- 0.01
 fdc_plot <- hydroTSM::fdc(cbind(hydrpd[names(hydrpd)== base_var], hydrpd[names(hydrpd)== comp_var]),
                           # yat = c(0.10,1,5,10,25,100,400),
                           # yat = c(round(min(hydrpd),0),500,1000,5000,10000),
@@ -572,7 +577,7 @@ fdc_plot <- hydroTSM::fdc(cbind(hydrpd[names(hydrpd)== base_var], hydrpd[names(h
                           leg.txt = legend_text,
                           main=paste("Flow Duration Curve","\n","(Model Flow Period ",sdate," to ",edate,")",sep=""),
                           ylab = "Flow (cfs)",
-                          ylim=c(min(hydrpd$Qout), max(hydrpd$Qout)),
+                          ylim=c(ymn, max(hydrpd$Qout)),
                           cex.main=1.75,
                           cex.axis=1.50,
                           leg.cex=2,
