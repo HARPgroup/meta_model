@@ -675,6 +675,8 @@ print(paste("image_dir: ", image_dir))
 print(paste("save_url: ", save_url))
 print(paste("site: ", site))
 
+print(class(model_scenario$propname))
+
 # elfgen_huc(scenario_name, rseg_hydroid, huc_level, Dataset, model_scenario, ds, image_dir, save_url, site)
 elfgen_huc(runid = scenario_name,
            hydroid = rseg_hydroid,
