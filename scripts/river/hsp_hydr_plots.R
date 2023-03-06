@@ -673,7 +673,7 @@ print(paste("model_scenario$propname: ", model_scenario$propname))
 # print(paste("ds: ", ds))
 print(paste("image_dir: ", image_dir))
 print(paste("save_url: ", save_url))
-print(paste("site: ", site))
+print(paste("omsite: ", omsite))
 
 print(class(model_scenario))
 
@@ -686,6 +686,6 @@ elfgen_huc(runid = scenario_name,
            ds = ds,
            save_directory = image_dir,
            save_url = save_url,
-           site = site)
+           site = omsite)
 
 
