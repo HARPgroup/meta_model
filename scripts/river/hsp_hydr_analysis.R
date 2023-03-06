@@ -70,7 +70,6 @@ ds <- RomDataSource$new(site, rest_uname = rest_uname)
 ds$get_token(rest_pw)
 
 rseg_name=paste0(Sys.getenv("RIVER_PREFIX",river_seg))
-#rseg_ftype='vahydro'
 
 riverseg<- RomFeature$new(
   ds,
