@@ -91,8 +91,6 @@ print(paste("input_file_path: ",input_file_path,sep=""))
 ds <- RomDataSource$new(site, rest_uname = rest_uname)
 ds$get_token(rest_pw)
 
-print(paste("rseg_name: ",rseg_name,sep=""))
-print(paste("rseg_ftype: ",rseg_ftype,sep=""))
 
 rseg_name=paste0(Sys.getenv("RIVER_PREFIX",river_seg))
 
@@ -106,7 +104,7 @@ riverseg<- RomFeature$new(
   TRUE
 )
 
-# print(paste("riverseg: ",riverseg,sep=""))
+print(paste("riverseg: ",riverseg,sep=""))
 
 model <- RomProperty$new(
   ds,
