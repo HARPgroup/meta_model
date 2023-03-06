@@ -91,24 +91,10 @@ print(paste("input_file_path: ",input_file_path,sep=""))
 ds <- RomDataSource$new(site, rest_uname = rest_uname)
 ds$get_token(rest_pw)
 
-rseg_name=river_seg
-# rseg_ftype='vahydro'
-
 print(paste("rseg_name: ",rseg_name,sep=""))
 print(paste("rseg_ftype: ",rseg_ftype,sep=""))
 
-# riverseg<- RomFeature$new(
-#   ds,
-#   list(
-#     hydrocode=paste('vahydrosw_wshed_',rseg_name, sep = ''),
-#     ftype=rseg_ftype,
-#     bundle='watershed'
-#   ),
-#   TRUE
-# )
-
 rseg_name=paste0(Sys.getenv("RIVER_PREFIX",river_seg))
-#rseg_ftype='vahydro'
 
 riverseg<- RomFeature$new(
   ds,
