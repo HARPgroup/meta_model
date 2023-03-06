@@ -120,7 +120,7 @@ riverseg<- RomFeature$new(
   TRUE
 )
 
-print(paste("riverseg: ",riverseg,sep=""))
+# print(paste("riverseg: ",riverseg,sep=""))
 
 model <- RomProperty$new(
   ds,
