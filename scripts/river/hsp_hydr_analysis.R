@@ -19,6 +19,7 @@ suppressPackageStartupMessages(library(jsonlite)) #for exporting values as json
 
 # establishing location on server for storing images
 omsite = "http://deq1.bse.vt.edu:81"
+site = omsite
 
 # setwd("/Users/glenncampagna/Desktop/HARPteam22/Data") # for testing only 
 # setwd("/Users/VT_SA/Documents/HARP") # for testing only
