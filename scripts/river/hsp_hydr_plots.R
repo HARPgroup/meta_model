@@ -665,4 +665,16 @@ rseg_hydroid<-rseg$featureid
 huc_level <- 'huc8'
 Dataset <- 'VAHydro-EDAS'
 
+print(paste("scenario_name: ", scenario_name))
+print(paste("rseg_hydroid: ", rseg_hydroid))
+print(paste("huc_level: ", huc_level))
+print(paste("Dataset: ", Dataset))
+print(paste("model_scenario: ", model_scenario))
+# print(paste("ds: ", ds))
+print(paste("image_dir: ", image_dir))
+print(paste("save_url: ", save_url))
+print(paste("site: ", site))
+
 elfgen_huc(scenario_name, rseg_hydroid, huc_level, Dataset, model_scenario, ds, image_dir, save_url, site)
+
+
