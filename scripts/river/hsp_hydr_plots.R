@@ -571,22 +571,46 @@ furl <- paste(
 )
 
 
-hydrpd <- data.frame(hydrpd)
+# hydrpd <- data.frame(hydrpd)
+# png(fname, width = 700, height = 700)
+# legend_text = c("Baseline Flow","Scenario Flow")
+# ymn <- 0.01
+# fdc_plot <- hydroTSM::fdc(cbind(hydrpd[names(hydrpd)== base_var], hydrpd[names(hydrpd)== comp_var]),
+#                           # yat = c(0.10,1,5,10,25,100,400),
+#                           # yat = c(round(min(hydrpd),0),500,1000,5000,10000),
+#                           yat = seq(round(min(hydrpd$Qout),0),round(max(hydrpd$Qout),0), by = 500),
+#                           leg.txt = legend_text,
+#                           main=paste("Flow Duration Curve","\n","(Model Flow Period ",sdate," to ",edate,")",sep=""),
+#                           ylab = "Flow (cfs)",
+#                           ylim=c(ymn, max(hydrpd$Qout)),
+#                           cex.main=1.75,
+#                           cex.axis=1.50,
+#                           leg.cex=2,
+#                           cex.sub = 1.2
+# )
+# dev.off()
+datpd <- data.frame(hydrpd)
 png(fname, width = 700, height = 700)
 legend_text = c("Baseline Flow","Scenario Flow")
-ymn <- 0.01
-fdc_plot <- hydroTSM::fdc(cbind(hydrpd[names(hydrpd)== base_var], hydrpd[names(hydrpd)== comp_var]),
-                          # yat = c(0.10,1,5,10,25,100,400),
-                          # yat = c(round(min(hydrpd),0),500,1000,5000,10000),
-                          yat = seq(round(min(hydrpd$Qout),0),round(max(hydrpd$Qout),0), by = 500),
-                          leg.txt = legend_text,
-                          main=paste("Flow Duration Curve","\n","(Model Flow Period ",sdate," to ",edate,")",sep=""),
-                          ylab = "Flow (cfs)",
-                          ylim=c(ymn, max(hydrpd$Qout)),
-                          cex.main=1.75,
-                          cex.axis=1.50,
-                          leg.cex=2,
-                          cex.sub = 1.2
+ymn <- 0
+ymx <- max(cbind(as.numeric(unlist(datpd[names(datpd)== base_var])),
+                 as.numeric(unlist(datpd[names(datpd)== comp_var]))))
+fdc_plot <- hydroTSM::fdc(
+  cbind(datpd[names(datpd)== base_var], datpd[names(datpd)== comp_var]),
+  # yat = c(0.10,1,5,10,25,100,400),
+  # yat = c(round(min(datpd),0),500,1000,5000,10000),
+  # yat = seq(round(min(datpd),0),round(max(datpd),0), by = 500),
+  yat = c(1, 5, 10, 50, 100, seq(0,round(ymx,0), by = 500)),
+  leg.txt = legend_text,
+  main=paste("Flow Duration Curve","\n","(Model Flow Period ",sdate," to ",edate,")",sep=""),
+  ylab = "Flow (cfs)",
+  # ylim=c(1.0, 5000),
+  # ylim=c(min(datpd), max(datpd)),
+  ylim=c(ymn, ymx),
+  cex.main=1.75,
+  cex.axis=1.50,
+  leg.cex=2,
+  cex.sub = 1.2
 )
 dev.off()
 
@@ -675,7 +699,6 @@ print(paste("image_dir: ", image_dir))
 print(paste("save_url: ", save_url))
 print(paste("site: ", site))
 
-print(class(model_scenario))
 
 # elfgen_huc(scenario_name, rseg_hydroid, huc_level, Dataset, model_scenario, ds, image_dir, save_url, site)
 elfgen_huc(runid = scenario_name,
