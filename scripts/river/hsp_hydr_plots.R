@@ -601,7 +601,7 @@ fdc_plot <- hydroTSM::fdc(
   # yat = c(0.10,1,5,10,25,100,400),
   # yat = c(round(min(datpd),0),500,1000,5000,10000),
   # yat = seq(round(min(datpd),0),round(max(datpd),0), by = 500),
-  yat = c(1, 5, 10, 50, 100, seq(0,round(ymx,0), by = 500)),
+  yat = c(0, 0.1, 1, 5, 10, 50, 100, seq(0,round(ymx,0), by = 500)),
   leg.txt = legend_text,
   main=paste("Flow Duration Curve","\n","(Model Flow Period ",sdate," to ",edate,")",sep=""),
   ylab = "Flow (cfs)",
