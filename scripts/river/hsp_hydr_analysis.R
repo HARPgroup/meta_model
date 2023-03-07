@@ -256,6 +256,26 @@ if (is.na(l30)) {
   l30_year = 0
 }
 
+l7 <- Qout_g2["X7.Day.Min"];
+ndx = which.min(as.numeric(l7[,"X7.Day.Min"]));
+l7_Qout = round(Qout_g2[ndx,]$"X7.Day.Min",6);
+l7_year = Qout_g2[ndx,]$"year";
+
+if (is.na(l7)) {
+  l7_Runit = 0.0
+  l7_year = 0
+}
+
+l1 <- Qout_g2["X1.Day.Min"];
+ndx = which.min(as.numeric(l1[,"X1.Day.Min"]));
+l1_Qout = round(Qout_g2[ndx,]$"X1.Day.Min",6);
+l1_year = Qout_g2[ndx,]$"year";
+
+if (is.na(l1)) {
+  l1_Runit = 0.0
+  l1_year = 0
+}
+
 # alf
 fn_iha_mlf <- function(zoots, targetmo) {
   modat <- group1(zoots,'water','min')  # IHA function that calculates minimum monthly statistics for our data by water year	 
