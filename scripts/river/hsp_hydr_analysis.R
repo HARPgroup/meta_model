@@ -256,24 +256,24 @@ if (is.na(l30)) {
   l30_year = 0
 }
 
-l7 <- Qout_g2["X7.Day.Min"];
-ndx = which.min(as.numeric(l7[,"X7.Day.Min"]));
-l7_Qout = round(Qout_g2[ndx,]$"X7.Day.Min",6);
-l7_year = Qout_g2[ndx,]$"year";
+l07 <- Qout_g2["X7.Day.Min"];
+ndx = which.min(as.numeric(l07[,"X7.Day.Min"]));
+l07_Qout = round(Qout_g2[ndx,]$"X7.Day.Min",6);
+l07_year = Qout_g2[ndx,]$"year";
 
-if (is.na(l7)) {
-  l7_Runit = 0.0
-  l7_year = 0
+if (is.na(l07)) {
+  l07_Runit = 0.0
+  l07_year = 0
 }
 
-l1 <- Qout_g2["X1.Day.Min"];
-ndx = which.min(as.numeric(l1[,"X1.Day.Min"]));
-l1_Qout = round(Qout_g2[ndx,]$"X1.Day.Min",6);
-l1_year = Qout_g2[ndx,]$"year";
+l01 <- Qout_g2["X1.Day.Min"];
+ndx = which.min(as.numeric(l01[,"X1.Day.Min"]));
+l01_Qout = round(Qout_g2[ndx,]$"X1.Day.Min",6);
+l01_year = Qout_g2[ndx,]$"year";
 
-if (is.na(l1)) {
-  l1_Runit = 0.0
-  l1_year = 0
+if (is.na(l01)) {
+  l01_Runit = 0.0
+  l01_year = 0
 }
 
 # alf
@@ -316,10 +316,10 @@ vahydro_post_metric_to_scenprop(model_scenario$pid, 'om_class_Constant', NULL, '
 vahydro_post_metric_to_scenprop(model_scenario$pid, 'om_class_Constant', NULL, 'l90_year', l90_year, ds)
 vahydro_post_metric_to_scenprop(model_scenario$pid, 'om_class_Constant', NULL, 'l30_Qout', l30_Qout, ds)
 vahydro_post_metric_to_scenprop(model_scenario$pid, 'om_class_Constant', NULL, 'l30_year', l30_year, ds)
-vahydro_post_metric_to_scenprop(model_scenario$pid, 'om_class_Constant', NULL, 'l7_Qout', l7_Qout, ds)
-vahydro_post_metric_to_scenprop(model_scenario$pid, 'om_class_Constant', NULL, 'l7_year', l7_year, ds)
-vahydro_post_metric_to_scenprop(model_scenario$pid, 'om_class_Constant', NULL, 'l1_Qout', l1_Qout, ds)
-vahydro_post_metric_to_scenprop(model_scenario$pid, 'om_class_Constant', NULL, 'l1_year', l1_year, ds)
+vahydro_post_metric_to_scenprop(model_scenario$pid, 'om_class_Constant', NULL, 'l07_Qout', l07_Qout, ds)
+vahydro_post_metric_to_scenprop(model_scenario$pid, 'om_class_Constant', NULL, 'l07_year', l07_year, ds)
+vahydro_post_metric_to_scenprop(model_scenario$pid, 'om_class_Constant', NULL, 'l01_Qout', l01_Qout, ds)
+vahydro_post_metric_to_scenprop(model_scenario$pid, 'om_class_Constant', NULL, 'l01_year', l01_year, ds)
 vahydro_post_metric_to_scenprop(model_scenario$pid, '7q10', NULL, '7q10', x7q10, ds)
 vahydro_post_metric_to_scenprop(model_scenario$pid, 'om_class_Constant', NULL, 'ml8', alf, ds)
 vahydro_post_metric_to_scenprop(model_scenario$pid, 'om_class_Constant', NULL, 'mne9_10', sept_10, ds)
