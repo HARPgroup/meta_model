@@ -81,6 +81,8 @@ file_path_text = paste(hydr_file_path)
 split <- strsplit(file_path_text, split = "/")
 input_file_path <- gsub(split[[1]][[9]],'',file_path_text)
 
+print(paste("input_file_path: ",input_file_path,sep=""))
+
 ### Exporting to VAHydro
 ## Set up currently to output all the Qout values & the Qout
 
@@ -88,8 +90,8 @@ input_file_path <- gsub(split[[1]][[9]],'',file_path_text)
 ds <- RomDataSource$new(site, rest_uname = rest_uname)
 ds$get_token(rest_pw)
 
+
 rseg_name=paste0(Sys.getenv("RIVER_PREFIX",river_seg))
-#rseg_ftype='vahydro'
 
 riverseg<- RomFeature$new(
   ds,
@@ -101,31 +103,37 @@ riverseg<- RomFeature$new(
   TRUE
 )
 
+
 model <- RomProperty$new(
   ds,
   list(
-    varkey="om_model_element", 
-    propname=riverseg$name,
     featureid=riverseg$hydroid, 
     entity_type="dh_feature", 
     propcode=model_version
   ), 
   TRUE
 )
-model$save(TRUE)
+if (is.na(model$pid)) {
+  model$propname = paste(riverseg$name, model_version)
+  model$varid = ds$get_vardef('om_water_model_node')$varid
+  model$save(TRUE)
+}
 
-model_scenario <- RomProperty$new( 
+
+model_scenario <- RomProperty$new(
   ds,
   list(
-    varkey="om_scenario", 
     featureid=model$pid, 
     entity_type="dh_properties", 
-    propname=scenario_name,
     propcode=scenario_name
   ), 
   TRUE
 )
-model_scenario$save(TRUE)
+if (is.na(model_scenario$pid)) {
+  model_scenario$propname = paste(scenario_name)
+  model_scenario$varid = ds$get_vardef('om_scenario')$varid
+  model_scenario$save(TRUE)
+}
 
 
 # Uploading constants to VaHydro:
@@ -448,7 +456,7 @@ if (imp_off == 0) {
   # max() syntax which is OK with max(c(df1, df2))
   # instead, we cbind them instead of the default which is an implicit rbind
   # ymx <- max(hydrpd$Qbaseline, hydrpd$Qout)
-      
+  
   ymx <- max(cbind(hydrpd$Qbaseline, hydrpd$Qout), na.rm = TRUE)
   plot(
     hydrpd$Qbaseline, ylim = c(0,ymx),  #Placeholders for xlim, come back to this and create xlim based on hydrpd
@@ -471,8 +479,8 @@ if (imp_off == 0) {
   )
   if (ymx == 0) {
     plot_label='No withdrawal or point source for this segment'
-   } else {
-      ymx <- 10
+  } else {
+    ymx <- 10
   }
   lines(hydrpd$ps_cumulative_mgd * 1.547,col='green')
   axis(side = 4)
@@ -508,7 +516,7 @@ if (imp_off == 0) {
     hydrpd$Qbaseline, ylim = c(0,ymx), #xlim = c(xmn, xmx),
     ylab="Flow/WD/PS (cfs)",
     xlab=paste("Model Flow Period",sdate,"to",edate,
-    main = plot_label)
+               main = plot_label)
   )
   lines(as.numeric(hydrpd$Qout,col='blue'))
   par(new = TRUE)
@@ -518,10 +526,10 @@ if (imp_off == 0) {
   ymx <- max(cbind((hydrpd$wd_cumulative_mgd) * 1.547, (hydrpd$ps_cumulative_mgd) * 1.547))
   if (ymx == 0) {
     plot_label='No withdrawal or point source for this segment'
-    } else {
-      ymx <- 10  # in order to plot the figure correctly 
-    }
-
+  } else {
+    ymx <- 10  # in order to plot the figure correctly 
+  }
+  
   
   plot(
     hydrpd$wd_cumulative_mgd * 1.547,col='red',
@@ -562,21 +570,23 @@ furl <- paste(
 )
 
 
-hydrpd <- data.frame(hydrpd)
+datpd <- data.frame(hydrpd)
 png(fname, width = 700, height = 700)
 legend_text = c("Baseline Flow","Scenario Flow")
-fdc_plot <- hydroTSM::fdc(cbind(hydrpd[names(hydrpd)== base_var], hydrpd[names(hydrpd)== comp_var]),
-                          # yat = c(0.10,1,5,10,25,100,400),
-                          # yat = c(round(min(hydrpd),0),500,1000,5000,10000),
-                          yat = seq(round(min(hydrpd$Qout),0),round(max(hydrpd$Qout),0), by = 500),
-                          leg.txt = legend_text,
-                          main=paste("Flow Duration Curve","\n","(Model Flow Period ",sdate," to ",edate,")",sep=""),
-                          ylab = "Flow (cfs)",
-                          ylim=c(min(hydrpd$Qout), max(hydrpd$Qout)),
-                          cex.main=1.75,
-                          cex.axis=1.50,
-                          leg.cex=2,
-                          cex.sub = 1.2
+ymn <- 0.01
+ymx <- max(cbind(as.numeric(unlist(datpd[names(datpd)== base_var])),
+                 as.numeric(unlist(datpd[names(datpd)== comp_var]))))
+fdc_plot <- hydroTSM::fdc(
+  cbind(datpd[names(datpd)== base_var], datpd[names(datpd)== comp_var]),
+  yat = c(0, 0.1, 1, 5, 10, 50, 100, seq(0,round(ymx,0), by = 500)),
+  leg.txt = legend_text,
+  main=paste("Flow Duration Curve","\n","(Model Flow Period ",sdate," to ",edate,")",sep=""),
+  ylab = "Flow (cfs)",
+  ylim=c(ymn, ymx),
+  cex.main=1.75,
+  cex.axis=1.50,
+  leg.cex=2,
+  cex.sub = 1.2
 )
 dev.off()
 
@@ -648,11 +658,32 @@ vahydro_post_metric_to_scenprop(model_scenario$pid, 'dh_image_file', furl, 'fig.
 #rseg <-getProperty(list(pid=pid), site)
 
 #Retrieving pid of model because it is missing: 
-
 rseg <- RomProperty$new(ds, list(pid=model$pid), TRUE)
 rseg_hydroid<-rseg$featureid
 
 huc_level <- 'huc8'
 Dataset <- 'VAHydro-EDAS'
 
-elfgen_huc(scenario_name, rseg_hydroid, huc_level, Dataset, model_scenario, ds, image_dir, save_url, site)
+print(paste("scenario_name: ", scenario_name))
+print(paste("rseg_hydroid: ", rseg_hydroid))
+print(paste("huc_level: ", huc_level))
+print(paste("Dataset: ", Dataset))
+print(paste("model_scenario$propname: ", model_scenario$propname))
+# print(paste("ds: ", ds))
+print(paste("image_dir: ", image_dir))
+print(paste("save_url: ", save_url))
+print(paste("site: ", site))
+
+
+# elfgen_huc(scenario_name, rseg_hydroid, huc_level, Dataset, model_scenario, ds, image_dir, save_url, site)
+elfgen_huc(runid = scenario_name,
+           hydroid = rseg_hydroid,
+           huc_level = huc_level,
+           dataset = Dataset,
+           scenprop = model_scenario,
+           ds = ds,
+           save_directory = image_dir,
+           save_url = save_url,
+           site = site)
+
+
