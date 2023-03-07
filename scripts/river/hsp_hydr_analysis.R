@@ -232,7 +232,7 @@ vahydro_post_metric_to_scenprop(model_scenario$pid, 'om_class_Constant', NULL, '
 vahydro_post_metric_to_scenprop(model_scenario$pid, 'om_class_Constant', NULL, 'daily_consumptive_use_frac', daily_consumptive_use_frac, ds)
 vahydro_post_metric_to_scenprop(model_scenario$pid, 'om_class_Constant', NULL, 'unmet_demand_mgd', unmet_demand_mgd, ds)
 
-# L90 and l30 -- move this? 
+# L90, l30, l07, l01
 #Qout_zoo <- zoo(as.numeric(hydr$Qout), order.by = hydr$index)
 Qout_g2 <- data.frame(group2(hydr$Qout)) #doesn't work when index of hydr is non-numeric 
 l90 <- Qout_g2["X90.Day.Min"];
