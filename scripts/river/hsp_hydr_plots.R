@@ -592,7 +592,8 @@ furl <- paste(
 datpd <- data.frame(hydrpd)
 png(fname, width = 700, height = 700)
 legend_text = c("Baseline Flow","Scenario Flow")
-ymn <- 0
+# ymn <- 0
+ymn <- 0.01
 ymx <- max(cbind(as.numeric(unlist(datpd[names(datpd)== base_var])),
                  as.numeric(unlist(datpd[names(datpd)== comp_var]))))
 fdc_plot <- hydroTSM::fdc(
