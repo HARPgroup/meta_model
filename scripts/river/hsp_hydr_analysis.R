@@ -69,7 +69,6 @@ ds <- RomDataSource$new(site, rest_uname = rest_uname)
 ds$get_token(rest_pw)
 
 rseg_name=paste0(Sys.getenv("RIVER_PREFIX",river_seg))
-#rseg_ftype='vahydro'
 
 riverseg<- RomFeature$new(
   ds,
@@ -95,19 +94,6 @@ if (is.na(model$pid)) {
   model$varid = ds$get_vardef('om_water_model_node')$varid
   model$save(TRUE)
 }
-
-#model_scenario <- RomProperty$new( 
-#  ds,
-#  list(
-#    varkey="om_scenario", 
-#    featureid=model$pid, 
-#    entity_type="dh_properties", 
-#    propname=scenario_name,
-#    propcode=scenario_name
-#  ), 
-#  TRUE
-#)
-#model_scenario$save(TRUE)
 
 model_scenario <- RomProperty$new(
   ds,
@@ -246,7 +232,7 @@ vahydro_post_metric_to_scenprop(model_scenario$pid, 'om_class_Constant', NULL, '
 vahydro_post_metric_to_scenprop(model_scenario$pid, 'om_class_Constant', NULL, 'daily_consumptive_use_frac', daily_consumptive_use_frac, ds)
 vahydro_post_metric_to_scenprop(model_scenario$pid, 'om_class_Constant', NULL, 'unmet_demand_mgd', unmet_demand_mgd, ds)
 
-# L90 and l30 -- move this? 
+# L90, l30, l07, l01
 #Qout_zoo <- zoo(as.numeric(hydr$Qout), order.by = hydr$index)
 Qout_g2 <- data.frame(group2(hydr$Qout)) #doesn't work when index of hydr is non-numeric 
 l90 <- Qout_g2["X90.Day.Min"];
@@ -267,6 +253,26 @@ l30_year = Qout_g2[ndx,]$"year";
 if (is.na(l30)) {
   l30_Runit = 0.0
   l30_year = 0
+}
+
+l07 <- Qout_g2["X7.Day.Min"];
+ndx = which.min(as.numeric(l07[,"X7.Day.Min"]));
+l07_Qout = round(Qout_g2[ndx,]$"X7.Day.Min",6);
+l07_year = Qout_g2[ndx,]$"year";
+
+if (is.na(l07)) {
+  l07_Runit = 0.0
+  l07_year = 0
+}
+
+l01 <- Qout_g2["X1.Day.Min"];
+ndx = which.min(as.numeric(l01[,"X1.Day.Min"]));
+l01_Qout = round(Qout_g2[ndx,]$"X1.Day.Min",6);
+l01_year = Qout_g2[ndx,]$"year";
+
+if (is.na(l01)) {
+  l01_Runit = 0.0
+  l01_year = 0
 }
 
 # alf
@@ -309,6 +315,10 @@ vahydro_post_metric_to_scenprop(model_scenario$pid, 'om_class_Constant', NULL, '
 vahydro_post_metric_to_scenprop(model_scenario$pid, 'om_class_Constant', NULL, 'l90_year', l90_year, ds)
 vahydro_post_metric_to_scenprop(model_scenario$pid, 'om_class_Constant', NULL, 'l30_Qout', l30_Qout, ds)
 vahydro_post_metric_to_scenprop(model_scenario$pid, 'om_class_Constant', NULL, 'l30_year', l30_year, ds)
+vahydro_post_metric_to_scenprop(model_scenario$pid, 'om_class_Constant', NULL, 'l07_Qout', l07_Qout, ds)
+vahydro_post_metric_to_scenprop(model_scenario$pid, 'om_class_Constant', NULL, 'l07_year', l07_year, ds)
+vahydro_post_metric_to_scenprop(model_scenario$pid, 'om_class_Constant', NULL, 'l01_Qout', l01_Qout, ds)
+vahydro_post_metric_to_scenprop(model_scenario$pid, 'om_class_Constant', NULL, 'l01_year', l01_year, ds)
 vahydro_post_metric_to_scenprop(model_scenario$pid, '7q10', NULL, '7q10', x7q10, ds)
 vahydro_post_metric_to_scenprop(model_scenario$pid, 'om_class_Constant', NULL, 'ml8', alf, ds)
 vahydro_post_metric_to_scenprop(model_scenario$pid, 'om_class_Constant', NULL, 'mne9_10', sept_10, ds)
