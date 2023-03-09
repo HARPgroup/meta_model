@@ -90,13 +90,17 @@ print(paste("input_file_path: ",input_file_path,sep=""))
 ds <- RomDataSource$new(site, rest_uname = rest_uname)
 ds$get_token(rest_pw)
 
-
-rseg_name=paste0(Sys.getenv("RIVER_PREFIX",river_seg))
+if (rseg_ftype == 'vahydro') {
+  # we have a hinky prefix, so add it
+  rseg_code=paste0('vahydrosw_wshed_',river_seg)
+} else {
+  rseg_code=river_seg
+}
 
 riverseg<- RomFeature$new(
   ds,
   list(
-    hydrocode=rseg_name,
+    hydrocode=rseg_code,
     ftype=rseg_ftype,
     bundle='watershed'
   ),
