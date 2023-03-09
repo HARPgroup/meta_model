@@ -22,6 +22,9 @@ endif
 if ( ! ( -d $CBP_EXPORT_DIR/river/$scenario/hydr ) ) then
   mkdir $CBP_EXPORT_DIR/river/$scenario/hydr
 endif
+if ( ! ( -d $CBP_EXPORT_DIR/river/$scenario/json ) ) then
+  mkdir $CBP_EXPORT_DIR/river/$scenario/json
+endif
 if ( ! ( -d $CBP_EXPORT_DIR/river/$scenario/hydr/images ) ) then
   mkdir $CBP_EXPORT_DIR/river/$scenario/hydr/images
 endif
