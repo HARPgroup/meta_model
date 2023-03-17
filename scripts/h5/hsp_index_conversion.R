@@ -10,9 +10,11 @@ hydr <- fread(hydr_file_path)
 
 origin <- "1970-01-01"
 hydr$date <- as.Date(hydr$index, format = "%m/%d/%Y %H:%M", origin = origin)
-hydr$hour <- hour(hydr$index)
-hydr$day <- day(hydr$index)
-hydr$month <- month(hydr$index)
 hydr$year <- year(hydr$index)
+hydr$month <- month(hydr$index)
+hydr$day <- day(hydr$index)
+hydr$hour <- hour(hydr$index)
+hydr$minute <- minute(hydr$index)
+hydr$second <- second(hydr$index)
 
 write.table(hydr,file = hydr_file_path, sep = ",", row.names = FALSE)
