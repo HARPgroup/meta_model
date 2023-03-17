@@ -32,8 +32,23 @@ if (temp_res == 'day') {
   hydr_df <- data.frame(hydr$year, hydr$month, hydr$day, hydr_column)
 } 
 if (temp_res == 'hour') {
-  message("USing hourly export")
+  message("Using hourly export")
   hydr_df <- data.frame(hydr$year, hydr$month, hydr$day, hydr$hour, hydr_column)
+} 
+if (temp_res == 'minute') {
+  message("Using minute export")
+  hydr_df <- data.frame(hydr$year, hydr$month, hydr$day, hydr$hour, hydr$minute, hydr_column)
+} 
+if (temp_res == 'second') {
+  message("Using second export (required by default wdmtoolbox imports)")
+  hydr_df <- data.frame(hydr$year, hydr$month, hydr$day, hydr$hour, hydr$minute, hydr$second, hydr_column)
+} 
+if (temp_res == 'string') {
+  message("Using date string export (required by default wdmtoolbox imports)")
+  # Using index is a bad thing IMO (but I did it).  I think perhaps we should consider
+  # using a string formatting of the year, month, day, hour, minute, second columns 
+  #A insteawd of relying on the index to not be clobbered at a previous step 
+  hydr_df <- data.frame(format(hydr$index, "%Y-%m-%d %H:%M:%S", usetz=TRUE ), hydr_column)
 } 
 if (is.logical(hydr_df)) {
   message(paste("Resolution", temp_res,"is not available"))
