@@ -20,12 +20,11 @@ while ( $i <= $num )
   set dsn = $dsns[$i]
   # Prep outflow data for export to river wdm
   set wdmcsv = ${seg}_${col}'.csv'
-  echo "Notice: Rscript $META_MODEL_ROOT/scripts/wdm/csv_export_wdm_format.R $csvfile $wdmcsv $col hour"
-  Rscript $META_MODEL_ROOT/scripts/wdm/csv_export_wdm_format.R $csvfile $wdmcsv $col "hour"
+  echo "Notice: Rscript $META_MODEL_ROOT/scripts/wdm/csv_export_wdm_format.R $csvfile $wdmcsv $col string"
+  Rscript $META_MODEL_ROOT/scripts/wdm/csv_export_wdm_format.R $csvfile $wdmcsv $col "string"
   # Push into wdm
   # copy here cause it is hardto send these paths to wdm_insert_one, need escape?
-  cp /usr/local/lib/hspf/message.wdm ./
-  echo ${seg}.wdm $wdmcsv $dsn 1 w message.wdm | wdm_insert_one
+  wdmtoolbox csvtowdm --input_ts=$wdmcsv ${seg}.wdm $dsn
   @ i++
 end
 cp $segment'.wdm' $tree/tmp/wdm/river/$scenario/stream/
