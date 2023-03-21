@@ -5,6 +5,7 @@ suppressPackageStartupMessages(library(lubridate))
 suppressPackageStartupMessages(library(plyr))
 suppressPackageStartupMessages(library(dplyr))
 suppressPackageStartupMessages(library(R.utils))
+suppressPackageStartupMessages(library(sqldf))
 
 omsite = "http://deq1.bse.vt.edu:81"
 
@@ -12,38 +13,65 @@ omsite = "http://deq1.bse.vt.edu:81"
 #hydr <- fread("OR1_7700_7980_hydr.csv") #for testing
 
 argst <- commandArgs(trailingOnly = T)
+if (length(argst) < 3) {
+  message("Usage: Rscript csv_export_wdm_format.R input_path output_path column [time_fields=day(hr,min,string)] [temp_conv=none,day,hour] [conv_method=avg,sum]")
+  q()
+}
 input_path <- argst[1]
 output_path <- argst[2]
 column <- argst[3]
 if (length(argst) >= 4) {
-  temp_res <- argst[4]
+  time_fields <- argst[4]
 } else {
-  temp_res = 'day'
+  time_fields = 'day'
 }
-message(paste("Temp res", temp_res, "count of args is", length(argst)) )
+if (length(argst) >= 5) {
+  temp_conv <- argst[5]
+} else {
+  temp_conv = 'none'
+}
+if (length(argst) >= 6) {
+  conv_method <- argst[6]
+} else {
+  conv_method = 'sum'
+}
+message(paste("Time field style", time_fields, "count of args is", length(argst)) )
   
 hydr <- fread(input_path)
-hydr %>% select(column) -> hydr_column
 
+if (temp_conv == 'hour') {
+   cstring = "select year, month, day, hour, 0 as minute, 0 as second"
+   gstring = "group by year, month, day, hour"
+}
+if (temp_conv == 'day') {
+   cstring = "select year, month, day, 0 as hour, 0 as minute, 0 as second"
+   gstring = "group by year, month, day"
+}
+if (temp_conv != 'none') {
+   print(paste(cstring, ", ", conv_method, "(", column,") as ", column," from hydr", gstring))
+   hydr <- sqldf(paste(cstring, ", ", conv_method, "(", column,") as ", column," from hydr", gstring))
+   hydr$index <- as.POSIXct(make_datetime(hydr$year,hydr$month,hydr$day,hydr$hour,hydr$minute,hydr$second))
+}
+hydr %>% select(column) -> hydr_column
 
 # creating tables with OVOL3 and ROVOL
 hydr_df = FALSE
-if (temp_res == 'day') {
+if (time_fields == 'day') {
   hydr_df <- data.frame(hydr$year, hydr$month, hydr$day, hydr_column)
 } 
-if (temp_res == 'hour') {
+if (time_fields == 'hour') {
   message("Using hourly export")
   hydr_df <- data.frame(hydr$year, hydr$month, hydr$day, hydr$hour, hydr_column)
 } 
-if (temp_res == 'minute') {
+if (time_fields == 'minute') {
   message("Using minute export")
   hydr_df <- data.frame(hydr$year, hydr$month, hydr$day, hydr$hour, hydr$minute, hydr_column)
 } 
-if (temp_res == 'second') {
+if (time_fields == 'second') {
   message("Using second export (required by default wdmtoolbox imports)")
   hydr_df <- data.frame(hydr$year, hydr$month, hydr$day, hydr$hour, hydr$minute, hydr$second, hydr_column)
 } 
-if (temp_res == 'string') {
+if (time_fields == 'string') {
   message("Using date string export (required by default wdmtoolbox imports)")
   # Using index is a bad thing IMO (but I did it).  I think perhaps we should consider
   # using a string formatting of the year, month, day, hour, minute, second columns 
@@ -51,7 +79,7 @@ if (temp_res == 'string') {
   hydr_df <- data.frame(format(hydr$index, "%Y-%m-%d %H:%M:%S", usetz=TRUE ), hydr_column)
 } 
 if (is.logical(hydr_df)) {
-  message(paste("Resolution", temp_res,"is not available"))
+  message(paste("Resolution", time_fields,"is not available"))
   q("n")
 }
 #Robustify by adding usage for hourly and daily data 

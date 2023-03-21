@@ -20,8 +20,8 @@ while ( $i <= $num )
   set dsn = $dsns[$i]
   # Prep outflow data for export to river wdm
   set wdmcsv = ${seg}_${col}'.csv'
-  echo "Notice: Rscript $META_MODEL_ROOT/scripts/wdm/csv_export_wdm_format.R $csvfile $wdmcsv $col string"
-  Rscript $META_MODEL_ROOT/scripts/wdm/csv_export_wdm_format.R $csvfile $wdmcsv $col "string"
+  echo "Notice: Rscript $META_MODEL_ROOT/scripts/wdm/csv_export_wdm_format.R $csvfile $wdmcsv $col string hour sum"
+  Rscript $META_MODEL_ROOT/scripts/wdm/csv_export_wdm_format.R $csvfile $wdmcsv $col "string" "hour" "sum"
   # Push into wdm
   # copy here cause it is hardto send these paths to wdm_insert_one, need escape?
   wdmtoolbox csvtowdm --input_ts=$wdmcsv ${seg}.wdm $dsn
