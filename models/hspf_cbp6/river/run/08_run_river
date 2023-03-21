@@ -16,6 +16,6 @@ if (!(-e $inp)) then
   exit
 endif
 
-echo $inp | $HSP_EXEC 
+echo $inp | $HSPF_EXEC 
 
 # @todo: put in run execution checks like normal HSPF has
