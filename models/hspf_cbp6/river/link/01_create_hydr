@@ -9,6 +9,7 @@ source $META_MODEL_ROOT/models/$MODEL/model_config
 cd $tempdir
 
 set wdm=${segment}.wdm
+set wdm3=ps_sep_div_ams_${scenario}_${segment}.wdm
 cp /usr/local/lib/hspf/message.wdm ./
 
 # create the basic wdm export of flow, ie. DSN 111
@@ -17,6 +18,12 @@ cp /usr/local/lib/hspf/message.wdm ./
 if ( $?START_YEAR ) then
   echo "echo $wdm,$START_YEAR,$END_YEAR,111 | wdm2text"
   echo "$wdm,$START_YEAR,$END_YEAR,111" | wdm2text
+  echo "echo $wdm3,$START_YEAR,$END_YEAR,3000 | wdm2text"
+  echo "$wdm3,$START_YEAR,$END_YEAR,3000" | wdm2text
+  echo "echo $wdm3,$START_YEAR,$END_YEAR,3007 | wdm2text"
+  echo "$wdm3,$START_YEAR,$END_YEAR,3007" | wdm2text
+  echo "echo $wdm3,$START_YEAR,$END_YEAR,3008 | wdm2text"
+  echo "$wdm3,$START_YEAR,$END_YEAR,3008" | wdm2text
 endif
 rm message.wdm
 set csv_file="${segment}_0111.csv"
