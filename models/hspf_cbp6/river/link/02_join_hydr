@@ -1,0 +1,27 @@
+#!/bin/csh
+# Run post-process extract routine
+set scenario=$1
+set segment=$2
+set seg=$segment # this is for backwards compatibility with scripts source
+set tempdir=$3
+# Load configuration
+source $META_MODEL_ROOT/models/$MODEL/model_config
+cd $tempdir
+
+exit
+# these below do not link so we exit
+set hydrcsv=${seg}_hydr'.csv'
+set divrcsv=ps_sep_div_ams_${scenario}_${segment}_3007'.csv'
+echo "Notice: Rscript $META_MODEL_ROOT/scripts/misc/join_col.R $hydrcsv $divrcsv values divr_cfs header day"
+Rscript $META_MODEL_ROOT/scripts/misc/join_col.R $hydrcsv $divrcsv "values" "divr_cfs" "header" "day"
+
+set divacsv=ps_sep_div_ams_${scenario}_${segment}_3008'.csv'
+echo "Notice: Rscript $META_MODEL_ROOT/scripts/misc/join_col.R $hydrcsv $divrcsv values diva_cfs header day"
+Rscript $META_MODEL_ROOT/scripts/misc/join_col.R $hydrcsv $divacsv "values" "diva_cfs" "header" "day"
+
+set pscsv=ps_sep_div_ams_${scenario}_${segment}_3000'.csv'
+echo "Notice: Rscript $META_MODEL_ROOT/scripts/misc/join_col.R $hydrcsv $pscsv values ps_afd header day"
+Rscript $META_MODEL_ROOT/scripts/misc/join_col.R $hydrcsv $pscsv "values" "ps_afd" "header" "day"
+
+echo "cp $hydr_file $CBP_EXPORT_DIR/river/$scenario/"
+cp $hydr_file $CBP_EXPORT_DIR/river/$scenario/hydr/
