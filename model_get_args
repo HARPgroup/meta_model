@@ -4,6 +4,7 @@
 set model=$1
 set scenario=$2
 set segment=$3
+set cleanup = 1
 # get a default path
 set default_path=`$META_MODEL_ROOT/models/$model/get_work_path`
 set work_path = $default_path
@@ -13,7 +14,10 @@ if (${#argv} >= 4) then
   endif
 endif
 echo "Model work_path = $work_path"
-
+if ( $argv[4] != "auto" ) then
+  # do not clean up
+  set cleanup = 0
+endif
 # @todo: handle command line switches for glaf arguments
 # -i, --IGNORE_PROBLEMS : set environment variable IGNORE_PROBLEMS
 if (! $?IGNORE_PROBLEMS) then
