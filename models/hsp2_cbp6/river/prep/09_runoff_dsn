@@ -12,7 +12,16 @@ cd $tempdir
 
 # export the flow data from DSN11 which should only be runoff since the ETM just ran
 # but stream_wdm.exe doesn't add the upstream flow until later in the "run" portion of this flow
-if ( $?LOCAL_TRIBS ) then
+# Note: this is incomplete. 
+# To use this we need to zero out DSN 11, which has already been loaded 
+# Current implementation copies the blank WDM in during the ETM step
+# However, Later export steps result in error
+
+if ( ! $?LOCAL_TRIBS ) then
+  set LOCAL_TRIBS = 0
+  echo "LOCAL_TRIBS = $LOCAL_TRIBS"
+endif
+if ( $LOCAL_TRIBS > 0 ) then
   # grab the eos WDM
   cp $tree/tmp/wdm/river/$scenario/eos/${seg}.wdm ./
 
@@ -23,17 +32,15 @@ if ( $?LOCAL_TRIBS ) then
   echo "echo ${seg}.wdm,$START_YEAR,$END_YEAR,11 | wdm2text"
   echo "${seg}.wdm,$START_YEAR,$END_YEAR,11" | wdm2text
   cp $wdmcsv $CBP_EXPORT_DIR/river/$scenario/stream/$seg'_0010.csv' -f
-  echo "Adding DSN 11 to WDM as DSN 10"
+  echo "Adding Copy of DSN 11 to WDM as DSN 10 (hsp2 ops model only)"
   cp /usr/local/lib/hspf/messa  echo "Adding DSN 11 to WDM as DSN 10"
   cp /usr/local/lib/hspf/message.wdm ./
   echo "echo ${seg}.wdm $wdmcsv 10 1 w message.wdm | wdm_insert_one"
   echo ${seg}.wdm $wdmcsv 10 1 w message.wdm | wdm_insert_one
-
   # now copy the eos wdm back
   cp ${seg}.wdm $tree/tmp/wdm/river/$scenario/eos/
 
-  echo "Finished Adding runoff data to DSN 10"
-
+  echo "Finished Adding LOCAL_TRIBS runoff data to DSN 10"
 else
   echo "LOCAL_TRIBS not enabled. All upstream and local inflow are in DSN 11" 
 endif

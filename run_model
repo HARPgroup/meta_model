@@ -49,10 +49,18 @@ if ( -d $model_plugins ) then
       if ( -d $script_path ) then 
         if ( $script  == "all" ) then
           set plugins = `ls $script_path`
-          set cleanup = 1 # normal run, remove temp dir afterwards if completes OK
         else 
           set plugins = `ls $script_path/*$script*`
-          set cleanup = 0 # step by step run, do not remove temp dir afterwards
+        endif
+        if ( $cleanup == 0 ) then
+          # override cleanup
+        else
+          # use logic to guess cleanup
+          if ( $script  == "all" ) then
+            set cleanup = 1 # normal run, remove temp dir afterwards if completes OK
+          else 
+            set cleanup = 0 # step by step run, do not remove temp dir afterwards
+          endif
         endif
         if ( ! ( "$plugins" == "" ) ) then
           foreach plugin ( $plugins ) 
