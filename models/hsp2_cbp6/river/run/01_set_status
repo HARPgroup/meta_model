@@ -1,0 +1,18 @@
+#!/bin/csh
+# THis exports hydro dat from the hdf5 to a CSV for import into the river wdm
+# this is doen here because the sediment routine needs to have he hydro data 
+# in the WDM to complete.  It is later used by the next downstream
+# do NOT be tempted to move this to "link", as the sediment will fail!
+set scenario=$1
+set segment=$2
+set seg = $segment
+set tempdir=$3
+set tree = $MODEL_ROOT
+source $MODEL_ROOT/config/control/script/${scenario}.con
+echo "Locating: cd $tempdir"
+cd $tempdir
+
+echo "SETTING MODEL STATUS"
+echo "Notice: Rscript $META_MODEL_ROOT/scripts/reset/set_model_status.R $seg $RIVER_FTYPE $MODEL_VERSION_CODE $scenario"
+Rscript $META_MODEL_ROOT/scripts/reset/set_model_status.R $seg $RIVER_FTYPE $MODEL_VERSION_CODE $scenario 1 "Model run begun"
+
