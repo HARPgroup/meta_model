@@ -1,0 +1,22 @@
+#!/bin/csh
+# Run post-process extract routine
+set scenario=$1
+set segment=$2
+set seg = $segment
+set tempdir=$3
+set tree = $MODEL_ROOT
+source $META_MODEL_ROOT/models/$MODEL/model_config
+cd $tempdir
+
+# move all files to the model data archive
+set mod="hydr"
+set h5file = $seg'.h5'
+cp *hydr*.csv $CBP_EXPORT_DIR/river/$scenario/$mod/ -f
+chgrp $MODEL_FILES_GROUP $CBP_EXPORT_DIR/river/$scenario/$mod/$wdmcsv
+chmod 664 $CBP_EXPORT_DIR/river/$scenario/$mod/*.csv
+# Remove message and h5 file to save space
+echo "Cleaning up $h5file -- disabled for testing!!!!!"
+rm $h5file
+rm message.wdm
+# todo: add the call to run the river hsp2 summary script here
+cp $seg'.wdm' $tree/tmp/wdm/river/$scenario/stream/ -f

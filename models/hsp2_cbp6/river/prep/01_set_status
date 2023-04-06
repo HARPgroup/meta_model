@@ -13,6 +13,6 @@ echo "Locating: cd $tempdir"
 cd $tempdir
 
 echo "SETTING MODEL STATUS"
-echo "Notice: Rscript $META_MODEL_ROOT/scripts/rest/set_model_status.R $seg $RIVER_FTYPE $MODEL_VERSION_CODE $scenario"
-Rscript $META_MODEL_ROOT/scripts/rest/set_model_status.R $seg $RIVER_FTYPE $MODEL_VERSION_CODE $scenario 0 "Model run complete."
+echo "Notice: Rscript $META_MODEL_ROOT/scripts/rest/set_model_status.R $seg $RIVER_FTYPE $MODEL_VERSION_CODE $scenario 1"
+Rscript $META_MODEL_ROOT/scripts/rest/set_model_status.R $seg $RIVER_FTYPE $MODEL_VERSION_CODE $scenario 1 "Model initializing."
 

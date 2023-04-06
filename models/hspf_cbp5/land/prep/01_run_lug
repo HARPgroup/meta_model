@@ -1,0 +1,35 @@
+#!/bin/csh
+set scenario=$1
+set segment=$2
+set tempdir=$3
+set clean=1
+
+# load all model config
+#echo "source $META_MODEL_ROOT/models/$MODEL/model_config"
+source $META_MODEL_ROOT/models/$MODEL/model_config
+
+#cd $MODEL_ROOT/$MY_HOME/$SCRIPT_DIR
+cd $tempdir
+
+set cmd = "lug.exe"
+
+source $MODEL_ROOT/run/fragments/set_landuse
+if (-e problem) then
+  rm problem
+endif
+
+foreach lu ($perlnds $implnds)
+
+  echo making UCI for $lu segment $segment land scenario $scenario
+  if (-e problem) then
+    rm problem
+  endif
+  echo $segment, $lu, $scenario | $MODEL_ROOT/code/bin/${cmd}
+
+  if (-e problem) then
+    echo ' '
+    cat problem
+    exit
+  endif
+
+end
