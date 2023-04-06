@@ -70,11 +70,8 @@ if (syear < (eyear - 2)) {
   flow_year_type <- 'calendar'
 }
 
-hydrd = aggregate(hydrd, list(hydrd$date),FUN = 'mean') #Adds 'Group.1' col of class date
-
 #Reverted back to using window(), which requires a ts or zoo:
-hydrd <- zoo(hydrd, order.by = as.Date(hydrd$Group.1)) 
-hydrd <- subset(hydrd, select = -c(Group.1)) #removing col that was added by aggregation
+hydrd <- zoo(hydrd, order.by = as.Date(hydrd$date)) 
 
 hydrd <- window(hydrd, start = sdate, end = edate)
 
