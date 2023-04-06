@@ -9,12 +9,11 @@ suppressPackageStartupMessages(library(hydrotools))
 # Accepting command arguments:
 argst <- commandArgs(trailingOnly = T)
 river_seg <- argst[1]
-scenario_name <- argst[2]
-hydr_file_path <- argst[3]
-model_version <- argst[4]
-rseg_ftype <- argst[5]
-model_status_flag <- argst[6]
-model_status_msg <- argst[7]
+rseg_ftype <- argst[2]
+model_version <- argst[3]
+scenario_name <- argst[4]
+model_status_flag <- argst[5]
+model_status_msg <- argst[6]
 
 # Set up our data source
 ds <- RomDataSource$new(site, rest_uname = rest_uname)
