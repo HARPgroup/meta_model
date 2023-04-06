@@ -1,0 +1,26 @@
+#!/bin/csh
+# Run post-process extract routine
+set scenario=$1
+set segment=$2
+set seg=$segment # this is for backwards compatibility with scripts source
+set tempdir=$3
+# Load configuration
+source $META_MODEL_ROOT/models/$MODEL/model_config
+cd $tempdir
+
+#Exporting diva, divr, and ps from TIMESERIES group of h5
+set h5file=$seg'.h5'
+set csvfile=${seg}_divr'.csv'
+set ds='/TIMESERIES/TS3007/table' #divr
+echo "Notice: Rscript $META_MODEL_ROOT/scripts/h5/export_hsp_h5.R $h5file $csvfile $ds"
+Rscript $META_MODEL_ROOT/scripts/h5/export_hsp_h5.R $h5file $csvfile $ds
+
+set csvfile=${seg}_diva'.csv'
+set ds='/TIMESERIES/TS3008/table' #diva
+echo "Notice: Rscript $META_MODEL_ROOT/scripts/h5/export_hsp_h5.R $h5file $csvfile $ds"
+Rscript $META_MODEL_ROOT/scripts/h5/export_hsp_h5.R $h5file $csvfile $ds
+
+set csvfile=${seg}_ps'.csv'
+set ds='/TIMESERIES/TS3000/table' #ps
+echo "Notice: Rscript $META_MODEL_ROOT/scripts/h5/export_hsp_h5.R $h5file $csvfile $ds"
+Rscript $META_MODEL_ROOT/scripts/h5/export_hsp_h5.R $h5file $csvfile $ds

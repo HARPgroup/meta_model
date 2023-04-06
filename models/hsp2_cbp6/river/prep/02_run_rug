@@ -1,0 +1,22 @@
+#!/bin/csh
+set scenario=$1
+set segment=$2
+set tempdir=$3
+set clean=1
+
+set tree=$MODEL_ROOT
+# @todo: 
+# when running in scenario mode, we need to use scenario_rug.exe wherease this one uses rug.exe 
+# cbp one_rug $scenario $segment $tempdir $clean
+
+# note: the "tree" variable in the cbp source code is hard-coded to
+#       a relative path, i.e., "../../../".  This is not something
+#       that should be done. but it is, so that means that you have to 
+#       be 3 directories beneath the MODEL_ROOT in order to have rug.exe
+#       function properly. Which is totally dependent on the tempdir 
+#       naming convention ALWAYS being 3 steps beneath the MODEL_ROOT
+#       so we cd here in order to makethiswork. But this must be fixed.
+#       Suggestion: pass the UCI directory in to the rug.exe command
+cd $tempdir
+echo "Doing: echo $segment,$scenario | $tree/code/bin/rug.exe"
+echo $segment,$scenario | $tree/code/bin/rug.exe

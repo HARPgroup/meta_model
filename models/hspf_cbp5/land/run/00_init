@@ -1,0 +1,15 @@
+#!/bin/csh
+set scenario=$1
+set segment=$2
+set tempdir=$3
+
+set tempbase=`basename $tempdir`
+cd $MODEL_ROOT/tmp/
+echo "cd $MODEL_ROOT/tmp/"
+
+rm -Rf $tempbase/*
+
+if ( ! -d $tempdir ) then
+  echo "Creating $tempdir"
+  mkdir $tempdir
+endif
