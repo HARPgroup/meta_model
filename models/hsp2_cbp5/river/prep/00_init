@@ -1,0 +1,12 @@
+#!/bin/csh
+set scenario=$1
+set segment=$2
+set tempdir=$3
+
+set tempbase=`basename $tempdir`
+cd $MODEL_ROOT/tmp/$user-scratch
+rm -Rf $tempbase
+
+if ( ! -d $tempdir ) then
+  mkdir $tempdir
+endif

@@ -1,0 +1,16 @@
+#!/bin/csh
+set scenario=$1
+set segment=$2
+set tmp_dir=$3
+
+source $MODEL_ROOT/run_bhatt/fragments/set_landuse
+if (-e problem) then
+  rm problem
+endif
+
+foreach lu ($perlnds $implnds)
+  echo converting UCI for $lu segment $segment land scenario $scenario
+  set uci_name="$MODEL_ROOT/tmp/uci/land/$lu/$scenario/${lu}${segment}.uci"
+  hsp_uci_version $uci_name hsp2
+end
+

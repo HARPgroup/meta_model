@@ -1,0 +1,21 @@
+#!/bin/csh
+# Run post-process clean up
+set scenario=$1
+set segment=$2
+set seg = $segment
+set tempdir=$3
+set tree = $MODEL_ROOT
+source $META_MODEL_ROOT/models/$MODEL/model_config
+
+if ( ! -f $tempdir/problem ) then
+  # all is good, clean up
+  # but do it safely.
+  set tmpbase=`basename $tempdir`
+  cd $MODEL_ROOT/tmp/$user-scratch
+  rm -Rf $tmpbase
+  # Remove message and h5 file to save space
+  #echo "Cleaning up $h5file"
+  #rm $h5file
+  #rm message.wdm
+endif
+
