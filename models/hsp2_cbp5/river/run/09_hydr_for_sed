@@ -1,0 +1,24 @@
+#!/bin/csh
+# THis exports hydro dat from the hdf5 to a CSV for import into the river wdm
+# this is doen here because the sediment routine needs to have he hydro data 
+# in the WDM to complete.  It is later used by the next downstream
+# do NOT be tempted to move this to "link", as the sediment will fail!
+set scenario=$1
+set segment=$2
+set seg = $segment
+set tempdir=$3
+set tree = $MODEL_ROOT
+source $MODEL_ROOT/config/control/script/${scenario}.con
+echo "Locating: cd $tempdir"
+cd $tempdir
+
+echo "Exporting HYDR data for $seg"
+set ds="/RESULTS/RCHRES_R001/HYDR/table"
+set mod="hydr"
+set h5file = $seg'.h5'
+set csvfile = ${seg}_hydr'.csv'
+echo "Notice: Rscript $META_MODEL_ROOT/scripts/h5/export_hsp_h5.R $h5file $csvfile $ds"
+Rscript $META_MODEL_ROOT/scripts/h5/export_hsp_h5.R $h5file $csvfile $ds
+
+echo "Notice: Rscript $META_MODEL_ROOT/scripts/h5/hsp_index_conversion.R $csvfile"
+Rscript $META_MODEL_ROOT/scripts/h5/hsp_index_conversion.R $csvfile

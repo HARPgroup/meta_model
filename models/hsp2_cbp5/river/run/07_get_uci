@@ -1,0 +1,23 @@
+#!/bin/csh
+set scenario=$1
+set segment=$2
+set seg=$segment # this is for backwards compatibility with scripts source
+set tempdir=$3
+
+# Load configuration
+source $META_MODEL_ROOT/models/$MODEL/model_config
+echo "Workspace: cd $tempdir"
+cd $tempdir
+
+set inp = $MODEL_ROOT/tmp/uci/river/$scenario/$seg'.uci'
+cp -vipf $inp .
+set inp = $seg'.uci'
+set h5 = $seg'.h5'
+if (!(-e $inp)) then
+  echo 'HSPF UCI for segment ' $seg ' named'
+  echo $inp 'does not exist'
+  exit
+endif
+
+echo "$HSP_EXEC import_uci $inp $h5"
+$HSP_EXEC import_uci $inp $h5

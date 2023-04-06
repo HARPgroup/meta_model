@@ -1,0 +1,44 @@
+#!/bin/csh
+# THis exports PWATER and IWATER dat from the hdf5 to a CSV for import into the analysis scripts
+set scenario=$1
+set segment=$2
+set seg = $segment
+set tempdir=$3
+set tree = $MODEL_ROOT
+
+source $META_MODEL_ROOT/models/$MODEL/model_config
+#source $MODEL_ROOT/config/control/script/${scenario}.con
+echo "Locating: cd $tempdir"
+cd $tempdir
+
+echo "Exporting PWATER/IWATER data for $seg"
+
+source $tree/run_bhatt/fragments/set_landuse
+echo "The real hsp2 is being used"
+foreach lu ($perlnds $implnds)
+
+  set h5file = $lu$seg'.h5'
+  set has_pwater=`Rscript $MODEL_ROOT/run/export/detect_data_source.R $h5file "/RESULTS/PERLND_P001/PWATER"`
+  echo "$has_pwater= Rscript $MODEL_ROOT/run/export/detect_data_source.R $h5file '/RESULTS/PERLND_P001/PWATER' "
+  set has_iwater=`Rscript $MODEL_ROOT/run/export/detect_data_source.R $h5file "/RESULTS/PERLND_I001/IWATER"`
+  echo "set has_iwater= Rscript $MODEL_ROOT/run/export/detect_data_source.R $h5file '/RESULTS/PERLND_I001/IWATER'"
+
+  if ( "$has_pwater" == "1" ) then
+    set run_landsum=1
+    set ds="/RESULTS/PERLND_P001/PWATER/table"
+    set csvfile=$CBP_EXPORT_DIR/land/$scenario/pwater/$lu${seg}_pwater'.csv'
+  else if ( "$has_iwater" == "1" ) then
+    set run_landsum=1
+    set ds="/RESULTS/IMPLND_I001/IWATER/table"
+    set csvfile = $CBP_EXPORT_DIR/land/$scenario/iwater/$lu${seg}_iwater'.csv'
+  else
+    echo "Neither IWATER nor PWATER found in $h5file"
+    continue
+  endif
+
+  echo "Notice: Rscript $MODEL_ROOT/run/export/export_hsp_h5.R $h5file $csvfile $ds"
+  Rscript $MODEL_ROOT/run/export/export_hsp_h5.R $h5file $csvfile $ds
+
+  echo "Notice: Rscript $MODEL_ROOT/run/export/hsp_index_conversion.R $csvfile"
+  Rscript $MODEL_ROOT/run/export/hsp_index_conversion.R $csvfile
+end
