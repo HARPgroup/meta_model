@@ -1,0 +1,11 @@
+#!/bin/bash
+scenario=$1
+segment=$2
+tmp_dir=$3
+
+echo "cd $tmp_dir"
+
+cd $tmp_dir
+clean=1
+cbp one_rug $scenario $segment $tmp_dir $clean
+
