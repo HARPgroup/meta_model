@@ -101,4 +101,3 @@ if ( -d $model_plugins ) then
 else
   echo "No model definitions found for model type $model in $META_MODEL_ROOT/models"
 endif
-
