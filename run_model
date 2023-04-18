@@ -94,7 +94,7 @@ if ( -d $model_plugins ) then
   if ( -f $work_path/problem ) then
     continue
   else
-    echo "Model run completed without errors."
+    echo "Model run for $segment / $scenario completed without errors."
     if ( $cleanup == 1 ) then
       if ( "$work_path" == "" ) then
         echo "Work path $work_path is unset, cannot remove files"
