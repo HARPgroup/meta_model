@@ -103,7 +103,7 @@ if ( -d $model_plugins ) then
         rm -Rf $work_path
       endif
     else
-      echo "Model cleanup NOT performed.  You will need to manuall remove emp dir $work_path"
+      echo "Model cleanup NOT performed.  You will need to manually remove emp dir $work_path"
     endif 
   endif
 else

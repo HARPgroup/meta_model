@@ -1,0 +1,27 @@
+#!/bin/csh
+echo "Loading model configuration"
+if (! $?MODEL_ROOT) then
+  echo "Variable MODEL_ROOT is undefined.  Exiting."
+  exit
+endif
+# Load defaults
+source $MODEL_ROOT/config/control/script/default.con
+# load model scenario specifics
+source $MODEL_ROOT/config/control/script/${scenario}.con
+setenv MODEL_VERSION_CODE $MODEL_VERSION_CODE
+echo "MODEL_VERSION_CODE = $MODEL_VERSION_CODE"
+set tspan = `cbp get_config ${scenario} river TIME`
+set START_YEAR = $tspan[1]
+set END_YEAR = $tspan[4]
+echo "Found model timespan $START_YEAR to $END_YEAR"
+if (! $?HSP_EXEC) then
+  echo "hsp_exec variable is undefined.  Check the scenario config file $MODEL_ROOT/config/control/script/${scenario}.con"
+  echo "hsp_exec variable is undefined." > problem
+  exit
+endif
+
+# Model bin pertains to locating scripts, which allows compatibility with p5 and p6
+if ( ! $?MODEL_BIN) then
+  set MODEL_BIN = $MY_HOME
+endif
+echo "model_config finished."
