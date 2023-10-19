@@ -1,4 +1,5 @@
 # creating a csv with wanted col and wdm format
+options(scipen=999) # disable scientific notation in dataframes
 
 suppressPackageStartupMessages(library(data.table)) 
 suppressPackageStartupMessages(library(lubridate))
@@ -35,9 +36,24 @@ if (length(argst) >= 6) {
 } else {
   conv_method = 'sum'
 }
+if (length(argst) >= 7) {
+  src_tz <- argst[7]
+} else {
+  src_tz = FALSE
+}
+if (length(argst) >= 8) {
+  dest_tz <- argst[8]
+} else {
+  dest_tz = src_tz
+}
+
 message(paste("Time field style", time_fields, "count of args is", length(argst)) )
   
 hydr <- fread(input_path)
+# must rename first several columns in case they are not time formatted, or not named at all
+bnames <- colnames(hydr)
+bnames[1:4] <- c('year','month','day','hour')
+colnames(hydr) <- bnames
 
 if (temp_conv == 'hour') {
    cstring = "select year, month, day, hour, 0 as minute, 0 as second"
@@ -50,7 +66,11 @@ if (temp_conv == 'day') {
 if (temp_conv != 'none') {
    print(paste(cstring, ", ", conv_method, "(", column,") as ", column," from hydr", gstring))
    hydr <- sqldf(paste(cstring, ", ", conv_method, "(", column,") as ", column," from hydr", gstring))
-   hydr$index <- as.POSIXct(make_datetime(hydr$year,hydr$month,hydr$day,hydr$hour,hydr$minute,hydr$second))
+   if (src_tz == FALSE) {
+     hydr$index <- as.POSIXct(make_datetime(hydr$year,hydr$month,hydr$day,hydr$hour,hydr$minute,hydr$second))
+   } else {
+     hydr$index <- as.POSIXct(make_datetime(hydr$year,hydr$month,hydr$day,hydr$hour,hydr$minute,hydr$second, tz = src_tz))
+   }
 }
 
 # creating tables with OVOL3 and ROVOL
@@ -75,7 +95,11 @@ if (time_fields == 'string') {
   # Using index is a bad thing IMO (but I did it).  I think perhaps we should consider
   # using a string formatting of the year, month, day, hour, minute, second columns 
   #A insteawd of relying on the index to not be clobbered at a previous step 
-  hydr_df <- data.frame(format(hydr$index, "%Y-%m-%d %H:%M:%S", usetz=TRUE ), hydr[[column]])
+  if (dest_tz == FALSE) {
+    hydr_df <- data.frame(format(hydr$index, "%Y-%m-%d %H:%M:%S", usetz=TRUE ), hydr[[column]])
+  } else {
+    hydr_df <- data.frame(format(hydr$index, "%Y-%m-%d %H:%M:%S", usetz=TRUE, tz=dest_tz ), hydr[[column]])
+  }
 } 
 if (is.logical(hydr_df)) {
   message(paste("Resolution", time_fields,"is not available"))
