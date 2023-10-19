@@ -10,8 +10,17 @@ source $MODEL_ROOT/config/control/script/default.con
 # load model scenario specifics
 source $MODEL_ROOT/config/control/script/${scenario}.con
 setenv MODEL_VERSION_CODE $MODEL_VERSION_CODE
+if (! $?modules ) then
+   echo "CAN NOT FIND modules setting, what the hell?"
+   echo "CAN NOT FIND modules setting, what the hell?" > problem
+   exit
+endif
 echo "Getting timespan"
-set tspan = `cbp get_config ${scenario} river TIME`
+if ( "$modules" == "land") then
+  set tspan = `cbp get_config ${scenario} land TIME`
+else
+  set tspan = `cbp get_config ${scenario} river TIME`
+endif
 set START_YEAR = $tspan[1]
 set END_YEAR = $tspan[4]
 
