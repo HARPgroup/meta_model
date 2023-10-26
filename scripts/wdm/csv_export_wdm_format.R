@@ -52,8 +52,12 @@ message(paste("Time field style", time_fields, "count of args is", length(argst)
 hydr <- fread(input_path)
 # must rename first several columns in case they are not time formatted, or not named at all
 bnames <- colnames(hydr)
-bnames[1:4] <- c('year','month','day','hour')
-colnames(hydr) <- bnames
+if (!("year" %in% bnames)) {
+   message("WARNING: CSV file does not have year column, and this code is made to assume the standard wdm2text format of year, month, day, hour, value")
+   message("Assuming this is really bad, but this is where we are at")
+   bnames[1:4] <- c('year','month','day','hour')
+   colnames(hydr) <- bnames
+}
 
 if (temp_conv == 'hour') {
    cstring = "select year, month, day, hour, 0 as minute, 0 as second"
