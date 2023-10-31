@@ -1,0 +1,17 @@
+#!/bin/csh
+set scenario=$1
+set segment=$2
+set tempdir=$3
+
+set tempbase=`basename $tempdir`
+cd $MODEL_ROOT/tmp/$user-scratch
+# we don't remove this at this point since that 
+# happens in init.  If we get to this point, and tempdir exists,
+# we assume that either "prep" has created it, or we need to 
+# make one because something has been skipped.
+# see: ../prep/00_init
+#rm -Rf $tempbase
+
+if ( ! -d $tempdir ) then
+  mkdir $tempdir
+endif

@@ -1,0 +1,19 @@
+#!/bin/csh
+# Run post-process extract routine
+set scenario=$1
+set segment=$2
+set seg=$segment # this is for backwards compatibility with scripts source
+set tempdir=$3
+# Load configuration
+source $META_MODEL_ROOT/models/$MODEL/model_config
+
+# insure that we have all the required directories
+if ( ! ( -d $CBP_EXPORT_DIR/river ) ) then
+  mkdir $CBP_EXPORT_DIR/river
+endif
+if ( ! ( -d $CBP_EXPORT_DIR/river/$scenario/hydr ) ) then
+  mkdir $CBP_EXPORT_DIR/river/$scenario/hydr
+endif
+if ( ! ( -d $CBP_EXPORT_DIR/river/$scenario/hydr/images ) ) then
+  mkdir $CBP_EXPORT_DIR/river/$scenario/hydr/images
+endif

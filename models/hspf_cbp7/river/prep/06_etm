@@ -1,0 +1,23 @@
+#!/bin/csh
+set scenario=$1
+set segment=$2
+set tempdir=$3
+set clean=0
+# we need more than the standard data here
+source $META_MODEL_ROOT/models/$MODEL/model_config
+echo "Script dir:  $SCRIPT_DIR "
+set tempbase=`basename $tempdir`
+# this is a modified ETM process that separates the runoff from the upstream inflow to be combined later in HSP2
+# note: etm assumes that you are already inside the temp dir, or if you send the temp dir in
+#       that you want to create it, so we shiould change into it, then run without sending 
+#       directory arguments (5 and 6)
+echo "cd $tempdir" # e.g. run/standard, or run_bhat/OneCommandWSM_P6_STRLOAD_SCENCF
+echo "csh bhatt_run_etm_and_land_and_dat_simultaneously_oneseg.csh $scenario $segment $AVG_YEAR1 $AVG_YEAR2"
+# e.g. run/standard, or run_bhat/OneCommandWSM_P6_STRLOAD_SCENCF
+cd $tempdir
+csh $MODEL_ROOT/$MODEL_BIN/$SCRIPT_DIR/bhatt_run_etm_and_land_and_dat_simultaneously_oneseg.csh $scenario $segment $AVG_YEAR1 $AVG_YEAR2 $tempbase $MODEL_ROOT
+# now migrate DSN 11 to DSN 10 -- we should later revisit which DSN is actually needed
+# Export the data in the WDM to a [segment]_eos.csv, note: this data should have just been set as EOS/runoff inflows by the ETM
+# Export the data from blank_land.wdm to a csv blank_land.csv
+# Load blank_land.csv to the river WDM DSN 11 since we expect that upstream flows will be added later
+# Load the runoff data CSV into the WDM as DSN 10 (a unique, unused ID)
