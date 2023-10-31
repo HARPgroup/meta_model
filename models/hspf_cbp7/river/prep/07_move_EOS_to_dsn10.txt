@@ -1,0 +1,15 @@
+#!/bin/csh
+set scenario=$1
+set segment=$2
+set seg=$segment # backwards compat
+set tempdir=$3
+
+set tree = $MODEL_ROOT
+# load all model config
+source $META_MODEL_ROOT/models/$MODEL/model_config 
+
+## Move to the execution directory
+cd $tempdir
+# Export the data in the WDM, which should have just been set as EOS/runoff inflows by the ETM
+# load the runoff data into the WDM as DSN 10 (a unique, unused ID)
+# blank the river WDM DSN 11 since we expect that upstream flows will be added later
