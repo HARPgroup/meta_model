@@ -48,6 +48,8 @@ pwater$date <- as.Date(pwater$index, format = "%m/%d/%Y %H:%M")
 pwater$week <- week(pwater$date)
 pwater$month <- month(pwater$date)
 pwater$year <- year(pwater$date)
+minyr <- min(pwater$year)
+maxyr <- max(pwater$year)
 monthlyAGWS <- aggregate(pwater$AGWS, by = list(pwater$month, pwater$year), FUN = "mean")
 colnames(monthlyAGWS) <- c("month", "year", "AGWS")
 
@@ -199,7 +201,7 @@ furl <- paste(
   sep = '/'
 )
 png(fname) #fname is a character string with file name
-years <- seq(1984,2020,1)
+years <- seq(minyr,maxyr,1)
 plot(monthlyAGWS$AGWS, type ='l', ylab = 'AGWS (in)', xaxt = 'n', xlab = NA, col = 'blue')
 axis(1, at = seq(6,438,12), labels = years) 
 title(main = 'Active groundwater storage', sub = 'Monthly average values are plotted')

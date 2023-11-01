@@ -56,12 +56,13 @@ colnames(monthlyAGWS) <- c("month","year", "AGWS")
 yearlyAGWS <- aggregate(pwater$AGWS, by = list(pwater$year), FUN = "mean")
 colnames(yearlyAGWS) <- c("year", "AGWS")
 
-
+minyr <- min(pwater$year)
+maxyr <- max(pwater$year)
 # 1. Decomposition: 
 # response = trend + seasonal + random
 # $trend, $seasonal, and $random can be individually plotted from the stacked plot
 
-AGWS_ts <- ts(monthlyAGWS$AGWS, start = c(1984,1), end = c(2020,12), frequency = 12)
+AGWS_ts <- ts(monthlyAGWS$AGWS, start = c(minyr,1), end = c(maxyr,12), frequency = 12)
 
 agws_decomp <- decompose(AGWS_ts, type = "multiplicative") #multiplicative seasonality was chosen
 

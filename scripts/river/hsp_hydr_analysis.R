@@ -46,6 +46,25 @@ hydr <- fread(hydr_file_path)
 # date <- hydr$date
 
 hydr <- zoo(hydr, order.by = hydr$index)
+#trimming to water year and adding the buffer
+syear = as.integer(min(hydr$year))
+eyear = as.integer(max(hydr$year))
+model_run_start <- min(hydr$date)
+model_run_end <- max(hydr$date)
+years <- seq(syear,eyear)
+
+if (syear < (eyear - 2)) {
+  sdate <- as.Date(paste0(syear,"-10-01"))
+  edate <- as.Date(paste0((eyear),"-09-30"))
+  flow_year_type <- 'water'
+} else {
+  sdate <- as.Date(paste0(syear,"-02-01"))
+  edate <- as.Date(paste0(eyear,"-12-31"))
+  flow_year_type <- 'calendar'
+}
+
+#Reverted back to using window(), which requires a ts or zoo:
+hydr <- window(hydr, start = sdate, end = edate)
 
 cols <- names(hydr)
 
