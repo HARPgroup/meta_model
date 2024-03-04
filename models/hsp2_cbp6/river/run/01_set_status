@@ -8,11 +8,18 @@ set segment=$2
 set seg = $segment
 set tempdir=$3
 set tree = $MODEL_ROOT
+
+# Load configuration
 source $META_MODEL_ROOT/models/$MODEL/model_config
+
 echo "Locating: cd $tempdir"
 cd $tempdir
 
 echo "SETTING MODEL STATUS"
-echo "Notice: Rscript $META_MODEL_ROOT/scripts/rest/set_model_status.R $seg $RIVER_FTYPE $MODEL_VERSION_CODE $scenario 2"
-Rscript $META_MODEL_ROOT/scripts/rest/set_model_status.R $seg $RIVER_FTYPE $MODEL_VERSION_CODE $scenario 2 "Model running."
-
+# set vars here for brevity of code
+set flag=2
+set msg="Model run begun"
+set ftype=$RIVER_FTYPE
+set ver=$MODEL_VERSION_CODE
+echo "Notice: Rscript $META_MODEL_ROOT/scripts/rest/set_model_status.R $seg $scenario $ver $ftype $flag $msg "
+Rscript $META_MODEL_ROOT/scripts/rest/set_model_status.R $seg $scenario $ver $ftype $flag "$msg"
