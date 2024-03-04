@@ -21,7 +21,8 @@ colnames(hspf) <- c('year','month','day','hour','ROVOL')
 
 # Creating new hydr table
 hspf$Qout <- hspf$ROVOL*12.1 # converting ROVOL to cfs
-hspf$index <- seq(mdy_hm("1/1/1984 0:00"), mdy_hm("12/31/2020 23:00"), by = "hour")
+
+hspf$index <- as.POSIXct(make_datetime(hspf$year,hspf$month,hspf$day,hspf$hour))
 
 hydr <- hspf[,c("index", "ROVOL", "Qout")]
 

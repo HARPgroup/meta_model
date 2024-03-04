@@ -1,0 +1,19 @@
+#!/bin/csh
+set scenario=$1
+set segment=$2
+set tempdir=$3
+
+set tempbase=`basename $tempdir`
+cd $MODEL_ROOT/tmp/$user-scratch
+rm -Rf $tempbase
+# load model entity to get run_mode and flow_mode, timestep, start and end dates
+# probably can do this with get_prop function?
+# /usr/bin/php -f /var/www/html/om/run_shakeTree.php 1 elid runid sdate edate cdate xtype scen -1 6 normal varX=n 0 dt
+# xtype = shake tree or standard
+# Example command:
+# cd /var/www/html/om/ 
+# /usr/bin/php -f /var/www/html/om/run_shakeTree.php 1 337730 6011 1998-1-1 2002-12-31 2019-12-1 2 37 -1 6 normal flow_mode=8 0 86400
+
+if ( ! -d $tempdir ) then
+  mkdir $tempdir
+endif

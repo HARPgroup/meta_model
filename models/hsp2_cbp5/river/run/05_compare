@@ -1,0 +1,18 @@
+#!/bin/csh
+set scenario=$1
+set seg=$2
+set tmp_dir=$3
+set tree = $MODEL_ROOT
+
+# Load configuration
+source $META_MODEL_ROOT/models/$MODEL/model_config
+############### Compare calibration and scenario loads input to this river
+###############    modify comparison file
+if ( $RUN_RIVER_MODE == "SCENARIO" ) then
+  echo $scenario, $seg | $tree/code/bin/compare_scen_and_calib.exe
+  if (-e problem) then
+    echo ' '
+    cat problem
+    exit
+  endif
+endif

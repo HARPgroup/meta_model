@@ -1,0 +1,50 @@
+#!/bin/csh
+set scenario=$1
+set segment=$2
+set tempdir=$3
+set clean=1
+
+# load all model config
+#echo "source $META_MODEL_ROOT/models/$MODEL/model_config"
+source $META_MODEL_ROOT/models/$MODEL/model_config
+
+#cd $MODEL_ROOT/$MY_HOME/$SCRIPT_DIR
+cd $tempdir
+
+echo "Using INFEXP = $INFEXP and LAND_QUIET = $LAND_QUIET"
+if ( $LAND_QUIET == 1 ) then
+   if ( $INFEXP == 0 ) then
+      # note there is no lugQuiet.exe or equivalent
+      set cmd = "lug.exe"
+   else
+      set cmd = "lugINFEXPquiet.exe"
+   endif
+else
+   if ( $INFEXP == 0 ) then
+      set cmd = "lug.exe"
+   else
+      set cmd = "lugINFEXP.exe"
+   endif
+endif
+
+
+source $MODEL_ROOT/run_bhatt/fragments/set_landuse
+if (-e problem) then
+  rm problem
+endif
+
+foreach lu ($perlnds $implnds)
+
+  echo making UCI for $lu segment $segment land scenario $scenario
+  if (-e problem) then
+    rm problem
+  endif
+  echo $segment, $lu, $scenario | $MODEL_ROOT/code/bin/${cmd}
+
+  if (-e problem) then
+    echo ' '
+    cat problem
+    exit
+  endif
+
+end

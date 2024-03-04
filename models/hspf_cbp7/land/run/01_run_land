@@ -1,0 +1,11 @@
+#!/bin/csh
+set scenario=$1
+set segment=$2
+set tempdir=$3
+
+source $MODEL_ROOT/config/control/script/${scenario}.con
+echo "Changing to $tempdir"
+#cd $MODEL_ROOT/$MY_HOME/$SCRIPT_DIR
+cd $tempdir
+
+$MODEL_ROOT/$MY_HOME/$SCRIPT_DIR/bhatt_run_land_oneseg.csh $scenario $segment $tempdir $MODEL_ROOT

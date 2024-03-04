@@ -8,6 +8,7 @@ set segment=$2
 set seg = $segment
 set tempdir=$3
 set tree = $MODEL_ROOT
+
 # Load configuration
 source $META_MODEL_ROOT/models/$MODEL/model_config
 
