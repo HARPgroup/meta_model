@@ -16,8 +16,8 @@ cd $tempdir
 
 echo "SETTING MODEL STATUS"
 # set vars here for brevity of code
-set flag=1
-set msg="Model initializing"
+set flag=2
+set msg="Model run begun"
 set ftype=$RIVER_FTYPE
 set ver=$MODEL_VERSION_CODE
 echo "Notice: Rscript $META_MODEL_ROOT/scripts/rest/set_model_status.R $seg $scenario $ver $ftype $flag $msg "
