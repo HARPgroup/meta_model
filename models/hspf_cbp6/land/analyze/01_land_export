@@ -25,4 +25,6 @@ endif
 if ( $EXPORT_RUNOFF_OM == 1 ) then
   echo "om CSV: Rscript $MODEL_ROOT/run/export/wdm_export_flow.R $scenario $segment $START_YEAR $END_YEAR $CBP_EXPORT_DIR $MODEL_ROOT"
   Rscript $MODEL_ROOT/run/export/wdm_export_flow.R $scenario $segment $START_YEAR $END_YEAR $CBP_EXPORT_DIR $MODEL_ROOT
+else
+  echo "Land export is off EXPORT_RUNOFF_OM = $EXPORT_RUNOFF_OM, no runoff component file generated."
 endif
