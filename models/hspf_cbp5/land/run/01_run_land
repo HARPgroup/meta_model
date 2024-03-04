@@ -11,7 +11,6 @@ cd $tempdir
 
 source $MODEL_ROOT/run/fragments/set_landuse
 source $MODEL_ROOT/run/fragments/set_icprb_hspf
-
 foreach lu ($perlnds $implnds)
   echo running $lu for segment $seg land scenario $scenario
 

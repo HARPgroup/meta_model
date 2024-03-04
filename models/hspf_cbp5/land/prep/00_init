@@ -18,7 +18,7 @@ endif
 # should do better than to just assume "for" is 
 # always going to be a valid land use name but for now
 # we go with it
-source $MODEL_ROOT/run_bhatt/fragments/set_landuse
+source $MODEL_ROOT/run/fragments/set_landuse
 set onelu=$perlnds[1]
 echo "Checking for existence of $MODEL_ROOT/tmp/uci/land/$onelu/$scenario"
 if ( ! -d "$MODEL_ROOT/tmp/uci/land/$onelu/$scenario" ) then
