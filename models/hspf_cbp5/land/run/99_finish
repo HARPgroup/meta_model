@@ -25,8 +25,8 @@
     pwd
   endif
 
-  source $tree/run_bhatt/fragments/set_landuse
-  source $tree/run_bhatt/fragments/set_icprb_hspf
+  source $tree/run/fragments/set_landuse
+  source $tree/run/fragments/set_icprb_hspf
   
     foreach lu ($perlnds $implnds)
 
@@ -40,11 +40,6 @@
 
       echo $inp | $hspf > xyz
 
-#??      tail -1 $lu$seg'.ech' > EOJtest$tempdir
-#??      diff $tree/run_bhatt/test/EOJ EOJtest$tempdir > diffeoj
-#??      rm EOJtest$tempdir
-#      wait
-##      set count = `grep "2014/12" $lu$seg'.out' | wc -l`
       set count = `grep "HSPF simulation completed." xyz | wc -l`
       echo "count = $count"
       if ( $count == 0 ) then
