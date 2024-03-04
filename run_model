@@ -20,6 +20,7 @@ echo $run_steps
 
 # Load meta-model configuration
 if ( -f $META_MODEL_ROOT/models/$model/model_config ) then
+  echo "Calling model_config with modules = $modules"
   source $META_MODEL_ROOT/models/$model/model_config
 else 
   echo "Error: Can not find model configuration file $META_MODEL_ROOT/models/$model/model_config"
@@ -36,10 +37,11 @@ setenv MODEL_ROOT "$MODEL_ROOT"
 setenv MODEL_BIN "$MODEL_BIN"
 setenv META_MODEL_ROOT "$META_MODEL_ROOT"
 setenv SCRIPT_DIR "$SCRIPT_DIR"
+echo "setting MODEL to $model"
 setenv MODEL "$model"
 setenv START_YEAR "$START_YEAR"
 setenv END_YEAR "$END_YEAR"
-
+setenv modules "$modules" # makes it available to sourced scripts
 # iterate through different component of the model execution cycle
 if ( -d $model_plugins ) then
   foreach module ( $modules )
@@ -94,7 +96,7 @@ if ( -d $model_plugins ) then
   if ( -f $work_path/problem ) then
     continue
   else
-    echo "Model run completed without errors."
+    echo "Model run for $segment / $scenario completed without errors."
     if ( $cleanup == 1 ) then
       if ( "$work_path" == "" ) then
         echo "Work path $work_path is unset, cannot remove files"
@@ -103,7 +105,7 @@ if ( -d $model_plugins ) then
         rm -Rf $work_path
       endif
     else
-      echo "Model cleanup NOT performed.  You will need to manuall remove emp dir $work_path"
+      echo "Model cleanup NOT performed.  You will need to manually remove emp dir $work_path"
     endif 
   endif
 else

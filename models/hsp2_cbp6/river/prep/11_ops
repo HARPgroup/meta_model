@@ -1,0 +1,26 @@
+#!/bin/csh
+# Push data back into WDM file for the sediment routine to use it in the next step of run
+# also this satisfies the export for the next downstream WDM
+set scenario=$1
+set segment=$2
+set seg = $segment
+set tempdir=$3
+#source $MODEL_ROOT/config/control/script/${scenario}.con
+source $META_MODEL_ROOT/models/$MODEL/model_config
+set tree = $MODEL_ROOT
+cd $tempdir
+
+# see if river operations have been enabled, if so copy the json file into tmp dir
+if ( ! $?RIVER_OPSCEN ) then
+  set RIVER_OPSCEN = 'disabled'
+  echo "River operational model disabled"
+else
+  set op_file = $tree/input/scenario/river/ops/$RIVER_OPSCEN/${segment}.json
+  if (-e $op_file) then  
+    cp $tree/input/scenario/river/ops/$RIVER_OPSCEN/${segment}.json ./
+    echo "Using river operational model file ${segment}.json." 
+  else
+    echo "Warning: Could not find river operational model file $op_file" 
+  endif
+endif
+

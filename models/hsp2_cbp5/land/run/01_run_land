@@ -1,0 +1,22 @@
+#!/bin/csh
+set scenario=$1
+set segment=$2
+set tempdir=$3
+
+source $MODEL_ROOT/config/control/script/${scenario}.con
+echo "Changing to $tempdir"
+#cd $MODEL_ROOT/$MY_HOME/$SCRIPT_DIR
+cd $tempdir
+
+source $tree/run/fragments/set_landuse
+source $tree/run/fragments/set_icprb_hspf
+
+foreach lu ($perlnds $implnds)
+  echo running $lu for segment $seg land scenario $scenario
+
+  cp -v $tree/config/blank_wdm/land.wdm $lu$seg'.wdm'
+  set inp = $tree/tmp/uci/land/$lu/$scenario/$lu$seg'.uci'
+  echo $seg, $lu
+  hsp2 import_uci $inp $lu$seg'.h5'
+  hsp2 run $lu$seg'.h5'
+done

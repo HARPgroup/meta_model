@@ -1,0 +1,18 @@
+#!/bin/csh
+# Run post-process extract routine
+set scenario=$1
+set segment=$2
+set seg=$segment # this is for backwards compatibility with scripts source
+set tempdir=$3
+# Load configuration
+source $META_MODEL_ROOT/models/$MODEL/model_config
+cd $tempdir
+
+if (! $?MODEL_VERSION_CODE) then
+  echo "Variable MODEL_VERSION_CODE is not defined. Cannot push results to REST" >> problem
+  exit
+endif
+set image_file_path=$CBP_EXPORT_DIR/land/$scenario/images
+
+# START_YEAR and END_YEAR are set in model_config script
+Rscript $MODEL_ROOT/run/export/wdm_export_flow.R $scenario $segment $START_YEAR $END_YEAR $CBP_EXPORT_DIR $MODEL_ROOT

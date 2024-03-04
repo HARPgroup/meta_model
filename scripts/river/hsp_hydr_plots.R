@@ -54,14 +54,33 @@ if (!file.exists(image_dir)) {
 # the data is in a json format txt file
 
 hydr <- fread(hydr_file_path) #file is a data frame
+hydr <- zoo(hydr, order.by = hydr$index)
+#trimming to water year and adding the buffer
+syear = as.integer(min(hydr$year))
+eyear = as.integer(max(hydr$year))
+model_run_start <- min(hydr$date)
+model_run_end <- max(hydr$date)
+years <- seq(syear,eyear)
+
+if (syear < (eyear - 2)) {
+  sdate <- as.Date(paste0(syear,"-10-01"))
+  edate <- as.Date(paste0((eyear),"-09-30"))
+  flow_year_type <- 'water'
+} else {
+  sdate <- as.Date(paste0(syear,"-02-01"))
+  edate <- as.Date(paste0(eyear,"-12-31"))
+  flow_year_type <- 'calendar'
+}
+
+#Reverted back to using window(), which requires a ts or zoo:
+hydr <- window(hydr, start = sdate, end = edate)
 
 cols <- names(hydr)
 
 sdate <- as.Date(min(hydr$date)) #the right time span has been set in a previous script already
 edate <- as.Date(max(hydr$date))
 
-hydr <- zoo(hydr, order.by = hydr$index)
-hydr <- window(hydr, start = sdate, end = edate)
+#hydr <- zoo(hydr, order.by = hydr$index)
 
 mode(hydr) <- 'numeric'
 
@@ -434,8 +453,8 @@ if (imp_off == 0) {
   # l90 2 year
   # this has an impoundment.  Plot it up.
   # Now zoom in on critical drought period
-  pdstart = as.IDate(paste0(l90_year,"-06-01"))
-  pdend = as.IDate(paste0(l90_year, "-11-15") )
+  pdstart = as.Date(paste0(l90_year,"-06-01"))
+  pdend = as.Date(paste0(l90_year, "-11-15") )
   
   hydrpd <- window(hydr, start = pdstart, end = pdend)
   
@@ -493,7 +512,7 @@ if (imp_off == 0) {
   print(paste("Saved file: ", fname, "with URL", furl))
   vahydro_post_metric_to_scenprop(model_scenario$pid, 'dh_image_file', furl, 'fig.l90_flows.2yr', 0.0, ds)
   
-  hydrpd <- hydr 
+  hydrpd <- hydr # full time period for this plot
   fname <- paste(
     image_dir,
     paste0(

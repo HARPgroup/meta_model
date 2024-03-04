@@ -1,0 +1,37 @@
+#!/bin/csh
+set scenario=$1
+set segment=$2
+set tempdir=$3
+set seg = $segment
+
+source $MODEL_ROOT/config/control/script/${scenario}.con
+echo "Changing to $tempdir"
+#cd $MODEL_ROOT/$MY_HOME/$SCRIPT_DIR
+cd $tempdir
+
+source $MODEL_ROOT/run/fragments/set_landuse
+source $MODEL_ROOT/run/fragments/set_icprb_hspf
+
+foreach lu ($perlnds $implnds)
+  echo running $lu for segment $seg land scenario $scenario
+
+  cp -v $MODEL_ROOT/config/blank_wdm/land.wdm $lu$seg'.wdm'
+  set inp = $MODEL_ROOT/tmp/uci/land/$lu/$scenario/$lu$seg'.uci'
+  echo $seg, $lu
+  echo $inp | $hspf
+  tail -1 $lu$seg'.ech' > EOJtest$$
+  diff $MODEL_ROOT/run/fragments/EOJ EOJtest$$ > diffeoj
+  rm EOJtest$$
+  if (!(-z diffeoj)) then
+    if (-e problem) then
+      rm problem
+    endif
+    echo 'land segment: ' $seg ' did not run for land use: ' $lu >problem
+    echo '  input file ' $inp >>problem
+    echo   check the file ../../tmp/scratch/temp$$/$lu$seg.ech >>problem
+    cat problem
+    exit
+  endif
+  mv $lu$seg'.out' $MODEL_ROOT/output/hspf/land/out/$lu/$scenario/
+  mv $lu$seg'.ech' $MODEL_ROOT/output/hspf/land/ech/$lu/$scenario/
+done

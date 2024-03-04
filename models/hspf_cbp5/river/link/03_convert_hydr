@@ -1,0 +1,16 @@
+#!/bin/csh
+# Run post-process extract routine
+set scenario=$1
+set segment=$2
+set seg = $segment
+set tempdir=$3
+set tree = $MODEL_ROOT
+# Load configuration
+source $META_MODEL_ROOT/models/$MODEL/model_config
+
+cd $tempdir
+
+set csvfile = $CBP_EXPORT_DIR/river/${scenario}/hydr/${seg}_hydr'.csv'
+# Run conversion script to add Qout and other derived/alias columns
+echo "Notice (unit conversions): Rscript $MODEL_ROOT/run/export/hsp_hydr_conversion.R $csvfile"
+Rscript $MODEL_ROOT/run/export/hsp_hydr_conversion.R $csvfile 
