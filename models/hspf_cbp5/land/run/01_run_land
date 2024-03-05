@@ -7,8 +7,14 @@ set seg = $segment
 source $MODEL_ROOT/config/control/script/${scenario}.con
 echo "Changing to $tempdir"
 #cd $MODEL_ROOT/$MY_HOME/$SCRIPT_DIR
-cd $tempdir
+#cd $tempdir
 
+echo "Calling: cbp run_land_oneseg.csh $scenario $segment $tempdir"
+#$MODEL_ROOT/run/standard/run_land_oneseg.csh $scenario $segment $tempdir
+cbp run_land_oneseg.csh $scenario $segment 
+exit
+
+# populates variables implnds and perlnds
 source $MODEL_ROOT/run/fragments/set_landuse
 source $MODEL_ROOT/run/fragments/set_icprb_hspf
 foreach lu ($perlnds $implnds)
@@ -17,7 +23,7 @@ foreach lu ($perlnds $implnds)
   cp -v $MODEL_ROOT/config/blank_wdm/land.wdm $lu$seg'.wdm'
   set inp = $MODEL_ROOT/tmp/uci/land/$lu/$scenario/$lu$seg'.uci'
   echo $seg, $lu
-  echo $inp | $hspf
+  echo $inp | $hspf #alt: use HSPF_BIN which CAN BE set in the config/script/${scenario}.con
   tail -1 $lu$seg'.ech' > EOJtest$$
   diff $MODEL_ROOT/run/fragments/EOJ EOJtest$$ > diffeoj
   rm EOJtest$$
