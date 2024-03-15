@@ -32,7 +32,7 @@ land_segment_name <- argst[1]
 scenario_name <- argst[2]
 landuse <- as.character(argst[3]) # don't need quotes around landuse argument anymore
 pwater_file_path <- argst[4] 
-image_directory_path <- argst[5] # '/media/model/p532/out/land/hsp2_2022/images'
+image_directory_path <- argst[5] # paste0('/media/model/p532/out/land/', scenario, '/images')
 #image_directory_path <- '/media/model/p532/out/land/hsp2_2022/images' # needs to be commented when running on the server 
 model_version <- argst[6]
 lseg_ftype <- argst[7]
