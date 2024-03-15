@@ -26,7 +26,8 @@ merged_df1 <- wdm_merge_land_flow(lseg, wdmpath, scenario , outpath, TRUE, TRUE)
 # merged_df2 <- wdm_merge_land_flow(lseg, wdmpath, scenario , outpath)
 
 saved.file <- paste0(outpath, "/", outname)
+message(paste("Exporting to",saved.file))
 # also much faster than other version
 fwrite(merged_df1, saved.file, row.names = FALSE)
 message(paste("Exported file", saved.file))
-system(paste("chgrp allmodelers ", saved.file))
+#system(paste("chgrp allmodelers ", saved.file))
