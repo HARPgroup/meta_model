@@ -8,6 +8,9 @@ set tempdir=$3
 set modules="land" # set this so that the model_config will get land dates
 source $META_MODEL_ROOT/models/$MODEL/model_config
 cd $tempdir
+set tspan = `cbp get_config ${scenario} land TIME`
+set START_YEAR = $tspan[1]
+set END_YEAR = $tspan[4]
 
 if (! $?MODEL_VERSION_CODE) then
   echo "Variable MODEL_VERSION_CODE is not defined. Cannot push results to REST" >> problem
