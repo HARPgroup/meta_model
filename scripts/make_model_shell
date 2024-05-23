@@ -1,0 +1,27 @@
+#!/bin/bash
+model_name=$1
+if [ "$#" -gt 1 ]; then
+  modules=$2
+else
+  modules="land river"
+fi
+base_path=$META_MODEL_ROOT/models/$model_name
+mkdir $base_path
+if [ ! -e $base_path/get_work_path ]; then
+   cp $META_MODEL_ROOT/scripts/get_work_path_template $base_path/get_work_path
+fi
+if [ ! -e $base_path/model_config ]; then
+   cp $META_MODEL_ROOT/scripts/model_config_template $base_path/model_config
+   echo "# Define modules to loop through" >> $base_path/model_config
+   echo "set modules='$modules'" >> $base_path/model_config
+fi
+
+touch $base_path/model_config
+for i in $modules; do
+  for j in prep run link analyze; do
+    if [ ! -e $base_path/$i ]; then
+      mkdir $base_path/$i
+    fi
+    mkdir $base_path/$i/$j
+  done
+done
