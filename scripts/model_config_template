@@ -1,0 +1,10 @@
+#!/bin/csh
+echo "Loading model configuration"
+if (! $?MODEL_ROOT) then
+  echo "Variable MODEL_ROOT is undefined.  Exiting."
+  exit
+endif
+# Load defaults
+# Put whatever you need in here to be available to script pieces
+# Use csh so the meta source protocol works
+echo "model_config finished."

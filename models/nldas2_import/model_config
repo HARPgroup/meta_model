@@ -1,0 +1,18 @@
+#!/bin/csh
+echo "Loading model configuration"
+if (! $?MODEL_ROOT) then
+  echo "Variable MODEL_ROOT is undefined.  Exiting."
+  exit
+endif
+# what is the date?
+# what is the julian day?
+# what is the base file name?
+# do we have a feature hydrocode?
+# which database host?
+echo "model_config finished."
+# Define modules to loop through
+set modules='met'
+set db_host="dbase2"
+set db_port="5432"
+set db_name="drupal.dh03"
+set tz=""
