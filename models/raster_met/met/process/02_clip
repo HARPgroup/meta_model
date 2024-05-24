@@ -1,0 +1,15 @@
+#!/bin/bash
+ddate=$1
+datasource=$2
+
+# loads the raster specific config
+raster_config=`find_config raster.config`
+. $raster_config
+
+case $datasource in
+  nldas2)
+  ;;
+
+  PRISM)
+  ;;
+esac
