@@ -9,5 +9,5 @@ raster_config=`find_config raster.config`
 echo "Cleaning up files for $ddate"
 
 for originalFile in $src_files; do
-  rm "$archive_dir/${originalFile}.repro.gtiff"
+  rm "${originalFile}.repro.gtiff"
 done
