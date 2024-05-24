@@ -6,7 +6,7 @@ datasource=$2
 raster_config=`find_config raster.config`
 . $raster_config
 
-echo "Trying to clip files for $ddate"
+echo "Trying to clip $src_files for $ddate"
 	
 for originalFile in $src_files; do
   echo "Reprojecting raster..."
