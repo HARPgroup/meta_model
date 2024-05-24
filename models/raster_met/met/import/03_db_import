@@ -1,4 +1,5 @@
 #!/bin/bash
+
 ddate=$1
 datasource=$2
 
