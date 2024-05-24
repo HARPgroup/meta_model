@@ -11,8 +11,8 @@ endif
 # which database host?
 echo "model_config finished."
 # Define modules to loop through
-set modules='met'
-set db_host="dbase2"
-set db_port="5432"
-set db_name="drupal.dh03"
-set tz=""
+set all_modules = ( met )
+set all_run_steps = ( download clip import analyze )
+# these must exist, but are unused currently
+set START_YEAR=""
+set END_YEAR=""
