@@ -1,0 +1,13 @@
+#!/bin/bash
+ddate=$1
+datasource=$2
+
+# loads the raster specific config
+raster_config=`find_config raster.config`
+. $raster_config
+
+echo "Cleaning up files for $ddate"
+
+for originalFile in $src_files; do
+  rm "$archive_dir/${originalFile}.repro.gtiff"
+done
