@@ -1,0 +1,13 @@
+#!/bin/bash
+ddate=$1
+datasource=$2
+
+# loads the raster specific config
+raster_config=`find_config raster.config`
+. $raster_config
+
+echo "Trying to reproject data for $ddate"
+for originalFile in $src_files; do
+  echo "Reprojecting raster..."
+  gdalwarp $src_dir/$originalFile -t_srs EPSG:4326 -of "gtiff" "$archive_dir/${originalFile}repro.gtiff"
+done
