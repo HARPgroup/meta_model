@@ -11,5 +11,5 @@ fi
 
 echo "Importing data from "${config["datasource"]}
 
-source $META_MODEL_ROOT/sh/addRasterToDBase2.sh
+#source $META_MODEL_ROOT/sh/addRasterToDBase2.sh
 echo "Importing $import_files converted from $src_files"
