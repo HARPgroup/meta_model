@@ -8,6 +8,7 @@ raster_config=`find_config raster.config`
 if [ "$raster_config" = "" ]; then
   raster_config="/etc/raster.config"
 fi
+echo "Loading raster_config from $raster_config"
 . $raster_config
 
 echo "Importing data from "${config["datasource"]}
@@ -17,4 +18,6 @@ if [ "$import_files" == "" ]; then
   echo "Import files not found in $src_dir. Exiting"
 else
   echo "Importing $import_files converted from $src_files"
+  for $met_file in $import_files; do
+     $MET_SCRIPT_PATH $datasource $met_file $ddate
 fi
