@@ -1,0 +1,19 @@
+#!/bin/bash
+ddate=$1
+datasource=$2
+
+# loads the raster specific config
+raster_config=`find_config raster.config`
+. $raster_config
+
+echo "Downloading from "${config["datasource"]}
+
+case $datasource in
+  nldas2)
+  echo "Trying NLDAS2 download for $ddate"
+  ;;
+
+  PRISM)
+  echo "Trying PRISM download for $ddate"
+  ;;
+esac

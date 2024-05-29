@@ -54,12 +54,12 @@ model_run_end <- max(hydr$date)
 years <- seq(syear,eyear)
 
 if (syear < (eyear - 2)) {
-  sdate <- as.Date(paste0(syear,"-10-01"))
-  edate <- as.Date(paste0((eyear),"-09-30"))
+  sdate <- as.POSIXct(paste0(syear,"-10-01"), tz = "UTC")
+  edate <- as.POSIXct(paste0((eyear),"-09-30"), tz = "UTC")
   flow_year_type <- 'water'
 } else {
-  sdate <- as.Date(paste0(syear,"-02-01"))
-  edate <- as.Date(paste0(eyear,"-12-31"))
+  sdate <- as.POSIXct(paste0(syear,"-02-01"), tz = "UTC")
+  edate <- as.POSIXct(paste0(eyear,"-12-31"), tz = "UTC")
   flow_year_type <- 'calendar'
 }
 

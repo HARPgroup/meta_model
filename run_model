@@ -18,6 +18,10 @@ set IGNORE_PROBLEMS = 0
 source $META_MODEL_ROOT/model_get_args
 echo $run_steps
 
+# set a couple defaults that can e overriden by the model
+set all_modules = ( land river )
+set all_run_steps = ( prep run link analyze )
+
 # Load meta-model configuration
 if ( -f $META_MODEL_ROOT/models/$model/model_config ) then
   echo "Calling model_config with modules = $modules"
@@ -26,6 +30,12 @@ else
   echo "Error: Can not find model configuration file $META_MODEL_ROOT/models/$model/model_config"
   echo "Exiting"
   exit
+endif
+if ( $modules == "all" ) then
+  set modules = ( $all_modules )
+endif
+if ( $run_steps == "all" ) then
+  set run_steps = ( $all_run_steps )
 endif
 
 

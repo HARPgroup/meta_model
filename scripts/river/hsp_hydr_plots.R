@@ -63,12 +63,12 @@ model_run_end <- max(hydr$date)
 years <- seq(syear,eyear)
 
 if (syear < (eyear - 2)) {
-  sdate <- as.Date(paste0(syear,"-10-01"))
-  edate <- as.Date(paste0((eyear),"-09-30"))
+  sdate <- as.POSIXct(paste0(syear,"-10-01"), tz = "UTC")
+  edate <- as.POSIXct(paste0((eyear),"-09-30"), tz = "UTC")
   flow_year_type <- 'water'
 } else {
-  sdate <- as.Date(paste0(syear,"-02-01"))
-  edate <- as.Date(paste0(eyear,"-12-31"))
+  sdate <- as.POSIXct(paste0(syear,"-02-01"), tz = "UTC")
+  edate <- as.POSIXct(paste0(eyear,"-12-31"), tz = "UTC")
   flow_year_type <- 'calendar'
 }
 
@@ -218,8 +218,8 @@ if (imp_off == 0) {
     
     # this has an impoundment.  Plot it up.
     # Now zoom in on critical drought period
-    pdstart = as.Date(paste0(l90_year,"-06-01") )
-    pdend = as.Date(paste0(l90_year, "-11-15") )
+    pdstart = as.POSIXct(paste0(l90_year,"-06-01"), tz = "UTC" )
+    pdend = as.POSIXct(paste0(l90_year, "-11-15"), tz = "UTC" )
     
     hydrpd <- window(
       hydr,
@@ -270,8 +270,8 @@ if (imp_off == 0) {
     # l90 2 year
     # this has an impoundment.  Plot it up.
     # Now zoom in on critical drought period
-    pdstart = as.Date(paste0( (as.integer(l90_year) - 1),"-01-01") )
-    pdend = as.Date(paste0(l90_year, "-12-31") )
+    pdstart = as.POSIXct(paste0( (as.integer(l90_year) - 1),"-01-01"), tz = "UTC" )
+    pdend = as.POSIXct(paste0(l90_year, "-12-31"), tz = "UTC" )
     hydrpd <- window(
       hydr,
       start = pdstart,
@@ -394,8 +394,8 @@ if (imp_off == 0) {
     ndx = which.min(as.numeric(l90[,"90 Day Min"]));
     l90_elev = round(loelevs[ndx,]$"90 Day Min",6);
     l90_elevyear = loelevs[ndx,]$"year";
-    l90_elev_start = as.Date(paste0(l90_elevyear - 2,"-01-01"))
-    l90_elev_end = as.Date(paste0(l90_elevyear,"-12-31"))
+    l90_elev_start = as.POSIXct(paste0(l90_elevyear - 2,"-01-01"), tz = "UTC")
+    l90_elev_end = as.POSIXct(paste0(l90_elevyear,"-12-31"), tz = "UTC")
     elevhydrpd <- window(
       hydr,
       start = l90_elev_start,
@@ -453,8 +453,8 @@ if (imp_off == 0) {
   # l90 2 year
   # this has an impoundment.  Plot it up.
   # Now zoom in on critical drought period
-  pdstart = as.Date(paste0(l90_year,"-06-01"))
-  pdend = as.Date(paste0(l90_year, "-11-15") )
+  pdstart = as.POSIXct(paste0(l90_year,"-06-01"), tz = "UTC")
+  pdend = as.POSIXct(paste0(l90_year, "-11-15"), tz = "UTC" )
   
   hydrpd <- window(hydr, start = pdstart, end = pdend)
   
@@ -618,8 +618,8 @@ vahydro_post_metric_to_scenprop(model_scenario$pid, 'dh_image_file', furl, 'fig.
 
 # RSEG Hydrograph (Drought Period)
 # Zoom in on critical drought period
-pdstart = as.Date(paste0(l90_year,"-06-01"))
-pdend = as.Date(paste0(l90_year, "-11-15"))
+pdstart = as.POSIXct(paste0(l90_year,"-06-01"), tz = "UTC")
+pdend = as.POSIXct(paste0(l90_year, "-11-15"), tz = "UTC")
 
 hydrpd <- window(hydr, start = pdstart, end = pdend)
 hydrpd <- data.frame(hydrpd)

@@ -24,26 +24,21 @@ if (! $?IGNORE_PROBLEMS) then
   setenv IGNORE_PROBLEMS 0
 endif
 # Set up which modules to run
-# probably should NOT hard code these, instead 
-# relying on the model to configure this for us
+# this supplies defaults, but later in models/${model}model_config 
+# we can allow the model to override this for us
 set modules = "all"
 if (${#argv} >= 5) then
   set modules = ($5:as/,/ /)
 endif
-if ( $modules == "all" ) then
-  set modules = ( land river )
-endif
-
+# 
 # Set Up Run Steps
 # see above, maybe this should not be hard-coded?
-set run_steps = ( prep run link analyze )
+# this supplies defaults, but later in models/${model}model_config 
+# we can allow the model to override this for us
+set run_steps = "all"
 if (${#argv} >= 6) then
   set run_steps = ($6:as/,/ /)
 endif
-if ( $run_steps[1] == "all" ) then
-  set run_steps = ( prep run link analyze )
-endif
-echo $run_steps
 
 # Set up which scripts to run in each step
 # this will end up producing errors if misconfigured, and is seldom needed
