@@ -1,0 +1,20 @@
+#!/bin/bash
+
+ddate=$1
+datasource=$2
+
+# loads the raster specific config
+raster_config=`find_config raster.config`
+. $raster_config
+
+echo "Trying to clip $src_files for $ddate"
+	
+for originalFile in $src_files; do
+  echo "Reprojecting raster..."
+  echo "gdalwarp -of \"gtiff\" -cutline $maskExtent -crop_to_cutline \"${originalFile}.repro.gtiff\" \"${originalFile}${final_ext}\" "
+  gdalwarp -of "gtiff" -cutline $maskExtent -crop_to_cutline "${originalFile}.repro.gtiff" "${originalFile}${final_ext}"
+  # these files will be deleted during the final step in case we need to do verification
+done
+
+#Clipping the raster: Use gdalwarp to crop to the cutline maskExtent.csv, which is a csv of the CBP regions 
+	
