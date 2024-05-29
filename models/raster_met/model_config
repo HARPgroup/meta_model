@@ -12,7 +12,8 @@ endif
 echo "model_config finished."
 # Define modules to loop through
 set all_modules = ( met )
-set all_run_steps = ( download clip import analyze )
+set all_run_steps = ( download process import analyze )
 # these must exist, but are unused currently
 set START_YEAR=""
 set END_YEAR=""
+set MODEL_BIN=""
