@@ -1,0 +1,25 @@
+#!/bin/bash
+ddate=$1
+datasource=$2
+
+# loads the raster specific config
+raster_config=`find_config raster.config`
+if [ "$raster_config" = "" ]; then
+  raster_config="$META_MODEL_ROOT/models/raster_met/raster.config"
+fi
+. $raster_config
+
+echo "Downloading from "${config["datasource"]}
+
+if [ "$datasource" != "PRISM" ]; then
+  exit
+fi
+
+#Ensure the day is of two digit format
+printf -v DD "%02d" $DDIt
+finalTiff=${config["dataset"]}${yr}${mo}${da}${config["ext"]}
+
+echo "Getting data for month ${YYYY}-${MM}-${DD}..."
+#Download the daily PRISM data for target day, reporject, and crop
+downloadDailyPRISM config $finalTiff $maskExtent $YYYY $MM $DD
+
