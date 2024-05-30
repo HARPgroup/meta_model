@@ -29,6 +29,18 @@ if [ ! -d "$base_dir/$yr/$jday" ]; then
     echo "Doing: mkdir $base_dir/$yr/$jday"
     mkdir $base_dir/$yr/$jday
 fi  
+# Check the file date from a previous download, do NOT double up as we can be banned for such things!
+pfile=`ls "$base_dir/$yr/$jday/*.bil`
+pexist_date=""
+todays_date=`date +"%Y-%m-%d"`
+if [ -e "$pfile" ]; then
+  # check the date
+  pexist_date=`date -r $pfile +"%Y-%m-%d"`
+fi
+if [ "$pexist_date" == "$todays_date" ]; then
+  echo "PRISM file for ${yr}-${mo}-${da} has already been downloaded today, and cannot be downloaded twice in a day. Skipping."
+  exit
+fi
 echo "Getting data for month ${yr}-${mo}-${da}..."
 #Download the daily PRISM data for target day, reporject, and crop
 downloadPRISM $yr $mo $da
