@@ -29,7 +29,7 @@ finalTiff=${config["dataset"]}${yr}${mo}${da}${config["ext"]}
 
 echo "Getting data for month ${YYYY}-${MM}-${DD}..."
 #Download the daily PRISM data for target day, reporject, and crop
-pfile=downloadDailyPRISM config $finalTiff $maskExtent $YYYY $MM $DD
+pfile=`downloadDailyPRISM $finalTiff $YYYY $MM $DD`
 if [ "$pfile" == "-9999" ]; then
   echo "PRISM download could not find $download_name ... exiting. " > problem
   exit
