@@ -30,7 +30,7 @@ if [ ! -d "$base_dir/$yr/$jday" ]; then
     mkdir $base_dir/$yr/$jday
 fi  
 # Check the file date from a previous download, do NOT double up as we can be banned for such things!
-pfile=`ls "$base_dir/$yr/$jday/*.bil`
+pfile="$base_dir/$yr/$jday/prism_downloaded"
 pexist_date=""
 todays_date=`date +"%Y-%m-%d"`
 if [ -e "$pfile" ]; then
@@ -48,5 +48,7 @@ if [ "$originalFile" == "-9999" ]; then
   echo "PRISM download could not find $download_name ... exiting. " > problem
   exit
 fi
+# set a file with the date that we downloaded for future reference.
+touch $pfile
 # stash in the prism dowload place.
 cp *${yr}${mo}${da}* $base_dir/$yr/$jday/
