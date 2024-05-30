@@ -11,7 +11,7 @@ fi
 . $raster_config
 
 echo "Trying to clip $src_files for $ddate"
-	
+
 for originalFile in $src_files; do
   echo "Reprojecting raster..."
   echo "gdalwarp -of \"gtiff\" -cutline $maskExtent -crop_to_cutline \"${originalFile}.repro.gtiff\" \"${originalFile}${final_ext}\" "
