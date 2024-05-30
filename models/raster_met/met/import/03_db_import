@@ -35,7 +35,7 @@ else
     TZ=${config["TZ"]}
     echo "TIMESTAMP HANDLING: tstime='TZ=\"$TZ\" date -d \"$TIFFTAG_DATETIME\" +'%s''"
     tstime=`TZ="$TZ" date -d "$TIFFTAG_DATETIME" +'%s'`
-    cmd="$MET_SCRIPT_PATH/sh/met_raster2db.sh "${config["datasource"]}" $met_file $tstime "${config["dt"]}" "${config["entity_type"]}" "${config["varkey"]}" "${config["extent_hydrocode"]}" $db_host $db_name $DB_FORCE_OVERWRITE"
+    cmd="$MET_SCRIPT_PATH/sh/met_raster2db.sh "${config["datasource"]}" $met_file $tstime "${config["dt"]}" "${config["entity_type"]}" "${config["varkey"]}" "${config["extent_hydrocode"]}" $db_name $db_host $DB_FORCE_OVERWRITE"
     echo "Running: $cmd"
     eval $cmd
   done
