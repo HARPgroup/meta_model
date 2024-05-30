@@ -23,7 +23,7 @@ fi
 if [ ! -d "$base_dir/$yr/$jday" ]; then
     mkdir $base_dir/$yr/$jday
 fi  
-
+cd $tmp_dir
 echo "Getting data for month ${yr}-${mo}-${da}..."
 #Download the daily PRISM data for target day, reporject, and crop
 downloadPRISM $yr $mo $da
@@ -33,4 +33,3 @@ if [ "$originalFile" == "-9999" ]; then
 fi
 # stash in the prism dowload place.
 cp *${yr}${mo}${da}* $base_dir/$yr/$jday/
-rm *${yr}${mo}${da}*
