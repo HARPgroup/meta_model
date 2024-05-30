@@ -13,7 +13,7 @@ echo "Loading raster_config from $raster_config"
 . $raster_config
 
 echo "Importing data from "${config["datasource"]}
-
+echo "DB_FORCE_OVERWRITE = $DB_FORCE_OVERWRITE"
 if [ -z ${DB_FORCE_OVERWRITE+x} ]; then 
   DB_FORCE_OVERWRITE=0
 fi
