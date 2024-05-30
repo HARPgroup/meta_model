@@ -13,6 +13,8 @@ if [ "$datasource" != "PRISM" ]; then
   exit
 fi
 
+# Changing to 
+cd $tempdir
 # load the functions used herein
 source $MET_SCRIPT_PATH/prism/downloadDailyPRISM.sh
 echo "Verifying $base_dir/$yr and $base_dir/$yr/$jday" 
@@ -23,7 +25,6 @@ fi
 if [ ! -d "$base_dir/$yr/$jday" ]; then
     mkdir $base_dir/$yr/$jday
 fi  
-cd $tmp_dir
 echo "Getting data for month ${yr}-${mo}-${da}..."
 #Download the daily PRISM data for target day, reporject, and crop
 downloadPRISM $yr $mo $da
