@@ -25,7 +25,6 @@ if [ "$datasource" != "nldas2" ]; then
             if [ "$TIFFTAG_DATETIME" == "" ]; then
                 TIFFTAG_DATETIME="${yr}-${mo}-${da}T$00:00:00Z"
                 echo "Setting TIFFTAG_DATETIME: gdal_edit.py $fname -mo \"TIFFTAG_DATETIME=${TIFFTAG_DATETIME}\""
-                fname=`ls $src_dir/*.${hr4digit}.*.grb_CBP.gtiff`
                 gdal_edit.py $fname -mo "TIFFTAG_DATETIME=${TIFFTAG_DATETIME}"
             fi
         fi
