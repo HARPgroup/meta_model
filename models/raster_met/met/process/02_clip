@@ -5,6 +5,9 @@ datasource=$2
 
 # loads the raster specific config
 raster_config=`find_config raster.config`
+if [ "$raster_config" = "" ]; then
+  raster_config="$META_MODEL_ROOT/models/raster_met/raster.config"
+fi
 . $raster_config
 
 echo "Trying to clip $src_files for $ddate"
