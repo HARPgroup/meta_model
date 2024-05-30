@@ -15,7 +15,7 @@ fi
 
 # load the functions used herein
 source $MET_SCRIPT_PATH/prism/downloadDailyPRISM.sh
-
+echo "Verifying $base_dir/$yr and $base_dir/$yr/$jday" 
 # make sure we have our data dirs
 if [ ! -d "$base_dir/$yr" ]; then
     mkdir $base_dir/$yr
