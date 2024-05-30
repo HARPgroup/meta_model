@@ -9,17 +9,30 @@ if [ "$raster_config" = "" ]; then
 fi
 . $raster_config
 
-echo "Downloading from "${config["datasource"]}
-
 if [ "$datasource" != "PRISM" ]; then
   exit
 fi
 
+# load the functions used herein
+source $MET_SCRIPT_PATH/prism/downloadDailyPRISM.sh
+
+# make sure we have our data dirs
+if [ ! -d "$base_dir/$yr" ]; then
+    mkdir $base_dir/$yr
+fi
+if [ ! -d "$base_dir/$yr/$jday" ]; then
+    mkdir $base_dir/$yr/$jday
+fi  
+
 #Ensure the day is of two digit format
-printf -v DD "%02d" $DDIt
 finalTiff=${config["dataset"]}${yr}${mo}${da}${config["ext"]}
 
 echo "Getting data for month ${YYYY}-${MM}-${DD}..."
 #Download the daily PRISM data for target day, reporject, and crop
-downloadDailyPRISM config $finalTiff $maskExtent $YYYY $MM $DD
-
+pfile=downloadDailyPRISM config $finalTiff $maskExtent $YYYY $MM $DD
+if [ "$pfile" == "-9999" ]; then
+  echo "PRISM download could not find $download_name ... exiting. " > problem
+  exit
+fi
+# stash in the prism dowload place.
+cp $pfile $base_dir/$yr/$jday/$pfile
