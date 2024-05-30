@@ -23,7 +23,7 @@ if [ "$datasource" != "nldas2" ]; then
         if [ -e $fname ]; then
             eval `gdalinfo $fname |grep TIFFTAG_DATETIME`
             if [ "$TIFFTAG_DATETIME" == "" ]; then
-                TIFFTAG_DATETIME="${yr}-${mo}-${da}T$00:00:00Z"
+                TIFFTAG_DATETIME="${yr}-${mo}-${da}T00:00:00Z"
                 echo "Setting TIFFTAG_DATETIME: gdal_edit.py $fname -mo \"TIFFTAG_DATETIME=${TIFFTAG_DATETIME}\""
                 gdal_edit.py $fname -mo "TIFFTAG_DATETIME=${TIFFTAG_DATETIME}"
             fi
