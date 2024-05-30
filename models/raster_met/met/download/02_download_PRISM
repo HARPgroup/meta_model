@@ -1,6 +1,7 @@
 #!/bin/bash
 ddate=$1
 datasource=$2
+tempdir=$3
 
 # loads the raster specific config
 raster_config=`find_config raster.config`
@@ -14,6 +15,7 @@ if [ "$datasource" != "PRISM" ]; then
 fi
 
 # Changing to 
+echo "Changing to temp dir: cd $tempdir "
 cd $tempdir
 # load the functions used herein
 source $MET_SCRIPT_PATH/prism/downloadDailyPRISM.sh
