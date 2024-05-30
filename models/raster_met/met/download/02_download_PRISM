@@ -22,9 +22,11 @@ source $MET_SCRIPT_PATH/prism/downloadDailyPRISM.sh
 echo "Verifying $base_dir/$yr and $base_dir/$yr/$jday" 
 # make sure we have our data dirs
 if [ ! -d "$base_dir/$yr" ]; then
+    echo "Doing: mkdir $base_dir/$yr"
     mkdir $base_dir/$yr
 fi
 if [ ! -d "$base_dir/$yr/$jday" ]; then
+    echo "Doing: mkdir $base_dir/$yr/$jday"
     mkdir $base_dir/$yr/$jday
 fi  
 echo "Getting data for month ${yr}-${mo}-${da}..."
