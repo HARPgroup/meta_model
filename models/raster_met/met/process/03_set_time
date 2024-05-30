@@ -18,12 +18,17 @@ echo "Looking for geotiff files in $base_dir/$yr/$jday"
 
 if [ "$datasource" != "nldas2" ]; then
     # single day files only,
-    if [ "$fname" != "" ]; then
-        TIFFTAG_DATETIME="${yr}-${mo}-${da}T00:00:00Z"
-        echo "Setting TIFFTAG_DATETIME: gdal_edit.py $fname -mo \"TIFFTAG_DATETIME=${TIFFTAG_DATETIME}\""
-        fname=`ls $src_dir/*.${hr4digit}.*.grb_CBP.gtiff`
-        gdal_edit.py $fname -mo "TIFFTAG_DATETIME=${TIFFTAG_DATETIME}"
-    fi
+    for fname in $import_files; do
+        if [ -e $fname ]; then
+            eval `gdalinfo $fname |grep TIFFTAG_DATETIME`
+            if [ "$TIFFTAG_DATETIME" == "" ]; then
+                TIFFTAG_DATETIME="${yr}-${mo}-${da}T$00:00:00Z"
+                echo "Setting TIFFTAG_DATETIME: gdal_edit.py $fname -mo \"TIFFTAG_DATETIME=${TIFFTAG_DATETIME}\""
+                fname=`ls $src_dir/*.${hr4digit}.*.grb_CBP.gtiff`
+                gdal_edit.py $fname -mo "TIFFTAG_DATETIME=${TIFFTAG_DATETIME}"
+            fi
+        fi
+    done
 else
     # This must be NLDAS2 with hourly files
     if [ -d "$base_dir/$yr" ]; then
