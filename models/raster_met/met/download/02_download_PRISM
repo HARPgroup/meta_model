@@ -32,5 +32,5 @@ if [ "$originalFile" == "-9999" ]; then
   exit
 fi
 # stash in the prism dowload place.
-cp $originalFile* $base_dir/$yr/$jday/
-rm $originalFile*
+cp *${yr}${mo}${da}* $base_dir/$yr/$jday/
+rm *${yr}${mo}${da}*
