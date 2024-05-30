@@ -24,15 +24,13 @@ if [ ! -d "$base_dir/$yr/$jday" ]; then
     mkdir $base_dir/$yr/$jday
 fi  
 
-#Ensure the day is of two digit format
-finalTiff=${config["dataset"]}${yr}${mo}${da}${config["ext"]}
-
-echo "Getting data for month ${YYYY}-${MM}-${DD}..."
+echo "Getting data for month ${yr}-${mo}-${da}..."
 #Download the daily PRISM data for target day, reporject, and crop
-pfile=`downloadDailyPRISM $finalTiff $YYYY $MM $DD`
-if [ "$pfile" == "-9999" ]; then
+downloadPRISM $yr $mo $da
+if [ "$originalFile" == "-9999" ]; then
   echo "PRISM download could not find $download_name ... exiting. " > problem
   exit
 fi
 # stash in the prism dowload place.
-cp $pfile $base_dir/$yr/$jday/$pfile
+cp $originalFile $base_dir/$yr/$jday/$pfile
+rm $originalFile
