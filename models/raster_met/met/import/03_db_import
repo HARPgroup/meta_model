@@ -6,7 +6,7 @@ datasource=$2
 # loads the raster specific config
 raster_config=`find_config raster.config`
 if [ "$raster_config" = "" ]; then
-  raster_config="/etc/raster.config"
+  raster_config="$META_MODEL_ROOT/models/raster_met/raster.config"
 fi
 echo "Loading raster_config from $raster_config"
 . $raster_config
@@ -16,8 +16,22 @@ echo "Importing data from "${config["datasource"]}
 #source $META_MODEL_ROOT/sh/addRasterToDBase2.sh
 if [ "$import_files" == "" ]; then
   echo "Import files not found in $src_dir. Exiting"
+  exit
 else
-  echo "Importing $import_files converted from $src_files"
-  for $met_file in $import_files; do
-     $MET_SCRIPT_PATH $datasource $met_file $ddate
+  echo "Importing file converted from $src_dir ..."
+  for met_file in $import_files; do
+    # set the variable TIFFTAG_DATETIME from meta-data
+    eval `gdalinfo $met_file |grep TIFFTAG_DATETIME`
+    if [ "$TIFFTAG_DATETIME" == "" ]; then
+      echo "Could not find TIFFTAG_DATETIME in meta-data for $met_file ($TIFFTAG_DATETIME)"
+      echo "Could not find TIFFTAG_DATETIME in meta-data for $met_file" > problem
+      exit
+    fi
+    TZ=${config["TZ"]}
+    echo "TIMESTAMP HANDLING: tstime='TZ=\"$TZ\" date -d \"$TIFFTAG_DATETIME\" +'%s''"
+    tstime=`TZ="$TZ" date -d "$TIFFTAG_DATETIME" +'%s'`
+    cmd="$MET_SCRIPT_PATH/met_raster2db.sh "${config["datasource"]}" $met_file $tstime "${config["dt"]}" "${config["entity_type"]}" "${config["varkey"]}" "${config["extent_hydrocode"]}" 1"
+    echo "Running: $cmd"
+    eval $cmd
+  done
 fi
