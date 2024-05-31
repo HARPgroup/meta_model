@@ -12,11 +12,6 @@ echo "Loading raster_config from $raster_config"
 . $raster_config
 cd $tempdir
 
-if [ $?MODEL_VERSION_CODE ]; then
-  echo "Variable MODEL_VERSION_CODE is not defined. Cannot push results to REST" >> problem
-  exit
-fi
-
 #source $META_MODEL_ROOT/sh/addRasterToDBase2.sh
 if [ "$import_files" == "" ]; then
   echo "Import files not found in $src_dir. Exiting"
