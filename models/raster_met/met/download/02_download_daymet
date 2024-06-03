@@ -1,6 +1,7 @@
 #!/bin/bash
 ddate=$1
 datasource=$2
+tempdir=$3
 
 # loads the raster specific config
 raster_config=`find_config raster.config`
@@ -9,9 +10,33 @@ if [ "$raster_config" = "" ]; then
 fi
 . $raster_config
 
-echo "Downloading from "${config["datasource"]}
-
 if [ "$datasource" != "daymet" ]; then
   exit
 fi
 
+# Changing to 
+echo "Changing to temp dir: cd $tempdir "
+cd $tempdir
+# load the functions used herein
+source $MET_SCRIPT_PATH/daymet/downloadDailyDaymet.sh
+echo "Verifying $base_dir/$yr and $base_dir/$yr/$jday" 
+# make sure we have our data dirs
+if [ ! -d "$base_dir/$yr" ]; then
+    echo "Doing: mkdir $base_dir/$yr"
+    mkdir $base_dir/$yr
+fi
+if [ ! -d "$base_dir/$yr/$jday" ]; then
+    echo "Doing: mkdir $base_dir/$yr/$jday"
+    mkdir $base_dir/$yr/$jday
+fi  
+
+echo "Getting data for month ${yr}-${mo}-${da}..."
+#Download the daily PRISM data for target day, reporject, and crop
+downloadDaymet $yr-$mo-$da $tempdir
+if [ "$originalFile" == "-9999" ]; then
+  echo "daymet download could not find $download_name ... exiting. " > problem
+  exit
+fi
+
+# stash in the daymet dowload place.
+cp ORIGINAL_*${yr}${mo}${da}* $base_dir/$yr/$jday/
