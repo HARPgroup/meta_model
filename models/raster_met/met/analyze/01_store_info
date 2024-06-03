@@ -18,6 +18,10 @@ if [ "$import_files" == "" ]; then
   exit
 else
   echo "Importing file converted from $src_dir ..."
+  if [ - e "raster_list.txt" ]; then 
+    rm raster_list.txt
+  fi
+  touch raster_list.txt
   for met_file in $import_files; do
     # set the variable TIFFTAG_DATETIME from meta-data
     eval `gdalinfo $met_file |grep TIFFTAG_DATETIME`
@@ -31,9 +35,10 @@ else
     tstime=`TZ="$TZ" date -d "$TIFFTAG_DATETIME" +'%s'`
     # attach a property to the dh_timeseries_weather record pointing to the raster file.
     img_varkey='dh_image_file'
-    cmd="Rscript $META_MODEL_ROOT/scripts/met/met_store_info.R $ddate $datasource $extent_hydrocode $extent_ftype $img_varkey $met_file"    
-    echo "Running: $cmd"
-    eval $cmd
-
+    echo "$tstime\t$datasource,$extent_hydrocode,$extent_ftype,$img_varkey,$met_file" >> raster_list.txt
   done
+  cmd="Rscript $META_MODEL_ROOT/scripts/met/met_store_info.R $ddate $datasource $extent_hydrocode $extent_ftype $img_varkey $met_file"    
+  echo "Running: $cmd"
+  eval $cmd
+
 fi
