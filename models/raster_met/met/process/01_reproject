@@ -16,4 +16,12 @@ for originalFile in $src_files; do
   echo "Reprojecting raster..."
   echo "gdalwarp $originalFile -t_srs EPSG:4326 -of \"gtiff\" \"${originalFile}.repro.gtiff\""
   gdalwarp $originalFile -t_srs EPSG:4326 -of "gtiff" "${originalFile}.repro.gtiff"
+  if [ "$single_band" != "false" ]; then
+    echo "Extracting $single_band from ${originalFile}.repro.gtiff"
+    cp "${originalFile}.repro.gtiff" "${originalFile}.allbands.gtiff"
+    echo "cp \"${originalFile}.repro.gtiff\" \"${originalFile}.allbands.gtiff\""
+    echo "gdal_translate -b $single_band -of gtiff \"${originalFile}.allbands.gtiff\" \"$originalFile.repro.gtiff\" "
+    gdal_translate -b $single_band -of gtiff "${originalFile}.allbands.gtiff" "$originalFile.repro.gtiff"
+    rm "${originalFile}.allbands.gtiff"
+  fi
 done
