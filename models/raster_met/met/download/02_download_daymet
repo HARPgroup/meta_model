@@ -32,7 +32,7 @@ fi
 
 echo "Getting data for month ${yr}-${mo}-${da}..."
 #Download the daily PRISM data for target day, reporject, and crop
-downloadDaymet $yr-$mo-$da $tempdir
+downloadDaymet $yr-$mo-$da "$maskExtent"
 if [ "$originalFile" == "-9999" ]; then
   echo "daymet download could not find $download_name ... exiting. " > problem
   exit
