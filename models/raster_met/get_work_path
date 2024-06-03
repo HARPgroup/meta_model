@@ -1,13 +1,5 @@
 #!/bin/bash
-
-# add a script to return a name for a temp dir for holding persistent info if needed
-
-# Example:
-#dirnum=`echo "echo $((RANDOM+1))" | ksh`
-# handle both old and new scratch paths
-#if [ -z ${user+x} ]; then
-#  tempdir="$MODEL_ROOT/tmp/scratch/"`printf "%04d" $dirnum`
-#else 
-#  tempdir="$MODEL_ROOT/tmp/${user}-scratch/"`printf "%04d" $dirnum`
-#fi
-#echo $tempdir
+dirnum=`echo "echo $((RANDOM+1))" | ksh`
+# create a temp fir in the basic system space
+tempdir="/tmp/"`printf "%04d" $dirnum`
+echo $tempdir

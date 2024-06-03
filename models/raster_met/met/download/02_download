@@ -9,10 +9,14 @@ if [ "$raster_config" = "" ]; then
 fi
 . $raster_config
 
+echo "Downloading from "${config["datasource"]}
 
-echo "Cleaning up files for $ddate"
+case $datasource in
+  nldas2)
+  echo "Trying NLDAS2 download for $ddate"
+  ;;
 
-for originalFile in $src_files; do
-  echo "Trying to remove: rm ${originalFile}.repro.gtiff"
-  rm "${originalFile}.repro.gtiff"
-done
+  PRISM)
+  echo "Trying PRISM download for $ddate"
+  ;;
+esac

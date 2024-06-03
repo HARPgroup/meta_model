@@ -4,16 +4,14 @@ datasource=$2
 
 # loads the raster specific config
 raster_config=`find_config raster.config`
+if [ "$raster_config" = "" ]; then
+  raster_config="$META_MODEL_ROOT/models/raster_met/raster.config"
+fi
 . $raster_config
 
 echo "Downloading from "${config["datasource"]}
 
-case $datasource in
-  nldas2)
-  echo "Trying NLDAS2 download for $ddate"
-  ;;
+if [ "$datasource" != "daymet" ]; then
+  exit
+fi
 
-  PRISM)
-  echo "Trying PRISM download for $ddate"
-  ;;
-esac
