@@ -17,3 +17,7 @@ set all_run_steps = ( download process import analyze )
 set START_YEAR=""
 set END_YEAR=""
 set MODEL_BIN=""
+if (! $?DB_FORCE_OVERWRITE) then
+  set DB_FORCE_OVERWRITE=0
+endif
+setenv DB_FORCE_OVERWRITE "$DB_FORCE_OVERWRITE"

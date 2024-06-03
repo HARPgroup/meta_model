@@ -1,5 +1,4 @@
 #!/bin/bash
-
 ddate=$1
 datasource=$2
 tempdir=$3
@@ -11,12 +10,7 @@ if [ "$raster_config" = "" ]; then
 fi
 echo "Loading raster_config from $raster_config"
 . $raster_config
-
-echo "Importing data from "${config["datasource"]}
-echo "DB_FORCE_OVERWRITE = $DB_FORCE_OVERWRITE"
-if [ -z ${DB_FORCE_OVERWRITE+x} ]; then 
-  DB_FORCE_OVERWRITE=0
-fi
+cd $tempdir
 
 #source $META_MODEL_ROOT/sh/addRasterToDBase2.sh
 if [ "$import_files" == "" ]; then
@@ -35,8 +29,11 @@ else
     TZ=${config["TZ"]}
     echo "TIMESTAMP HANDLING: tstime='TZ=\"$TZ\" date -d \"$TIFFTAG_DATETIME\" +'%s''"
     tstime=`TZ="$TZ" date -d "$TIFFTAG_DATETIME" +'%s'`
-    cmd="$MET_SCRIPT_PATH/sh/met_raster2db.sh "${config["datasource"]}" $met_file $tstime "${config["dt"]}" "${config["entity_type"]}" "${config["varkey"]}" "${config["extent_hydrocode"]}" $db_name $db_host $DB_FORCE_OVERWRITE"
+    # attach a property to the dh_timeseries_weather record pointing to the raster file.
+    img_varkey='dh_image_file'
+    cmd="Rscript $META_MODEL_ROOT/scripts/met/met_store_info.R $ddate $datasource $extent_hydrocode $extent_ftype $img_varkey $met_file"    
     echo "Running: $cmd"
     eval $cmd
+
   done
 fi
