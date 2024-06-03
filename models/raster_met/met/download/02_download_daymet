@@ -39,4 +39,4 @@ if [ "$originalFile" == "-9999" ]; then
 fi
 
 # stash in the daymet dowload place.
-cp ORIGINAL_*${yr}${mo}${da}* $base_dir/$yr/$jday/
+cp ORIGINAL_*${yr}-${mo}-${da}* $base_dir/$yr/$jday/
