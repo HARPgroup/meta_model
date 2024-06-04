@@ -14,4 +14,9 @@ fi
 
 if [ "$datasource" == "PRISM" ]; then
   rm *${yr}${mo}${da}*
+elif [ "$datasource" == "daymet" ]; then
+  rm *${yr}-${mo}-${da}.bil
+  rm *${yr}-${mo}-${da}.bil.aux*
+  rm *${yr}-${mo}-${da}.hdr
+  rm *${yr}-${mo}-${da}.prj
 fi
