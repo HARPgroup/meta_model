@@ -23,7 +23,7 @@ if [ "$datasource" != "nldas2" ]; then
         if [ -e $fname ]; then
             eval `gdalinfo $fname |grep TIFFTAG_DATETIME`
             if [ "$TIFFTAG_DATETIME" == "" ]; then
-                TIFFTAG_DATETIME="${yr}-${mo}-${da}T00:00:00Z"
+                TIFFTAG_DATETIME="${yr}-${mo}-${da}T00:00:00"
                 echo "Setting TIFFTAG_DATETIME: gdal_edit.py $fname -mo \"TIFFTAG_DATETIME=${TIFFTAG_DATETIME}\""
                 gdal_edit.py $fname -mo "TIFFTAG_DATETIME=${TIFFTAG_DATETIME}"
             fi
@@ -38,7 +38,7 @@ else
                 hr4digit="${hr2digit}00"
                 fname=`ls $src_dir/*.${hr4digit}.* | grep $final_ext`
                 if [ "$fname" != "" ]; then
-                    TIFFTAG_DATETIME="${yr}-${mo}-${da}T${hr2digit}:00:00Z"
+                    TIFFTAG_DATETIME="${yr}-${mo}-${da}T${hr2digit}:00:00"
                     # edit file meta data to set date time for later use
                     echo "Setting TIFFTAG_DATETIME: gdal_edit.py $fname -mo \"TIFFTAG_DATETIME=${TIFFTAG_DATETIME}\""
                     gdal_edit.py $fname -mo "TIFFTAG_DATETIME=${TIFFTAG_DATETIME}"
