@@ -3,5 +3,5 @@ dirnum=`echo "echo $((RANDOM+1))" | ksh`
 ts=`date +%s`
 dirnum="${3}_${ts}_${dirnum}"
 # create a temp fir in the basic system space
-tempdir="/tmp/"`printf "%04d" $dirnum`
+tempdir="/tmp/$dirnum"
 echo $tempdir
