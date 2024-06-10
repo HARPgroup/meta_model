@@ -18,7 +18,7 @@ if [ "$import_files" == "" ]; then
   exit
 else
   echo "Importing file converted from $src_dir ..."
-  if [ - e "raster_list.txt" ]; then 
+  if [ -e "raster_list.txt" ]; then 
     rm raster_list.txt
   fi
   touch raster_list.txt
