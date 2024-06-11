@@ -13,6 +13,11 @@ fi
 
 echo "Trying to reproject $src_files for $ddate"
 for originalFile in $src_files; do
+  echo "Clearing pre-existing file ${originalFile}.repro.gtiff"
+  if [ -e ${originalFile}.repro.gtiff ]; then
+    echo "Clearing pre-existing file ${originalFile}.repro.gtiff"
+    rm ${originalFile}.repro.gtiff
+  fi
   echo "Reprojecting raster..."
   echo "gdalwarp $originalFile -t_srs EPSG:4326 -of \"gtiff\" \"${originalFile}.repro.gtiff\""
   gdalwarp $originalFile -t_srs EPSG:4326 -of "gtiff" "${originalFile}.repro.gtiff"
