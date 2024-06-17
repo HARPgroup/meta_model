@@ -17,12 +17,27 @@ base_dir=${config["basedir"]}
 final_ext=${config["ext"]}
 echo "Looking for geotiff files in $base_dir/$yr/$jday"
 
-if [ "$datasource" != "nldas2" ]; then
+if [ "$datasource" == "PRISM" ]; then
     # single day files only,
     for fname in $import_files; do
         if [ -e $fname ]; then
             eval `gdalinfo $fname |grep TIFFTAG_DATETIME`
             TIFFTAG_DATETIME="${yr}-${mo}-${da}T${tz_hr}:00:00"
+            echo "Setting TIFFTAG_DATETIME: gdal_edit.py $fname -mo \"TIFFTAG_DATETIME=${TIFFTAG_DATETIME}\""
+            gdal_edit.py $fname -mo "TIFFTAG_DATETIME=${TIFFTAG_DATETIME}"
+        fi
+    done
+elif [ "$datasource" == "daymet" ]; then
+    # single day files only,
+    for fname in $import_files; do
+        if [ -e $fname ]; then
+            eval `gdalinfo $fname |grep TIFFTAG_DATETIME`
+            #For dayment, we believe the datetime is the beginning of the 
+            #timestamp, tstime. TIFFTAG_DATETIME is ultimately imported as the
+            #end time, tsendtime. For this reason, we add one day to 
+            #TIFFTAG_DATETIME for daymet
+            tstime_start="${yr}-${mo}-${da}T${tz_hr}:00:00"
+            TIFFTAG_DATETIME=`date -d "${tstime_start} 1 day" +'%Y-%m-%dT%H:%M:%S'`
             echo "Setting TIFFTAG_DATETIME: gdal_edit.py $fname -mo \"TIFFTAG_DATETIME=${TIFFTAG_DATETIME}\""
             gdal_edit.py $fname -mo "TIFFTAG_DATETIME=${TIFFTAG_DATETIME}"
         fi
