@@ -1,0 +1,18 @@
+#!/bin/bash
+datasource=$1 # scenario place
+coverage=$2 # segment place
+# TODO: set ddate as a variable from configuration file, or just a dummy here
+ddate="1984-01-01"
+# loads the raster specific config
+raster_config=`find_config raster.config`
+if [ "$raster_config" = "" ]; then
+  raster_config="$META_MODEL_ROOT/models/raster_met/raster.config"
+fi
+. $raster_config
+
+echo "Aggregating precip for $coverage from "${config["datasource"]}$datasource
+outfile="${coverage}-${datasource}-all.csv"
+varkey=${config["varkey"]}
+echo "Calling: $MET_SCRIPT_PATH/sh/calc_raster_ts $coverage $varkey /tmp/${outfile} $db_host $db_name"
+$MET_SCRIPT_PATH/sh/calc_raster_ts $coverage $varkey "/tmp/${outfile}" $db_host $db_name
+sftp ${db_host}:"/tmp/${outfile}" ${base_dir}/out/${outfile}
