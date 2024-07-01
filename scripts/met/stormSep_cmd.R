@@ -1,8 +1,5 @@
 #Input variables are:
-# timeIn = Timestamps associated with streamflow data as vector
-# inflow = Streamflow daily data as vector in cfs
-# plt = Boolean to determine if plots are necessary
-# path = Directory to store plots in. Used if plt is TRUE
+# 1 = The path to the USGS gage data downloaded in a previous step of geo
 # allMinimaStorms = Considers ALL local minima as potnetial storm endpoints.
 # Will distinguish between peaks in the case of a multi-day storm hydrograph if
 # set to TRUE. Otherwise, a storm is only considered as two subseuqnet local
@@ -25,11 +22,9 @@ usgsGage <- read.csv(args[1],row.names = FALSE,stringsAsFactors = FALSE)
 #Set variables required by script:
 timeIn <- as.Date(usgsGage$Datetime)
 inflow <- as.Date(usgsGage$Q)
-plt <- args[2]
-path <- args[3]
-allMinimaStorms <- args[4]
-baselineFlowOption <- args[5]
-pathToWrite <- args[6]
+allMinimaStorms <- args[3]
+baselineFlowOption <- args[4]
+pathToWrite <- args[5]
 
 #Below function hreg (horizontal regression) will try to fit mulitple
 #horizontal lines through subset of data involving every point below that line
@@ -320,170 +315,8 @@ for (i in 1:(length(x) - 1)){
     stormsep[[length(stormsep) + 1]] <- store
   }
 }
-#Now plot each storm and fit exponential curves to rising and falling limbs
-#Store coefficients and statistics for each curve into a data frame, looking
-#at shape of curve and the adjusted R square values. Store each storm as a PNG
-#graph in the designated area. Need to prevent errors from zero flow. Added
-#0.0001 to all flow values. This WILL RESULT IN BIAS
-ext <- ".png"
-#Empty data frame to store statistics
-transients <- data.frame(startDate=character(length(stormsep)),
-                         endDate = NA, maxDate = NA,
-                         rising = NA, RsqR = NA, falling = NA, RsqF = NA,
-                         durAll = NA,durF = NA,durR = NA,
-                         volumeTotalMG = NA,
-                         volumeAboveBaseQMG = NA,
-                         volumeAboveBaselineQMG = NA,
-                         volumeTotalMG_rise = NA,
-                         volumeAboveBaseQMG_rise = NA,
-                         volumeAboveBaselineQMG_rise = NA,
-                         volumeTotalMG_fall = NA,
-                         volumeAboveBaseQMG_fall = NA,
-                         volumeAboveBaselineQMG_fall = NA)
-for (i in 1:length(stormsep)){
-  #Find the storm of interest
-  storm <- stormsep[[i]]
-  #remove nas:
-  storm <- storm[!is.na(storm[,2]),]
-  #Look for where the max is
-  maxtime <- storm[storm[,2] == max(storm[,2]),1][1]
-  
-  #Store the start and end time of the storm
-  transients$startDate[i] <- format(storm$timestamp[1],"%Y-%m-%d")
-  transients$endDate[i] <- format(storm$timestamp[nrow(storm)],"%Y-%m-%d")
-  transients$maxDate[i] <- format(storm[storm[,2] == max(storm[,2]),1][1],"%Y-%m-%d")
-  
-  #Separate rising and falling limbs based on maxtime e.g. the rising limb is
-  #all values leading up to maxtime
-  rising <- storm[storm[,1] <= maxtime,]
-  falling <- storm[storm[,1] >= maxtime,]
-  
-  #What is the volume of the storm streamflow i.e. total volume? First, get
-  #the difference in timestamps throughout the storm from one time to the
-  #next:
-  timeDiff <- difftime(storm$timestamp[2:nrow(storm)], storm$timestamp[1:(nrow(storm) - 1)],
-                       units = "secs")
-  timeDiff <- as.numeric(timeDiff)
-  #Repeat for rising and falling limbs only:
-  #Rising:
-  timeDiff_rise <- difftime(rising$timestamp[2:nrow(rising)], rising$timestamp[1:(nrow(rising) - 1)],
-                            units = "secs")
-  timeDiff_rise <- as.numeric(timeDiff_rise)
-  #Falling:
-  timeDiff_fall <- difftime(falling$timestamp[2:nrow(falling)], falling$timestamp[1:(nrow(falling) - 1)],
-                            units = "secs")
-  timeDiff_fall <- as.numeric(timeDiff_fall)
-  #Using a trapezoidal approach, get the area of each trapezoid to estimate
-  #volume of the storm. Use three approaches. Total storm volume, volume above
-  #baseflow, volume above baseline flow
-  #Total storm flow:
-  trapzArea <- function(timeDiff,stormFlow){
-    out <- timeDiff * ((stormFlow[1:(length(stormFlow) - 1)] + stormFlow[2:length(stormFlow)]) / 2)
-  }
-  trapz_total <- trapzArea(timeDiff,storm$flow)
-  #Only flow above baseflow:
-  trapz_abovebaseQ <- trapzArea(timeDiff,(storm$flow - storm$baseflow))
-  #Only flow above baseline flow. THIS CAN BE NEGATIVE AND THEREFORE
-  #UNRELIABLE?:
-  trapz_abovebaselineQ <- trapzArea(timeDiff,(storm$flow - storm$baselineflow))
-  
-  #Rising/falling storm flow:
-  trapz_total_rise <- trapzArea(timeDiff_rise,rising$flow)
-  trapz_total_fall <- trapzArea(timeDiff_fall,falling$flow)
-  #Only flow above baseflow:
-  trapz_abovebaseQ_rise <- trapzArea(timeDiff_rise,(rising$flow - rising$baseflow))
-  trapz_abovebaseQ_fall <- trapzArea(timeDiff_fall,(falling$flow - falling$baseflow))
-  #Only flow above baseline flow. THIS CAN BE NEGATIVE AND THEREFORE
-  #UNRELIABLE?:
-  trapz_abovebaselineQ_rise <- trapzArea(timeDiff_rise,(rising$flow - rising$baselineflow))
-  trapz_abovebaselineQ_fall <- trapzArea(timeDiff_fall,(falling$flow - falling$baselineflow))
-  
-  #Total volume is the sum of area of the trapezoids found above converted to
-  #MG from CF (1 CF * 12^3 in^3/cf * 231 gal/in^3 * 1 MG/1000000 gal):
-  volume_total <- sum(trapz_total) * 12 * 12 * 12 / 231 / 1000000
-  volume_abovebaseQ <- sum(trapz_abovebaseQ) * 12 * 12 * 12 / 231 / 1000000
-  volume_abovebaselineQ <- sum(trapz_abovebaselineQ) * 12 * 12 * 12 / 231 / 1000000
-  #Rising Limb
-  volume_total_rise <- sum(trapz_total_rise) * 12 * 12 * 12 / 231 / 1000000
-  volume_abovebaseQ_rise <- sum(trapz_abovebaseQ_rise) * 12 * 12 * 12 / 231 / 1000000
-  volume_abovebaselineQ_rise <- sum(trapz_abovebaselineQ_rise) * 12 * 12 * 12 / 231 / 1000000
-  #Falling limb:
-  volume_total_fall <- sum(trapz_total_fall) * 12 * 12 * 12 / 231 / 1000000
-  volume_abovebaseQ_fall <- sum(trapz_abovebaseQ_fall) * 12 * 12 * 12 / 231 / 1000000
-  volume_abovebaselineQ_fall <- sum(trapz_abovebaselineQ_fall) * 12 * 12 * 12 / 231 / 1000000
-  #Store results:
-  transients$volumeTotalMG[i] <- volume_total
-  transients$volumeAboveBaseQMG[i] <- volume_abovebaseQ
-  transients$volumeAboveBaselineQMG[i] <- volume_abovebaselineQ
-  transients$volumeTotalMG_rise[i] <- volume_total_rise
-  transients$volumeAboveBaseQMG_rise[i] <- volume_abovebaseQ_rise
-  transients$volumeAboveBaselineQMG_rise[i] <- volume_abovebaselineQ_rise
-  transients$volumeTotalMG_fall[i] <- volume_total_fall
-  transients$volumeAboveBaseQMG_fall[i] <- volume_abovebaseQ_fall
-  transients$volumeAboveBaselineQMG_fall[i] <- volume_abovebaselineQ_fall
-  
-  #Create an exponential regression for the rising limb to roughly fit the
-  #rising limb based on an "ideal" hydrograph
-  modelR <- lm(log(rising[,2] + 0.0001) ~ seq(1,length(rising[,1])))
-  #Store exponential coefficient and adjusted r squared values
-  transients$rising[i] <- summary(modelR)$coefficients[2]
-  transients$RsqR[i] <- summary(modelR)$adj.r.squared
-  
-  #Create an exponential regression for the falling limb
-  modelF <- lm(log(falling[,2] + 0.0001) ~ seq(1,length(falling[,1])))
-  transients$falling[i] <- summary(modelF)$coefficients[2]
-  transients$RsqF[i] <- summary(modelF)$adj.r.squared
-  
-  #Finds duration of the storm, rising and falling limbs combined
-  transients$durAll[i] <- length(storm$timestamp)
-  #Finds duration of the rising limb
-  transients$durF[i] <- length(rising$timestamp)
-  #Finds duration of the falling limb
-  transients$durR[i] <- length(falling$timestamp)
-  
-  #Plot the storm and the fitted rising and falling limbs and store them in
-  #designated path. Include the baseflow and and the baseline flow brk
-  if(plt == T){
-    #Set plot output path and dimensions
-    png(paste0(path,"storm",i,ext), width=1820,height=760)
-    #Set plot margines
-    par(mar=c(5,6,2,4))
-    #Plot the storm, making the labels a little thicker and the lines of the
-    #plot and labeling the axes
-    plot(storm[,1], storm[,2], type='l',
-         xlab='Date', ylab='Flow (cfs)',
-         lwd=2, cex.axis=2, cex.lab=2)
-    #Plot the fitted rising limb:
-    lines(storm[storm[,1] <= maxtime,1],
-          exp(fitted(modelR)),
-          col = 'darkblue',lwd = 2)
-    #Plot the fitted falling limb:
-    lines(storm[storm[,1] >= maxtime,1],
-          exp(fitted(modelF)),
-          col = 'darkred', lwd = 2)
-    #Plot the baseflow
-    lines(storm[,1], storm[,3],
-          col = "darkgreen", lwd = 2)
-    #Plot the baseline flow brk as a dashed line via lty = 3
-    lines(storm[,1], storm[,4],lty = 3,lwd = 2)
-    #Put a small legend on the plot
-    legend("topleft",c("Flow","Baseflow","Rise Limb","Fall Limb","Baseline"),
-           col = c("black","darkgreen","darkblue","darkred","black"),
-           lty = c(1,1,1,1,3),
-           bty = "n")
-    #Close the plot PNG and output the file
-    dev.off()
-  }
-}
-#rm(maxtime,storm,rising,falling,modelR,modelF,i,ext,fxn_locations)
-out <- list(Storms = stormsep,Stats = transients,
-            flowData = baseQ)
-
-write.csv(out$Stats,
-          paste0(pathToWrite,"/Gage",usgsGage$site_id[1],"_stormEventStats.csv"),
-          row.names = FALSE)
-write.csv(out$flowData,
+#Write out the full flow data with the stormIDs to create a file from which the
+#storms may easily be extracted
+write.csv(baseQ,
           paste0(pathToWrite,"/Gage",usgsGage$site_id[1],"_StormflowData.csv"),
           row.names = FALSE)
-
-
