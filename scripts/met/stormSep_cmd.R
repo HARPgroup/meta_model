@@ -1,14 +1,14 @@
 #Input variables are:
 # 1 = The path to the USGS gage data downloaded in a previous step of geo
-# allMinimaStorms = Considers ALL local minima as potnetial storm endpoints.
+# 2 = allMinimaStorms = Considers ALL local minima as potnetial storm endpoints.
 # Will distinguish between peaks in the case of a multi-day storm hydrograph if
 # set to TRUE. Otherwise, a storm is only considered as two subseuqnet local
 # minima that fall below baseline flow
-# baselineFlowOption = One of c("Water Year","Month","Calendar Year","Climate Year","All").
+# 3 = baselineFlowOption = One of c("Water Year","Month","Calendar Year","Climate Year","All").
 # Defaults to "All". Determines how program will develop baseline flow. Uses
 # horizontal line regression of baseflow and breaks it down based on all time,
-# water year, calendar year, or month based on user selection
-#pathToWrite = the path to write out csv output files to 
+# 4 = water year, calendar year, or month based on user selection
+# 5 = pathToWrite = the path to write out csv output files to 
 
 #Call packages required by function if not called already:
 library(grwat)
