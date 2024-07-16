@@ -10,21 +10,23 @@
 # 4 = water year, calendar year, or month based on user selection
 # 5 = pathToWrite = the path to write out csv output files to 
 
+print("Calling stormSep_cmd.R")
 #Call packages required by function if not called already:
 library(grwat)
 library(zoo)
 library(sqldf)
+print("Setting arguments")
 #Get all arguments explicitly passed in from command line:
 args <- commandArgs(trailingOnly = TRUE)
 #Read in the USGS gage data:
-usgsGage <- read.csv(args[1],row.names = FALSE,stringsAsFactors = FALSE)
+usgsGage <- read.csv(args[1],stringsAsFactors = FALSE)
 
 #Set variables required by script:
-timeIn <- as.Date(usgsGage$Datetime)
-inflow <- as.Date(usgsGage$Q)
-allMinimaStorms <- args[3]
-baselineFlowOption <- args[4]
-pathToWrite <- args[5]
+timeIn <- as.Date(usgsGage$Date)
+inflow <- usgsGage$X_00060_00003
+allMinimaStorms <- args[2]
+baselineFlowOption <- args[3]
+pathToWrite <- args[4]
 
 #Below function hreg (horizontal regression) will try to fit mulitple
 #horizontal lines through subset of data involving every point below that line
@@ -50,7 +52,7 @@ hreg <- function(x, limit = 1){
   return(lns[which.min(mse)])
 }
 
-
+print("Finding baseflow and local mins/maxes")
 #First, get baseflow associated with inflow. Use defaults of grwat for now
 #which involves three passes and the Lyne-Hollick (1979) hydrograph separation
 #method with coefficient a as 0.925
@@ -85,6 +87,7 @@ maxes <- data.frame(timestamp = baseQ$timestamp[c(FALSE,maxes,FALSE)],
 #Find the break associated with this run and buffer by 10%. Based the hreg on
 #the timescale selected by the user
 # baselineFlowOption = One of c("Water Year","Month","Calendar Year","All")
+print("Setting baseline flow")
 if(baselineFlowOption == "All"){
   #Use the entire baseflow dataset to get baseline flow, brk
   brk <- hreg(baseQ$baseQ,limit = 1)
@@ -181,7 +184,7 @@ baseQ$baselineQ <- brk
 #small storms with little or no peak or rises in baseflow. Only minimums below
 #the brk value are considered as these are storms that occur at baseflow and
 #fully rise/recede.
-
+print("Setting storm hydrograph thresholds")
 #Get the times associated with minimums that are below baseline flow brk.
 #First, join in the baseline flow for the timeperiod:
 mins <- sqldf("SELECT mins.*, baseQ.baselineQ
@@ -208,6 +211,7 @@ baseQ$stormID <- NA
 
 #Start evaluating each set of minima to evaluate if there is a qualifying
 #storm event. If there is, store it with all relevant data
+print("Evaluating potential storms")
 for (i in 1:(length(x) - 1)){
   # if(i==73){browser()}
   endIndex <- 1
@@ -315,8 +319,9 @@ for (i in 1:(length(x) - 1)){
     stormsep[[length(stormsep) + 1]] <- store
   }
 }
+print(paste0(length(stormsep)," storms found. Writing data."))
 #Write out the full flow data with the stormIDs to create a file from which the
 #storms may easily be extracted
 write.csv(baseQ,
-          paste0(pathToWrite,"/Gage",usgsGage$site_id[1],"_StormflowData.csv"),
+          paste0(pathToWrite,"Gage",usgsGage$site_id[1],"_StormflowData.csv"),
           row.names = FALSE)

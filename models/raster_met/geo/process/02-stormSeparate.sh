@@ -6,7 +6,7 @@ gageDataPath=$2
 #Are we interested in baseline storms or all local minima? Recommended to set 
 #to TRUE as of 06/27/2024 due to lack of development on FALSE side
 allMinimaStorms=$3
-#How should baselineFlow be calculated? Recommended by "Months"
+#How should baselineFlow be calculated? Recommended by "Month"
 baselineFlowOption=$4
 #Where should files be written out to?
 pathToWrite=$5

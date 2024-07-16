@@ -14,17 +14,15 @@ library("lubridate")
 #rollingDur = 1 all precip will be summed from the storm duration only. At
 #rollingDur = 2, the precip will be summed for the storm duration AND will
 #include 1-day prior to the storm
-#6 = plotData = Should each storm and the leading 7-day period be included?
-#7 = powerRegressoin = Should the regressions performed be power regression?
+#6 = powerRegressoin = Should the regressions performed be power regression?
 args <- commandArgs(trailingOnly = TRUE)
 comp_dataFilePath <- args[1]
 MET_SCRIPT_PATH <- args[2]
 stormStatsPath <- args[3]
 stormPath <- args[4]
 rollingDur <- args[5]
-plotData <- args[6]
 
-if(is.null(args[7])){
+if(is.null(args[6])){
   powerRegressoin <- FALSE
 }else{
   powerRegressoin <- args[7]
@@ -36,15 +34,15 @@ source(paste0(MET_SCRIPT_PATH,"/stormSep_USGS.R"))
 
 #Read in the combined precipitation and flow data for that USGS gage
 comp_data <- read.csv(comp_dataFilePath,
-                      stringsAsFactors = FALSE,row.names = FALSE)
+                      stringsAsFactors = FALSE)
 
 #Can we learn anything based on what stormSep gives us? e.g. the number of
 #storms that occur in a given week, month, day, etc.?
 #First, create a dataset where USGS flow is not NA
 
-stormStats <- read.csv(stormStatsPath,stringsAsFactors = FALSE,row.names = FALSE)
+stormStats <- read.csv(stormStatsPath,stringsAsFactors = FALSE)
 
-Stroms <- read.csv(stormPath,stringsAsFactors = FALSE,row.names = FALSE)
+stormSepDF <- read.csv(stormPath,stringsAsFactors = FALSE)
 
 # stormCompData <- comp_data[!is.na(comp_data$usgs_cfs),]
 
@@ -57,8 +55,12 @@ Stroms <- read.csv(stormPath,stringsAsFactors = FALSE,row.names = FALSE)
 #Throw out any storms that have inconsistent durations compared to start and end
 #date. This can occur when a gage goes offline as StormSep doesn't check for
 #this
-stormEvents <- stormOut$Storms[(as.Date(stormStats$endDate) - as.Date(stormStats$startDate) + 1) == stormStats$durAll]
+QCStorms <- stormStats$ID[(as.Date(stormStats$endDate) - as.Date(stormStats$startDate) + 1) == stormStats$durAll]
+stormEvents <- stormSepDF[stormSepDF$stormID %in% QCStorms]
 stormStats <- stormStats[(as.Date(stormStats$endDate) - as.Date(stormStats$startDate) + 1) == stormStats$durAll,]
+
+#Get a list of storm IDs:
+stormIDs <- unique(stormEvents$stormID)
 
 #A function that gets precip from the rollingDur period but will include the
 #full stormDuration
@@ -86,22 +88,22 @@ getRollPrecip <- function(comp_data,stormDuration,
 #leading up to the storm and including the full storm duration. Convert to MG
 cfsToMGD <- 86400 * 12*12*12/231/1000000
 #Only precip during the storm iteself
-stormStats$rollDayWStormPRISM_MG <- mapply(SIMPLIFY = TRUE, USE.NAMES = FALSE,
+stormStats$rollDayWStorm_MG <- mapply(SIMPLIFY = TRUE, USE.NAMES = FALSE,
                                             FUN = getRollPrecip, stormDuration = stormStats$durAll,
                                             endDate = stormStats$endDate,
                                             MoreArgs = list(comp_data = comp_data,rollingDur = rollingDur,
                                                             precipColName = "prism_p_cfs")
 )
-stormStats$rollDayWStormPRISM_MG <- stormStats$roll1DayWStormPRISM_MG * cfsToMGD
+stormStats$rollDayWStorm_MG <- stormStats$rollDayWStorm_MG * cfsToMGD
 
 #Includes 1-day prior to the storm:
-# stormStats$roll2DayWStormPRISM_MG <- mapply(SIMPLIFY = TRUE, USE.NAMES = FALSE,
+# stormStats$roll2DayWStorm_MG <- mapply(SIMPLIFY = TRUE, USE.NAMES = FALSE,
 #                                             FUN = getRollPrecip, stormDuration = stormStats$durAll,
 #                                             endDate = stormStats$endDate,
 #                                             MoreArgs = list(comp_data = comp_data,rollingDur = 2,
 #                                                             precipColName = "prism_p_cfs")
 # )
-# stormStats$roll2DayWStormPRISM_MG <- stormStats$roll2DayWStormPRISM_MG * cfsToMGD
+# stormStats$roll2DayWStorm_MG <- stormStats$roll2DayWStorm_MG * cfsToMGD
 
 
 #The relationship will improve as we look only at specific months. Add month
@@ -147,34 +149,37 @@ mon_lm <- function(sample_data, y_var, x_var, mo_var){
   return(out)
 }
 
+
 #There may be some heavy influence from high storm events. May want to consider
 #power regressions or non-linear exponential regressions to reduce their
 #influence or evens a Cooks Distance analysis to remove errant data points
 if(powerRegressoin){
   stormStats$LOGvolumeAboveBaseQMG <- log(stormStats$volumeAboveBaseQMG)
-  stormStats$LOGroll1DayWStormPRISM_MG <- log(stormStats$roll1DayWStormPRISM_MG)
+  stormStats$LOGroll1DayWStorm_MG <- log(stormStats$roll1DayWStorm_MG)
   #What are the monthly relationships?
   monthEventOut <- mon_lm(stormStats, y_var = "volumeAboveBaseQMG",
-                             x_var = "roll1DayWStormPRISM_MG",
+                             x_var = "roll1DayWStorm_MG",
                              mo_var = "beginMonth", "Storm Event Vol")
 }else{
   #What are the monthly relationships?
   monthEventOut <- mon_lm(stormStats, y_var = "LOGvolumeAboveBaseQMG",
-                             x_var = "LOGroll1DayWStormPRISM_MG",
+                             x_var = "LOGroll1DayWStorm_MG",
                              mo_var = "beginMonth", "Storm Event Vol")
 }
 
+#WRITE OUT DATA. GET STATS OR JSON OUTPUT
+write.csv(monthEventOut$stats)
 
 
-#For each storm in stormOut$Storms, use the storm start and end-date to find the
+#For each storm in stormEvents, use the storm start and end-date to find the
 #7-day period leading up to the storm and the 7-day period following the storm.
 #Show precip during this period and throughout storm duration. Then, highlight
 #the separated storm hydrograph
-for(i in 1:length(stormEvents)){
+for(i in 1:length(stormIDs)){
   print(i)
   #Get the current storm flow data which will be used for highlighting that
   #hydrograph
-  stormi <- stormEvents[[1]]
+  stormi <- stormEvents[stormEvents$stormID == stormIDs[i]]
   #Only need non-NA values since stormSep will output full timeseries but leave
   #values as NA if they are not included in storm
   stormi <- stormi[!is.na(stormi$flow),]

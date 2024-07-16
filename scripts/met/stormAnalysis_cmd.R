@@ -1,8 +1,10 @@
 #Input variables are:
 # 1 = The path to the storm separated data from step 02 for this gage
-# plt = Boolean to determine if plots are necessary
-# path = Directory to store plots in. Used if plt is TRUE
 # pathToWrite = the path to write out csv output files to 
+
+#WE MAY CONSIDER EVENTS AS BREAKS IN PRECIPIATION, PARTICULARLY FOR GAGES
+#DOWNSTREAM WHERE WE MAY START TO SEE EVENTS BLENDING. WE MAY ALSO NEED TO LOOP
+#IN DATA FROM DOWNSTREAM
 
 #Call packages required by function if not called already:
 library(grwat)
@@ -24,9 +26,7 @@ stormID <- 1 : max(stormID,na.rm = TRUE)
 
 #Additional arguments to determine if plots should be generated and where they
 #should be written
-plt <- args[2]
-path <- args[3]
-pathToWrite <- args[4]
+pathToWrite <- args[2]
 
 #Using a trapezoidal approach, get the area of each trapezoid to estimate
 #volume of the storm.
@@ -41,9 +41,11 @@ trapzArea <- function(timeDiff,stormFlow){
 #Added 0.0001 to all flow values. This WILL RESULT IN BIAS
 ext <- ".png"
 #Empty data frame to store statistics
-transients <- data.frame(startDate=character(length(stormID)),
+transients <- data.frame(ID = numeric(length(stormID)), 
+                         startDate = character(length(stormID)),
                          endDate = NA, maxDate = NA,
-                         rising = NA, RsqR = NA, falling = NA, RsqF = NA,
+                         rising = NA, risingInt = NA, RsqR = NA,
+                         falling = NA, fallingInt, RsqF = NA,
                          durAll = NA,durF = NA,durR = NA,
                          volumeTotalMG = NA,
                          volumeAboveBaseQMG = NA,
@@ -65,6 +67,9 @@ for (i in 1:length(stormsep)){
                                    stormID[i],"$)"), stormSepDF$stormID),]
   #remove nas:
   storm <- storm[!is.na(storm$flow),]
+  
+  #Set the ID of the storm
+  transients$ID <- stormID[i]
   
   #Look for where the max is
   maxtime <- storm$timestamp[storm$flow == max(storm$flow)][1]
@@ -144,11 +149,13 @@ for (i in 1:length(stormsep)){
   modelR <- lm(log(rising$flow + 0.0001) ~ seq(1,length(rising$flow)))
   #Store exponential coefficient and adjusted r squared values
   transients$rising[i] <- summary(modelR)$coefficients[2]
+  transients$risingInt[i] <- summary(modelR)$coefficients[1]
   transients$RsqR[i] <- summary(modelR)$adj.r.squared
   
   #Create an exponential regression for the falling limb
   modelF <- lm(log(falling$flow + 0.0001) ~ seq(1,length(falling$flow)))
   transients$falling[i] <- summary(modelF)$coefficients[2]
+  transients$fallingInt[i] <- summary(modelF)$coefficients[1]
   transients$RsqF[i] <- summary(modelF)$adj.r.squared
   
   #Finds duration of the storm, rising and falling limbs combined
@@ -157,40 +164,7 @@ for (i in 1:length(stormsep)){
   transients$durF[i] <- length(rising$timestamp)
   #Finds duration of the falling limb
   transients$durR[i] <- length(falling$timestamp)
-  
-  #Plot the storm and the fitted rising and falling limbs and store them in
-  #designated path. Include the baseflow and and the baseline flow brk
-  if(plt == T){
-    #Set plot output path and dimensions
-    png(paste0(path,"storm",i,ext), width=1820,height=760)
-    #Set plot margines
-    par(mar=c(5,6,2,4))
-    #Plot the storm, making the labels a little thicker and the lines of the
-    #plot and labeling the axes
-    plot(storm$timestamp, storm$flow, type='l',
-         xlab='Date', ylab='Flow (cfs)',
-         lwd=2, cex.axis=2, cex.lab=2)
-    #Plot the fitted rising limb:
-    lines(storm$timestamp[storm$timestamp <= maxtime],
-          exp(fitted(modelR)),
-          col = 'darkblue',lwd = 2)
-    #Plot the fitted falling limb:
-    lines(storm$timestamp[storm$timestamp >= maxtime],
-          exp(fitted(modelF)),
-          col = 'darkred', lwd = 2)
-    #Plot the baseflow
-    lines(storm$timestamp, storm$baseQ,
-          col = "darkgreen", lwd = 2)
-    #Plot the baseline flow brk as a dashed line via lty = 3
-    lines(storm$timestamp, storm$baselineQ,lty = 3,lwd = 2)
-    #Put a small legend on the plot
-    legend("topleft",c("Flow","Baseflow","Rise Limb","Fall Limb","Baseline"),
-           col = c("black","darkgreen","darkblue","darkred","black"),
-           lty = c(1,1,1,1,3),
-           bty = "n")
-    #Close the plot PNG and output the file
-    dev.off()
-  }
+
 }
 #Write out data to the appropriate location
 write.csv(transients,
