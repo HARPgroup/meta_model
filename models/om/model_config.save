@@ -1,0 +1,8 @@
+#!/bin/csh
+echo "Loading model configuration"
+MODEL
+if (! $?MODEL_ROOT) then
+  echo "Variable MODEL_ROOT is undefined.  Exiting."
+  exit
+endif
+# Load defaults

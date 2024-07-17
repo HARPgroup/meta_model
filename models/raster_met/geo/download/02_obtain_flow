@@ -1,0 +1,21 @@
+#!/bin/bash
+datasource=$1 # scenario place
+coverage=$2 # segment place
+# TODO: set ddate as a variable from configuration file, or just a dummy here
+ddate="1984-01-01"
+# loads the raster specific config
+raster_config=`find_config raster.config`
+if [ "$raster_config" = "" ]; then
+  raster_config="$META_MODEL_ROOT/models/raster_met/raster.config"
+fi
+. $raster_config
+
+echo "Downloading USGS gage flow for ${coverage}"
+# Now, we should have a method to save a given coverages gage, but since 
+# our basic use case is for gage catchments, we can count on the fact that the gage hydrocode
+# contains the USGS gage ID
+gageid=`echo $coverage | sed 's/[^[:digit:]]\+//g'`
+outfile="${coverage}-flow.csv"
+
+echo "Calling: Rscript $META_MODEL_ROOT/scripts/river/usgsdata.R $gageid $outfile"
+Rscript $META_MODEL_ROOT/scripts/river/usgsdata.R $gageid $outfile
