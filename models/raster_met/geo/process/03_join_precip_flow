@@ -8,5 +8,5 @@ fi
 
 echo "Joining flow and precip files for $coverage (To Be completed)"
 
-#echo "Calling: Rscript $META_MODEL_ROOT/scripts/precip/hydroimport_daily.R $COVERAGE_PRECIP_FILE $DAILY_PRECIP_FILE"
-#Rscript $META_MODEL_ROOT/scripts/precip/hydroimport_daily.R $COVERAGE_PRECIP_FILE $DAILY_PRECIP_FILE
+echo "Calling: Rscript $META_MODEL_ROOT/scripts/precip/comp_data.R $COVERAGE_FLOW_FILE $DAILY_PRECIP_FILE $DAILY_PRECIP_FILE"
+Rscript $META_MODEL_ROOT/scripts/precip/comp_data.R $COVERAGE_FLOW_FILE $DAILY_PRECIP_FILE $DAILY_PRECIP_FILE
