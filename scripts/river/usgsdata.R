@@ -26,6 +26,7 @@ flow_data[,c('yr', 'mo', 'da')] <- cbind(year(as.Date(flow_data$Date)),
 #adds drainage area as a column, to be used in later steps
 
 flow_data <- flow_data |> rename(obs_flow = X_00060_00003)
+flow_data <- flow_data |> rename(obs_date = Date)
 gage_info <- readNWISsite(gage_id)
 flow_data <- flow_data |> mutate(dra = gage_info$drain_area_va)
 
