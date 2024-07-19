@@ -6,7 +6,7 @@ if [ "$geo_config" = "" ]; then
 fi
 . $geo_config
 
-echo "Joining flow and precip files for $coverage (To Be completed)"
+echo "Creating weekly data file of precip and flow for $coverage (TBD)"
 
 #echo "Calling: Rscript $META_MODEL_ROOT/scripts/precip/hydroimport_daily.R $COVERAGE_PRECIP_FILE $DAILY_PRECIP_FILE"
 #Rscript $META_MODEL_ROOT/scripts/precip/hydroimport_daily.R $COVERAGE_PRECIP_FILE $DAILY_PRECIP_FILE
