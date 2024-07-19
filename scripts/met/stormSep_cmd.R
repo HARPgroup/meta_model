@@ -24,7 +24,7 @@ usgsGage <- read.csv(args[1],stringsAsFactors = FALSE)
 #Set variables required by script:
 timeIn <- as.Date(usgsGage$Date)
 inflow <- usgsGage$X_00060_00003
-allMinimaStorms <- args[2]
+allMinimaStorms <- as.logical(args[2])
 baselineFlowOption <- args[3]
 pathToWrite <- args[4]
 
@@ -61,7 +61,7 @@ baseQ <- grwat::gr_baseflow(inflow)
 #Add timestamp to the baseflow separation for convenience by creating a
 #dataframe
 baseQ <- data.frame(timestamp = timeIn, Year = as.numeric(format(timeIn,"%Y")),
-                    baseQ = baseQ,flow = inflow)
+                    baseQ = baseQ,flow = inflow,gageID = usgsGage$site_no[1])
 
 #Find mins/maxes of three consecutive points such that the extreme is in the
 #middle. These represent potential local mins and maxes
@@ -211,7 +211,7 @@ baseQ$stormID <- NA
 
 #Start evaluating each set of minima to evaluate if there is a qualifying
 #storm event. If there is, store it with all relevant data
-print("Evaluating potential storms")
+print(paste0("Evaluating ",length(x)," potential storms"))
 for (i in 1:(length(x) - 1)){
   # if(i==73){browser()}
   endIndex <- 1
@@ -323,5 +323,5 @@ print(paste0(length(stormsep)," storms found. Writing data."))
 #Write out the full flow data with the stormIDs to create a file from which the
 #storms may easily be extracted
 write.csv(baseQ,
-          paste0(pathToWrite,"Gage",usgsGage$site_id[1],"_StormflowData.csv"),
+          paste0(pathToWrite,"Gage",usgsGage$site_no[1],"_StormflowData.csv"),
           row.names = FALSE)

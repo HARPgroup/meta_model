@@ -7,13 +7,17 @@
 #IN DATA FROM DOWNSTREAM
 
 #Call packages required by function if not called already:
-library(grwat)
 library(zoo)
 library(sqldf)
 #Get all arguments explicitly passed in from command line:
 args <- commandArgs(trailingOnly = TRUE)
+
+print("Beginning storm analysis. Setting arguments")
 #Read in the flow data that features an ID column to designate each storm event:
 stormSepDF <- read.csv(args[1],stringsAsFactors = FALSE)
+
+#Convert timestamps to date:
+stormSepDF$timestamp <- as.Date(stormSepDF$timestamp)
 
 #Get the vector of unique identifiers for each storm. This is tricky since some
 #rows of this field may be NA (e.g. no storm) or may have multiple values for a
@@ -34,18 +38,16 @@ trapzArea <- function(timeDiff,stormFlow){
   out <- timeDiff * ((stormFlow[1:(length(stormFlow) - 1)] + stormFlow[2:length(stormFlow)]) / 2)
 }
 
-#Plot each storm if requested and fit exponential curves to rising and falling
-#limbs Store coefficients and statistics for each curve into a data frame,
+#Store coefficients and statistics for each curve into a data frame,
 #looking at shape of curve and the adjusted R square values. Store each storm as
 #a PNG graph in the designated area. Need to prevent errors from zero flow.
 #Added 0.0001 to all flow values. This WILL RESULT IN BIAS
-ext <- ".png"
 #Empty data frame to store statistics
 transients <- data.frame(ID = numeric(length(stormID)), 
                          startDate = character(length(stormID)),
                          endDate = NA, maxDate = NA,
                          rising = NA, risingInt = NA, RsqR = NA,
-                         falling = NA, fallingInt, RsqF = NA,
+                         falling = NA, fallingInt = NA, RsqF = NA,
                          durAll = NA,durF = NA,durR = NA,
                          volumeTotalMG = NA,
                          volumeAboveBaseQMG = NA,
@@ -56,7 +58,8 @@ transients <- data.frame(ID = numeric(length(stormID)),
                          volumeTotalMG_fall = NA,
                          volumeAboveBaseQMG_fall = NA,
                          volumeAboveBaselineQMG_fall = NA)
-for (i in 1:length(stormsep)){
+print(paste0("Evaluating ",length(stormID)," storms for statistics"))
+for (i in 1:length(stormID)){
   #Find the storm of interest. Note that storms can overlap as stomrs were
   #identified via local minima. It is possible for two storms to share this
   #minima as the end date of the first storm and the start date of the second.
@@ -69,7 +72,7 @@ for (i in 1:length(stormsep)){
   storm <- storm[!is.na(storm$flow),]
   
   #Set the ID of the storm
-  transients$ID <- stormID[i]
+  transients$ID[i] <- stormID[i]
   
   #Look for where the max is
   maxtime <- storm$timestamp[storm$flow == max(storm$flow)][1]
@@ -166,9 +169,10 @@ for (i in 1:length(stormsep)){
   transients$durR[i] <- length(falling$timestamp)
 
 }
+print(paste0("Writing data to ",paste0(pathToWrite,"Gage",stormSepDF$gageID[1],"_StormStats.csv")))
 #Write out data to the appropriate location
 write.csv(transients,
-          paste0(pathToWrite,"/Gage",usgsGage$site_id[1],"_StormStats.csv"),
+          paste0(pathToWrite,"Gage",stormSepDF$gageID[1],"_StormStats.csv"),
           row.names = FALSE)
 
 
