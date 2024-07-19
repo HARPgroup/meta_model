@@ -1,9 +1,5 @@
 #!/bin/bash
-scenario=$1 # scenario place
-coverage=$2 # segment place
-# TODO: set ddate as a variable from configuration file, or just a dummy here
-ddate="1984-01-01"
-# loads the raster & geo specific config
+# loads the args, raster & geo specific config AND CHANGE TO TEMPDIR
 geo_config=`find_config geo.config`
 if [ "$geo_config" = "" ]; then
   geo_config="$META_MODEL_ROOT/models/raster_met/geo/geo.config"
