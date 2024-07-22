@@ -39,9 +39,8 @@ if (!all(required_variables %in% colnames(comp_data))){
 print("Converting to weekly data")
   week_data <- sqldf(
     "select min(obs_date) as start_date, max(obs_date) as end_date, yr, wk, min(mo) as mo,
-     avg(precip_in) as weekly_mean_p_in, avg(precip_cfs) as weekly_mean_precip_cfs,
-
-     avg(obs_flow) as weekly_mean_obs_flow
+     avg(precip_in) as precip_in, avg(precip_cfs) as precip_cfs,
+     avg(obs_flow) as obs_flow
    from comp_data
    group by yr, wk
    order by yr, wk
