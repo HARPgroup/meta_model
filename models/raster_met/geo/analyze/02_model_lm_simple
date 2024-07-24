@@ -12,5 +12,9 @@ fi
 
 echo "Creating simple linear model (TBD)"
 
-#echo "Calling: Rscript $META_MODEL_ROOT/scripts/precip/hydroimport_daily.R $COVERAGE_PRECIP_FILE $DAILY_PRECIP_FILE"
-#Rscript $META_MODEL_ROOT/scripts/precip/hydroimport_daily.R $COVERAGE_PRECIP_FILE $DAILY_PRECIP_FILE
+stats_file=`basename $MODEL_STATS`
+json_file=`basename $MODEL_JSON`
+echo "Rscript $META_MODEL_ROOT/scripts/precip/mon_lm_analysis.R $WEEKLY_PRECIP_FILE precip_cfs obs_flow mo $json_file $stats_file"
+Rscript $META_MODEL_ROOT/scripts/precip/mon_lm_analysis.R $WEEKLY_PRECIP_FILE precip_cfs obs_flow mo $json_file $stats_file
+install -D $json_file $MODEL_JSON 
+install -D $stats_file $MODEL_STATS
