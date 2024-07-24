@@ -1,0 +1,18 @@
+#!/bin/bash
+# loads the args, the raster specific config and change to temp dir
+geo_config=`find_config geo.config`
+if [ "$geo_config" = "" ]; then
+  geo_config="$META_MODEL_ROOT/models/raster_met/geo/geo.config"
+fi
+. $geo_config
+
+if [[ "$GEO_MET_MODEL" != "lm_simple" ]]; then
+  exit
+fi
+
+echo "Creating simple linear model Rating timeseries."
+
+rating_file=`basename $RATING_TS_FILE`
+echo "Rscript $META_MODEL_ROOT/scripts/precip/create_rating_ts.R \"$COVERAGE_PRECIP_FILE\" \"$RATING_FILE\" \"$rating_file\" monthly"
+Rscript $META_MODEL_ROOT/scripts/precip/create_rating_ts.R "$COVERAGE_PRECIP_FILE" "$RATING_FILE" "$rating_file" monthly
+install -D $rating_file $RATING_TS_FILE

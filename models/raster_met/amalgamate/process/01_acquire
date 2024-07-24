@@ -6,3 +6,5 @@ if [ "$ama_config" = "" ]; then
 fi
 . $ama_config
 
+if [[ "$GEO_MET_MODEL" != "lm_simple" ]]; then
+  exit
