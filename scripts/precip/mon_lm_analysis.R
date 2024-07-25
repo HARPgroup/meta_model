@@ -32,7 +32,7 @@ y_var <- args[2]
 x_var <- args[3]
 mo_var <- args[4]
 json_write_path <- args[5]
-stats_write_path <-args[6]
+ratings_write_path <-args[6]
 
 print("Reading in data")
 sample_data <- read.csv(data_location)
@@ -43,15 +43,9 @@ json_data_lm <- prettify(
   serializeJSON(data_lm), 
   indent = 2
 )
-print(paste0("Write json in new file path: ",json_write_path))
+message(paste0("Write json in new file path: ",json_write_path))
 write(json_data_lm, json_write_path)
-write.csv(data_lm$atts$stats, stats_write_path)
-
-
-
-
-
-
-
-
-
+ratings <- data_lm$atts$stats
+names(ratings) <- c('mo', 'rating') # this file should have either "mo", or "mo", "da", "yr" columns
+message(paste("Saving rating data to:", ratings_write_path))
+write.csv(ratings, ratings_write_path, row.names=FALSE)
