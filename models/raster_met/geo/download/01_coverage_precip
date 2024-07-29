@@ -1,18 +1,17 @@
 #!/bin/bash
-datasource=$1 # scenario place
-coverage=$2 # segment place
-# TODO: set ddate as a variable from configuration file, or just a dummy here
-ddate="1984-01-01"
-# loads the raster specific config
-raster_config=`find_config raster.config`
-if [ "$raster_config" = "" ]; then
-  raster_config="$META_MODEL_ROOT/models/raster_met/raster.config"
+# loads the args, raster & geo specific config and change to tempdir
+geo_config=`find_config geo.config`
+if [ "$geo_config" = "" ]; then
+  geo_config="$META_MODEL_ROOT/models/raster_met/geo/geo.config"
 fi
-. $raster_config
+. $geo_config
+datasource=$MET_DATA_SOURCE # copy from old naming convention
 
+# BEGIN - actually loading local data
 echo "Aggregating precip for $coverage from "${config["datasource"]}$datasource
-outfile="${coverage}-${datasource}-all.csv"
+outfile=`basename $COVERAGE_PRECIP_FILE`
 varkey=${config["varkey"]}
 echo "Calling: $MET_SCRIPT_PATH/sh/calc_raster_ts $coverage $varkey /tmp/${outfile} $db_host $db_name"
 $MET_SCRIPT_PATH/sh/calc_raster_ts $coverage $varkey "/tmp/${outfile}" $db_host $db_name
-sftp ${db_host}:"/tmp/${outfile}" ${base_dir}/out/${outfile}
+sftp ${db_host}:"/tmp/${outfile}" "/tmp/${outfile}"
+install -D "/tmp/${outfile}" $COVERAGE_PRECIP_FILE

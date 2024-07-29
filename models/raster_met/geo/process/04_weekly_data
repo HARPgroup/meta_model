@@ -1,0 +1,12 @@
+#!/bin/bash
+# loads the args, the raster specific config and change to tempdir
+geo_config=`find_config geo.config`
+if [ "$geo_config" = "" ]; then
+  geo_config="$META_MODEL_ROOT/models/raster_met/geo/geo.config"
+fi
+. $geo_config
+
+echo "Creating weekly data file of precip and flow for $coverage"
+
+echo "Calling: Rscript $META_MODEL_ROOT/scripts/precip/make_weekly_summary_ts.R $DAILY_PRECIP_FILE $WEEKLY_PRECIP_FILE"
+Rscript $META_MODEL_ROOT/scripts/precip/make_weekly_summary_ts.R $DAILY_PRECIP_FILE $WEEKLY_PRECIP_FILE
