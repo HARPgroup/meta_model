@@ -1,0 +1,36 @@
+#!/bin/bash
+# loads the args, the raster specific config and change to temp dir
+geo_config=`find_config geo.config`
+if [ "$geo_config" = "" ]; then
+  geo_config="$META_MODEL_ROOT/models/raster_met/geo/geo.config"
+fi
+. $geo_config
+
+if [[ "$GEO_MET_MODEL" != "storm_volume" ]]; then
+  exit
+fi
+
+echo "Finding regressions from storm events and statistics"
+
+#First argument should be the combined file that contains the daily gage data 
+#and precipitation data
+USGSgage=$COVERAGE_FLOW_FILE
+
+#Where are combined flow precip data file stored?
+comp_dataFilePath=$DAILY_PRECIP_FILE
+#Where to get data from process 02-stormAnalysis
+stormStatsPath=$STORM_EVENT_STATS_FILE
+#Where to get data from process 03-stormStatistics
+stormPath=$STORM_EVENT_FLOW_FILE
+#Should anydays prior to the storm start be included in precip volumes?
+rollingDur=$STORM_INCLUDE_DURATION
+#Where should output JSON be stored?
+# even though we might have need fo the stats, but they are included in the json file
+json_file=`basename $MODEL_JSON`
+rate_file=`basename $RATING_FILE`
+
+cmd="Rscript $META_MODEL_ROOT/scripts/met/stormEventsLM_cmd.R $comp_dataFilePath $stormStatsPath $stormPath $rollingDur $json_file $rate_file $STORMSEP_REGRESSION_METHOD"
+echo "Running: $cmd"
+eval $cmd
+install -D $json_file "$MODEL_JSON" 
+install -D $rate_file "$RATING_FILE"
