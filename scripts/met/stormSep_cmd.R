@@ -7,8 +7,7 @@
 # 3 = baselineFlowOption = One of c("Water Year","Month","Calendar Year","Climate Year","All").
 # Defaults to "All". Determines how program will develop baseline flow. Uses
 # horizontal line regression of baseflow and breaks it down based on all time,
-# 4 = water year, calendar year, or month based on user selection
-# 5 = pathToWrite = the path to write out csv output files to 
+# 4 = pathToWrite = the path to write out csv output files to 
 
 print("Calling stormSep_cmd.R")
 #Call packages required by function if not called already:
@@ -23,7 +22,7 @@ usgsGage <- read.csv(args[1],stringsAsFactors = FALSE)
 
 #Set variables required by script:
 timeIn <- as.Date(usgsGage$Date)
-inflow <- usgsGage$X_00060_00003
+inflow <- usgsGage$obs_flow
 allMinimaStorms <- as.logical(args[2])
 baselineFlowOption <- args[3]
 pathToWrite <- args[4]
@@ -323,5 +322,5 @@ print(paste0(length(stormsep)," storms found. Writing data."))
 #Write out the full flow data with the stormIDs to create a file from which the
 #storms may easily be extracted
 write.csv(baseQ,
-          paste0(pathToWrite,"Gage",usgsGage$site_no[1],"_StormflowData.csv"),
+          pathToWrite,
           row.names = FALSE)

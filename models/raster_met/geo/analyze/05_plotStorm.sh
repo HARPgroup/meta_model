@@ -1,13 +1,13 @@
 #!/bin/bash
 #Where to get data from process 02-stormAnalysis
-stormStatsPath=$1
+stormStatsPath=$STORM_EVENT_FLOW_FILE
 #Where to get data from process 03-stormStatistics
-stormPath=$2
+stormPath=$STORM_EVENT_STATS_FILE
 # Directory to store plots in. 
-pathToWrite=$3
+pathToWrite=$STORM_EVENT_PLOT_DIR
 # The USGS gage number or hydro ID of the coverage that will be used to store
 # this data with unique names
-plotDetails=$4
+plotDetails=$USGS_GAGE
 
 #While plotting, must clear existing plots. Can do so by deleting directory 
 #using -r recursive and -f force, which ignores nonexistant files

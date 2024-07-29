@@ -1,16 +1,16 @@
 #!/bin/bash
 
 #Where are combined flow precip data file stored?
-comp_dataFilePath=$1
+comp_dataFilePath=$DAILY_PRECIP_FILE
 #Where to get data from process 02-stormAnalysis
-stormStatsPath=$2
+stormStatsPath=$STORM_EVENT_FLOW_FILE
 #Where to get data from process 03-stormStatistics
-stormPath=$3
+stormPath=$STORM_EVENT_STATS_FILE
 # Directory to store plots in. 
-pathToWrite=$4
+pathToWrite=$STORM_EVENT__PRECIP_PLOT_DIR
 # The USGS gage number or hydro ID of the coverage that will be used to store
 # this data with unique names
-plotDetails=$5
+plotDetails=$USGS_GAGE
 
 
 #While plotting, must clear existing plots. Can do so by deleting directory 

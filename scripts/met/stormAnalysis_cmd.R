@@ -172,7 +172,7 @@ for (i in 1:length(stormID)){
 print(paste0("Writing data to ",paste0(pathToWrite,"Gage",stormSepDF$gageID[1],"_StormStats.csv")))
 #Write out data to the appropriate location
 write.csv(transients,
-          paste0(pathToWrite,"Gage",stormSepDF$gageID[1],"_StormStats.csv"),
+          pathToWrite,
           row.names = FALSE)
 
 
