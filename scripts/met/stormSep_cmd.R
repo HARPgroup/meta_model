@@ -21,7 +21,7 @@ args <- commandArgs(trailingOnly = TRUE)
 usgsGage <- read.csv(args[1],stringsAsFactors = FALSE)
 
 #Set variables required by script:
-timeIn <- as.Date(usgsGage$Date)
+timeIn <- as.Date(usgsGage$obs_date)
 inflow <- usgsGage$obs_flow
 allMinimaStorms <- as.logical(args[2])
 baselineFlowOption <- args[3]

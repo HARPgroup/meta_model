@@ -59,6 +59,11 @@ stormSepDF <- read.csv(stormPath,stringsAsFactors = FALSE)
 #use?
 
 print("Parsing storms outside of comp_data or with bad timestamps...")
+#Convert relevant fields to date
+stormStats$startDate <- as.Date(stormStats$startDate)
+stormSepDF$timestamp <- as.Date(stormSepDF$timestamp)
+comp_data$obs_date <- as.Date(comp_data$obs_date)
+
 #Remove any storms that occur prior to the precip record:
 stormStats <- stormStats[stormStats$startDate >= min(comp_data$obs_date),]
 stormSepDF <- stormSepDF[stormSepDF$timestamp >= min(comp_data$obs_date),]
@@ -100,14 +105,14 @@ getRollPrecip <- function(comp_data,stormDuration,
 #leading up to the storm and including the full storm duration. Convert to MG
 cfToMG <- 12*12*12/231/1000000
 #Only precip during the storm iteself
+print("Finding rolling precip over each storm duration...")
 stormStats$rollDayWStorm_MG <- mapply(SIMPLIFY = TRUE, USE.NAMES = FALSE,
                                             FUN = getRollPrecip, stormDuration = stormStats$durAll,
                                             endDate = stormStats$endDate,
                                             MoreArgs = list(comp_data = comp_data,rollingDur = rollingDur,
-                                                            precipColName = "precip_p_cfs",
+                                                            precipColName = "precip_cfs",
                                                             obs_date = "obs_date")
 )
-print("Finding rolling precip over each storm duration...")
 stormStats$rollDayWStorm_MG <- stormStats$rollDayWStorm_MG * cfToMG
 
 #Includes 1-day prior to the storm:
