@@ -67,6 +67,9 @@ comp_data$obs_date <- as.Date(comp_data$obs_date)
 #Remove any storms that occur prior to the precip record:
 stormStats <- stormStats[stormStats$startDate >= min(comp_data$obs_date),]
 stormSepDF <- stormSepDF[stormSepDF$timestamp >= min(comp_data$obs_date),]
+#Remove any storms that occur after precip record
+stormStats <- stormStats[stormStats$endDate <= max(comp_data$obs_date),]
+stormSepDF <- stormSepDF[stormSepDF$timestamp <= max(comp_data$obs_date),]
 
 #Throw out any storms that have inconsistent durations compared to start and end
 #date. This can occur when a gage goes offline as StormSep doesn't check for
