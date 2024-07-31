@@ -10,6 +10,7 @@ library("lubridate")
 #storm found in the hydrographs
 #4 = The path to write out plots to
 #5 = details to include in the path to make file path more informative
+#6 = Precip data set used in scenario
 args <- commandArgs(trailingOnly = TRUE)
 
 comp_dataFilePath <- args[1]
@@ -20,9 +21,12 @@ pathToWrite <- args[4]
 #The USGS gage number or hydro ID of the coverage that will be used to store
 #this data with unique names
 pathDetails <- args[5]
-
+#Precip data source
+dataSource <- args[6]
+MET_SCRIPT_PATH <- "C:\\Users\\gcw73279.COV\\Desktop\\gitBackups\\OWS\\model_meteorology"
 source(paste0(MET_SCRIPT_PATH,"/R/plotStorm.R"))
 
+print("Reading in data...")
 #Read in the combined precipitation and flow data for that USGS gage
 comp_data <- read.csv(comp_dataFilePath,
                       stringsAsFactors = FALSE)
@@ -33,15 +37,31 @@ comp_data <- read.csv(comp_dataFilePath,
 stormStats <- read.csv(stormStatsPath,stringsAsFactors = FALSE)
 stormEvents <- read.csv(stormPath,stringsAsFactors = FALSE)
 
-#Get a list of storm IDs:
-stormIDs <- unique(stormEvents$stormID)
+print("Setting date fields and removing data outside of precip data source...")
+#Convert date fields to date as needed:
+stormStats$startDate <- as.Date(stormStats$startDate)
+stormStats$endDate <- as.Date(stormStats$endDate)
+stormStats$maxDate <- as.Date(stormStats$maxDate)
+stormEvents$timestamp <- as.Date(stormEvents$timestamp)
+comp_data$obs_date <- as.Date(comp_data$obs_date)
+
+#Remove any storms that occur prior to the precip record:
+stormStats <- stormStats[stormStats$startDate >= min(comp_data$obs_date),]
+stormEvents <- stormEvents[stormEvents$timestamp >= min(comp_data$obs_date),]
+#Remove any storms that occur after precip record
+stormStats <- stormStats[stormStats$endDate <= max(comp_data$obs_date),]
+stormEvents <- stormEvents[stormEvents$timestamp <= max(comp_data$obs_date),]
+
+
+#Get a list of storm IDs that are not NA:
+stormIDs <- unique(stormStats$ID[!is.na(stormStats$ID)])
 
 #For each storm in stormOut$Storms, use the storm start and end-date to find the
 #7-day period leading up to the storm and the 7-day period following the storm.
 #Show precip during this period and throughout storm duration. Then, highlight
 #the separated storm hydrograph
+print(paste0("Generating plots for ",length(stormIDs)," storms, please wait..."))
 for(i in 1:length(stormIDs)){
-  print(i)
   #Get the current storm flow data which will be used for highlighting that
   #hydrograph
   stormi <- stormEvents[stormEvents$stormID == stormIDs[i],]
@@ -67,5 +87,5 @@ for(i in 1:length(stormIDs)){
                         LEFT JOIN comp_data as comp
                           ON flowData.timeStamp = comp.obs_date")
   pathOut <- paste0(pathToWrite,"/stormPlot_",pathDetails,"_",i,".PNG")
-  plotStorm(pathOut,stormi,flowDataAll)
+  plotStorm(pathOut,stormi,flowDataAll,"precip_in",dataSource)
 }
