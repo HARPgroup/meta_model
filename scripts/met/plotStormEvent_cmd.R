@@ -21,7 +21,7 @@ pathToWrite <- args[4]
 #this data with unique names
 pathDetails <- args[5]
 
-source(paste0(MET_SCRIPT_PATH,"/plotStorm.R"))
+source(paste0(MET_SCRIPT_PATH,"/R/plotStorm.R"))
 
 #Read in the combined precipitation and flow data for that USGS gage
 comp_data <- read.csv(comp_dataFilePath,
@@ -44,7 +44,7 @@ for(i in 1:length(stormIDs)){
   print(i)
   #Get the current storm flow data which will be used for highlighting that
   #hydrograph
-  stormi <- stormEvents[stormEvents$stormID == stormIDs[i]]
+  stormi <- stormEvents[stormEvents$stormID == stormIDs[i],]
   #Only need non-NA values since stormSep will output full timeseries but leave
   #values as NA if they are not included in storm
   stormi <- stormi[!is.na(stormi$flow),]
@@ -57,19 +57,15 @@ for(i in 1:length(stormIDs)){
   plotEnd <- stormEnd + 7
   
   #Get the stream flow and baseflow from stormSep
-  flowData <- stormOut$flowData[stormOut$flowData$timestamp >= plotStart & 
-                                  stormOut$flowData$timestamp <= plotEnd,]
+  flowData <- stormEvents[stormEvents$timestamp >= plotStart & 
+                            stormEvents$timestamp <= plotEnd,]
   #Join in the precip "flow" from comp_data:
   flowDataAll <- sqldf("SELECT flowData.*,
-                          comp.prism_p_in,
-                          comp.daymet_p_in,
-                          comp.nldas2_p_in,
-                          comp.prism_p_cfs,
-                          comp.daymet_p_cfs,
-                          comp.nldas2_p_cfs
+                          comp.precip_cfs,
+                          comp.precip_in
                         FROM flowData
                         LEFT JOIN comp_data as comp
-                          ON flowData.timeStamp = comp.Date")
-  pathOut <- paste0("StormPlotsNew/stormPlot",i,".PNG")
+                          ON flowData.timeStamp = comp.obs_date")
+  pathOut <- paste0(pathToWrite,"/stormPlot_",pathDetails,"_",i,".PNG")
   plotStorm(pathOut,stormi,flowDataAll)
 }
