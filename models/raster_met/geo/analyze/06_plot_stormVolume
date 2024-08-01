@@ -27,13 +27,15 @@ pathToWrite=$STORM_EVENT_PRECIP_PLOT_DIR
 plotDetails=$USGS_GAGE
 
 
-#While plotting, must clear existing plots. Can do so by deleting directory 
-#using -r recursive and -f force, which ignores nonexistant files
-rm -rf $pathToWrite
-#Add directory:
-mkdir $pathToWrite
+
+if [ -d "$pathToWrite" ]; then
+  mkdir $pathToWrite
+else
+  #While plotting, must clear existing plots. 
+  rm -f "${pathToWrite}/stormPlot_${plotDetails}_*.png"
+fi
 
 
-cmd="Rscript $META_MODEL_ROOT/scripts/met/stormEventsLM_cmd.R $comp_dataFilePath $stormStatsPath $stormPath $pathToWrite $plotDetails"
+cmd="Rscript $META_MODEL_ROOT/scripts/met/stormEventsLM_cmd.R $comp_dataFilePath $stormPath $stormStatsPath $pathToWrite $plotDetails $MET_DATA_SOURCE $MET_SCRIPT_PATH"
 echo "Running: $cmd"
 eval $cmd
