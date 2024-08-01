@@ -37,6 +37,6 @@ else
 fi
 
 
-cmd="Rscript $META_MODEL_ROOT/scripts/met/plotStormSep_cmd $comp_dataFilePath $stormPath $stormStatsPath $pathToWrite $plotDetails $MET_DATA_SOURCE $MET_SCRIPT_PATH"
+cmd="Rscript $META_MODEL_ROOT/scripts/met/plotStormEvent_cmd.R $comp_dataFilePath $stormPath $stormStatsPath $pathToWrite $plotDetails $MET_DATA_SOURCE $MET_SCRIPT_PATH"
 echo "Running: $cmd"
 eval $cmd
