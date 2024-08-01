@@ -11,6 +11,7 @@ library("lubridate")
 #4 = The path to write out plots to
 #5 = details to include in the path to make file path more informative
 #6 = Precip data set used in scenario
+#7 = Path to meteorology scripts used in meta model
 args <- commandArgs(trailingOnly = TRUE)
 
 comp_dataFilePath <- args[1]
@@ -23,7 +24,8 @@ pathToWrite <- args[4]
 pathDetails <- args[5]
 #Precip data source
 dataSource <- args[6]
-MET_SCRIPT_PATH <- "C:\\Users\\gcw73279.COV\\Desktop\\gitBackups\\OWS\\model_meteorology"
+#MET_SCRIPT_PATH = Path to meteorology scripts used in meta model
+MET_SCRIPT_PATH <- args[7]
 source(paste0(MET_SCRIPT_PATH,"/R/plotStorm.R"))
 
 print("Reading in data...")
