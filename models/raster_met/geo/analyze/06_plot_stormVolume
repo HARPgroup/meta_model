@@ -18,9 +18,9 @@ fi
 #Where are combined flow precip data file stored?
 comp_dataFilePath=$DAILY_PRECIP_FILE
 #Where to get data from process 02-stormAnalysis
-stormStatsPath=$STORM_EVENT_FLOW_FILE
+stormPath=$STORM_EVENT_FLOW_FILE
 #Where to get data from process 03-stormStatistics
-stormPath=$STORM_EVENT_STATS_FILE
+stormStatsPath=$STORM_EVENT_STATS_FILE
 # Directory to store plots in. 
 pathToWrite=$STORM_EVENT_PRECIP_PLOT_DIR
 # The USGS gage number or hydro ID of the coverage that will be used to store
