@@ -27,13 +27,13 @@ pathToWrite=$STORM_EVENT_PRECIP_PLOT_DIR
 # this data with unique names
 plotDetails=$USGS_GAGE
 
-echo "Plots to be written to: ${pathToWrite}"
-
 if [ -d "$pathToWrite" ]; then
-  mkdir $pathToWrite
-else
+  echo "${pathToWrite} found, clearing plots for ${plotDetails}:"
   #While plotting, must clear existing plots. 
   rm -f "${pathToWrite}/stormPlot_${plotDetails}_*.png"
+else
+  echo "${pathToWrite} not found, creating directory:"
+  mkdir $pathToWrite
 fi
 
 
