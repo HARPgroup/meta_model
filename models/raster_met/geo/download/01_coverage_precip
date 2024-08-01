@@ -8,10 +8,9 @@ fi
 
 
 # BEGIN - actually loading local data
-echo "Aggregating precip for $coverage from "${config["datasource"]}$datasource
+echo "Aggregating precip for $coverage from "$datasource
 outfile=`basename $COVERAGE_PRECIP_FILE`
 varkey=${config["varkey"]}
 echo "Calling: $MET_SCRIPT_PATH/sh/calc_raster_ts $coverage $varkey /tmp/${outfile} $db_host $db_name"
 $MET_SCRIPT_PATH/sh/calc_raster_ts $coverage $varkey "/tmp/${outfile}" $db_host $db_name
-sftp ${db_host}:"/tmp/${outfile}" "/tmp/${outfile}"
 install -D "/tmp/${outfile}" $COVERAGE_PRECIP_FILE
