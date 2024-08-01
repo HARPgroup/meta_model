@@ -33,7 +33,7 @@ if [ -d "$pathToWrite" ]; then
   rm -f "${pathToWrite}/stormPlot_${plotDetails}_*.png"
 else
   echo "${pathToWrite} not found, creating directory:"
-  mkdir $pathToWrite
+  mkdir -p $pathToWrite
 fi
 
 
