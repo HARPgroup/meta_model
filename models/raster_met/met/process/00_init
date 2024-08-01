@@ -1,7 +1,4 @@
 #!/bin/bash
-ddate=$1
-datasource=$2
-tempdir=$3
 if [ ! -d "$tempdir" ]; then
   mkdir $tempdir
 fi

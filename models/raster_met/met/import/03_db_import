@@ -1,18 +1,13 @@
 #!/bin/bash
-
-ddate=$1
-datasource=$2
-tempdir=$3
-
-# loads the raster specific config
-raster_config=`find_config raster.config`
-if [ "$raster_config" = "" ]; then
-  raster_config="$META_MODEL_ROOT/models/raster_met/raster.config"
+# loads the met specific config
+met_config=`find_config met.config`
+if [ "$met_config" = "" ]; then
+  met_config="$META_MODEL_ROOT/models/raster_met/met/met.config"
 fi
-echo "Loading raster_config from $raster_config"
-. $raster_config
+echo "Loading met_config from $met_config"
+. $met_config
 
-echo "Importing data from "${config["datasource"]}
+echo "Importing data from ${datasource}"
 echo "DB_FORCE_OVERWRITE = $DB_FORCE_OVERWRITE"
 if [ -z ${DB_FORCE_OVERWRITE+x} ]; then 
   DB_FORCE_OVERWRITE=0
@@ -32,12 +27,10 @@ else
       echo "Could not find TIFFTAG_DATETIME in meta-data for $met_file" > problem
       exit
     fi
-    TZ=${config["TZ"]}
     echo "TIMESTAMP HANDLING: tstime='TZ=\"$TZ\" date -d \"$TIFFTAG_DATETIME\" +'%s''"
     tsendtime=`TZ="$TZ" date -d "$TIFFTAG_DATETIME" +'%s'`
-    dt=${config["dt"]}
     tstime=$((tsendtime - dt))
-    cmd="$MET_SCRIPT_PATH/sh/met_raster2db.sh "${config["datasource"]}" $met_file $tstime $tsendtime "${config["entity_type"]}" "${config["varkey"]}" "${config["extent_hydrocode"]}" $db_name $db_host $DB_FORCE_OVERWRITE"
+    cmd="$MET_SCRIPT_PATH/sh/met_raster2db.sh "${datasource}" $met_file $tstime $tsendtime "${entity_type}" "${varkey}" "${extent_hydrocode}" $db_name $db_host $DB_FORCE_OVERWRITE"
     echo "Running: $cmd"
     eval $cmd
   done
