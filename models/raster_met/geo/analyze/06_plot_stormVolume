@@ -6,10 +6,11 @@ if [ "$geo_config" = "" ]; then
 fi
 . $geo_config
 
-if [[ "$STORMSEP_PLOT" ]]; then
+if [[ "$GEO_MET_MODEL" != "storm_volume" ]]; then
   exit
 fi
-if [[ "$GEO_MET_MODEL" != "storm_volume" ]]; then
+if [[ "$STORMSEP_PLOT" ]]; then
+	echo "Plot variable is ${STORMSEP_PLOT}, no storm volume plots generated"
   exit
 fi
 
