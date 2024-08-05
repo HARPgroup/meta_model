@@ -1,0 +1,24 @@
+#!/bin/csh
+# THis exports PWATER and IWATER dat from the hdf5 to a CSV for import into the analysis scripts
+set scenario=$1
+set segment=$2
+set seg = $segment
+set tempdir=$3
+set tree = $MODEL_ROOT
+
+source $META_MODEL_ROOT/models/$MODEL/model_config
+#source $MODEL_ROOT/config/control/script/${scenario}.con
+echo "Locating: cd $tempdir"
+cd $tempdir
+
+echo "Exporting PWATER/IWATER data for $seg"
+
+source $tree/run_bhatt/fragments/set_landuse
+echo "The real hsp2 is being used"
+foreach lu ($perlnds $implnds)
+  set lu_flow_file="${CBP_EXPORT_DIR}/land/${scenario}/eos/${segment}_0111-0211-0411.csv"
+  set pwater_file="${CBP_EXPORT_DIR}/land/${scenario}/pwater/${lu}${segment}_pwater.csv"
+  echo "Running: Rscript $META_MODEL_ROOT/scripts/land/hsp_make_pwater.R $lu_flow_file $pwater_file $lu"
+  Rscript $META_MODEL_ROOT/scripts/land/hsp_make_pwater.R $lu_flow_file $pwater_file $lu
+
+end

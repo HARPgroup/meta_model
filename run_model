@@ -40,7 +40,7 @@ endif
 
 
 echo "Beginning Run model=$model, scenario=$scenario, segment=$segment, work_path=$work_path, modules=$modules, run_steps=$run_steps,script=$script"
-
+install -d $work_path # insure that the work directory is in place
 # todo: set up places to look for plugins in various trees such as MODEL_ROOT
 set model_plugins=$META_MODEL_ROOT/models/$model
 setenv MODEL_ROOT "$MODEL_ROOT"
