@@ -15,3 +15,4 @@ echo "Calling: $MET_SCRIPT_PATH/sh/calc_raster_ts $coverage $varkey $RASTER_SQL_
 $MET_SCRIPT_PATH/sh/calc_raster_ts $coverage $varkey $RASTER_SQL_FILE $RASTER_SUM_FILE $db_host $db_name
 sftp ${db_host}:"${RASTER_SUM_FILE}" "${tempdir}/${outfile}"
 install -D "${tempdir}/${outfile}" $COVERAGE_PRECIP_FILE
+

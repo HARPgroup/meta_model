@@ -1,16 +1,11 @@
 #!/bin/bash
-
-ddate=$1
-datasource=$2
-tempdir=$3
-
-# loads the raster specific config
-raster_config=`find_config raster.config`
-if [ "$raster_config" = "" ]; then
-  raster_config="$META_MODEL_ROOT/models/raster_met/raster.config"
+# loads the met specific config
+met_config=`find_config met.config`
+if [ "$met_config" = "" ]; then
+  met_config="$META_MODEL_ROOT/models/raster_met/met/met.config"
 fi
-. $raster_config
-
+echo "Loading met_config from $met_config"
+. $met_config
 
 if [ "$datasource" == "PRISM" ]; then
   rm *${yr}${mo}${da}*
