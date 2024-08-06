@@ -21,5 +21,14 @@ set image_file_path=$CBP_EXPORT_DIR/land/$scenario/images
 # START_YEAR and END_YEAR are set in model_config script
 # this is the wrong setup here. This export creates OM exports
 # which should be in a separate app or an optional step
-echo "om CSV: Rscript $META_MODEL_ROOT/scripts/wdm/wdm_export_flow.R $scenario $segment $START_YEAR $END_YEAR $CBP_EXPORT_DIR $MODEL_ROOT"
-Rscript $META_MODEL_ROOT/scripts/wdm/wdm_export_flow.R $scenario $segment $START_YEAR $END_YEAR $CBP_EXPORT_DIR $MODEL_ROOT
+if ( ! $?EXPORT_RUNOFF_OM ) then
+  echo "!!!! WARNING: Cannot Locate EXPORT_RUNOFF_OM"
+  exit
+endif
+
+if ( $EXPORT_RUNOFF_OM == 1 ) then
+  echo "TBD: Allow importing from CSV to OM database here.  "
+  echo "Ex: create_landseg_table.sh $segment $scenario p6 1 "
+else
+  echo "Land export is off EXPORT_RUNOFF_OM = $EXPORT_RUNOFF_OM, no runoff component file imported."
+endif

@@ -11,6 +11,8 @@ fi
 echo "Aggregating precip for $coverage from "$datasource
 outfile=`basename $COVERAGE_PRECIP_FILE`
 
-echo "Calling: $MET_SCRIPT_PATH/sh/calc_raster_ts $coverage $varkey /tmp/${outfile} $db_host $db_name"
-$MET_SCRIPT_PATH/sh/calc_raster_ts $coverage $varkey "/tmp/${outfile}" $db_host $db_name
-install -D "/tmp/${outfile}" $COVERAGE_PRECIP_FILE
+echo "Calling: $MET_SCRIPT_PATH/sh/calc_raster_ts $coverage $varkey $RASTER_SQL_FILE ${RASTER_SQL_FILE} $db_host $db_name"
+$MET_SCRIPT_PATH/sh/calc_raster_ts $coverage $varkey $RASTER_SQL_FILE $RASTER_SUM_FILE $db_host $db_name
+sftp ${db_host}:"${RASTER_SUM_FILE}" "${tempdir}/${outfile}"
+install -D "${tempdir}/${outfile}" $COVERAGE_PRECIP_FILE
+
