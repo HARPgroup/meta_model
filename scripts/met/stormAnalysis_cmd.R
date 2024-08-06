@@ -169,7 +169,7 @@ for (i in 1:length(stormID)){
   transients$durR[i] <- length(falling$timestamp)
 
 }
-print(paste0("Writing data to ",paste0(pathToWrite,"Gage",stormSepDF$gageID[1],"_StormStats.csv")))
+print(paste0("Writing data to ",pathToWrite))
 #Write out data to the appropriate location
 write.csv(transients,
           pathToWrite,

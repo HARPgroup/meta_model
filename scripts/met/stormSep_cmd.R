@@ -318,9 +318,10 @@ for (i in 1:(length(x) - 1)){
     stormsep[[length(stormsep) + 1]] <- store
   }
 }
-print(paste0(length(stormsep)," storms found. Writing data."))
+message(paste0(length(stormsep)," storms found. Writing data."))
 #Write out the full flow data with the stormIDs to create a file from which the
 #storms may easily be extracted
+message(paste("Writing storms to", pathToWrite))
 write.csv(baseQ,
           pathToWrite,
           row.names = FALSE)
