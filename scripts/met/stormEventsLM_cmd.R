@@ -15,7 +15,9 @@ library("jsonlite")
 #include 1-day prior to the storm
 #5 = Path out to write to full model JSON to
 #6 = Path out to write csv of the regresison stats/ratings to
-#7 = STORMSEP_REGRESSION_METHOD = Should the regressions performed be power
+#7 = Path to write lm resid plots to
+#8 = Plot name details
+#9 = STORMSEP_REGRESSION_METHOD = Should the regressions performed be power
 #regression or linear regression
 args <- commandArgs(trailingOnly = TRUE)
 print("Setting arguments...")
@@ -26,11 +28,14 @@ rollingDur <- as.numeric(args[4])
 pathToWriteJSON <- args[5]
 pathToWriteRatings <- args[6]
 pathToWritePlots <- args[7]
+#The USGS gage number or hydro ID of the coverage that will be used to store
+#this data with unique names
+pathDetails <- args[8]
 
-if(is.na(args[8])){
+if(is.na(args[9])){
   regressionMethod <- "LINEAR"
 }else{
-  regressionMethod <- args[8]
+  regressionMethod <- args[9]
   if(!(regressionMethod %in% c("POWER","LINEAR"))){
     print(paste0("No method exists for ",regressionMethod," regression. Performing linear regression instead. Check config file..."))
     regressionMethod <- "LINEAR"
@@ -155,7 +160,7 @@ if(regressionMethod == "POWER"){
 print("Writing out data to JSON and ratings to csv...")
 # This outputs our residuals
 for (i in 1:12){
-  png(paste0(pathToWritePlots, "_Month",i,".png"))
+  png(paste0(pathToWritePlots,"/USGSgage",pathDetails,"_Month",i,".png"))
   plot(monthEventOut$atts$lms[[i]],1)
   dev.off()
 }
