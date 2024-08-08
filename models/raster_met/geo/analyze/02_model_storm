@@ -29,7 +29,7 @@ rollingDur=$STORM_INCLUDE_DURATION
 json_file=`basename $MODEL_JSON`
 rate_file=`basename $RATING_FILE`
 # Directory to store plots in. 
-pathToWritePlots=$STORM_EVENT_PRECIP_PLOT_DIR
+pathToWritePlots=$RESID_PLOTS
 # The USGS gage number or hydro ID of the coverage that will be used to store
 # this data with unique names
 plotDetails=$USGS_GAGE
