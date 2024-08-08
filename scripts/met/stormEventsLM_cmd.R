@@ -157,7 +157,7 @@ if(regressionMethod == "POWER"){
                                mo_var = "beginMonth")
 }
 
-print("Writing out data to JSON and ratings to csv...")
+print("Writing plots for redsids of monthly lms...")
 # This outputs our residuals
 for (i in 1:12){
   png(paste0(pathToWritePlots,"/USGSgage",pathDetails,"_Month",i,".png"))
