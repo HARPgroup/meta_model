@@ -25,11 +25,12 @@ stormPath <- args[3]
 rollingDur <- as.numeric(args[4])
 pathToWriteJSON <- args[5]
 pathToWriteRatings <- args[6]
+pathToWritePlots <- args[7]
 
-if(is.na(args[7])){
+if(is.na(args[8])){
   regressionMethod <- "LINEAR"
 }else{
-  regressionMethod <- args[7]
+  regressionMethod <- args[8]
   if(!(regressionMethod %in% c("POWER","LINEAR"))){
     print(paste0("No method exists for ",regressionMethod," regression. Performing linear regression instead. Check config file..."))
     regressionMethod <- "LINEAR"
@@ -150,6 +151,15 @@ if(regressionMethod == "POWER"){
                                x_var = "rollDayWStorm_MG",
                                mo_var = "beginMonth")
 }
+
+print("Writing out data to JSON and ratings to csv...")
+# This outputs our residuals
+for (i in 1:12){
+  png(paste0(pathToWritePlots, "_Month",i,".png"))
+  plot(monthEventOut$atts$lms[[i]],1)
+  dev.off()
+}
+
 
 print("Writing out data to JSON and ratings to csv...")
 #WRITE OUT DATA. GET STATS OR JSON OUTPUT

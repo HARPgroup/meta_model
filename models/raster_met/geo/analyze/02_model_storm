@@ -28,8 +28,10 @@ rollingDur=$STORM_INCLUDE_DURATION
 # even though we might have need fo the stats, but they are included in the json file
 json_file=`basename $MODEL_JSON`
 rate_file=`basename $RATING_FILE`
+# Directory to store plots in. 
+pathToWritePlots=$STORM_EVENT_PRECIP_PLOT_DIR
 
-cmd="Rscript $META_MODEL_ROOT/scripts/met/stormEventsLM_cmd.R $comp_dataFilePath $stormStatsPath $stormPath $rollingDur $json_file $rate_file $STORMSEP_REGRESSION_METHOD"
+cmd="Rscript $META_MODEL_ROOT/scripts/met/stormEventsLM_cmd.R $comp_dataFilePath $stormStatsPath $stormPath $rollingDur $json_file $rate_file $pathToWritePlots $STORMSEP_REGRESSION_METHOD"
 echo "Running: $cmd"
 eval $cmd
 install -D $json_file "$MODEL_JSON" 
