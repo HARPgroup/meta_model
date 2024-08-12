@@ -18,11 +18,16 @@ endif
 set vers = $MODEL_VERSION_CODE
 set ftype = $LAND_FTYPE
 set image_file_path=$CBP_EXPORT_DIR/land/$scenario/images
-
+echo "This contains model image file of base flow simulation" > /tmp/README.txt
+install -D /tmp/README.txt "${image_file_path}/"
 # load perlands and implnds variables
 source $MODEL_ROOT/run_bhatt/fragments/set_landuse
 foreach landuse ($perlnds $implnds)
   set output_file_path="$CBP_EXPORT_DIR/land/$scenario/pwater/${landuse}${seg}_pwater.csv"
-  Rscript $META_MODEL_ROOT/scripts/land/hsp_pwater.R $segment $scenario $landuse $output_file_path $image_file_path $vers $ftype
-  Rscript $META_MODEL_ROOT/scripts/land/hsp_pwater_stats.R $segment $scenario $landuse $output_file_path $image_file_path $vers $ftype
+  set pwater_file = "$image_file_path/${landuse}${segment}_pwater.csv"
+  set img_file = "${image_file_path}/${landuse}${segment}_pwater.png"
+  set img_url = "$CBP_EXPORT_URL/land/$scenario/images/${landuse}${segment}_pwater.png"
+  echo "Running: Rscript $META_MODEL_ROOT/scripts/land/aglzuz_storage.R $segment $scenario $landuse $output_file_path $img_file $vers $ftype $img_url "
+  Rscript $META_MODEL_ROOT/scripts/land/aglzuz_storage.R $segment $scenario $landuse $output_file_path $img_file $vers $ftype $img_url 
+
 end
