@@ -1,0 +1,26 @@
+#!/bin/csh
+# Run post-process extract routine
+set scenario=$1
+set segment=$2
+set seg=$segment # this is for backwards compatibility with scripts source
+# temp space
+set tempdir=$3
+if ( ! -d $tempdir ) then
+  echo "Creating $tempdir"
+  mkdir $tempdir
+endif
+
+# Load configuration
+source $META_MODEL_ROOT/models/$MODEL/model_config
+
+set RO_CLEAN_FILES = `cbp get_config $scenario script RO_CLEAN_FILES`
+if ( $RO_CLEAN_FILES != 1 ) then
+  echo "Keeping detailed land use runoff files in $CBP_EXPORT_DIR/land/eos (to override set RO_CLEAN_FILES = 1 in $MODEL_ROOT/config/control/script/${scenario}.con)"
+  exit
+endif
+
+
+source $MODEL_ROOT/run_bhatt/fragments/set_landuse
+foreach lu ($perlnds $implnds)
+  rm ${CBP_EXPORT_DIR}/land/subsheds/pwater/${lu}${segment}_pwater.csv
+end

@@ -5,17 +5,12 @@
 basepath='/var/www/R';
 source("/var/www/R/config.R") # will need file in same folder/directory
 
-library(data.table)
-library(lubridate)
-library(zoo)
-#library(plyr)
-#library(caTools)
-#library(RColorBrewer)
-#library(IHA)
-library(PearsonDS)
-#library(ggplot2)
-library(dplyr)
-library(R.utils)
+suppressPackageStartupMessages(library(data.table))
+suppressPackageStartupMessages(library(lubridate))
+suppressPackageStartupMessages(library(zoo))
+suppressPackageStartupMessages(library(PearsonDS))
+suppressPackageStartupMessages(library(dplyr))
+suppressPackageStartupMessages(library(R.utils))
 
 
 #message(R_TempDir)
