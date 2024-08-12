@@ -157,6 +157,12 @@ if(regressionMethod == "POWER"){
                                mo_var = "beginMonth")
 }
 
+print("Writing out data to JSON and ratings to csv...")
+#WRITE OUT DATA. GET STATS OR JSON OUTPUT
+out <- monthEventOut$toJSON()
+write(out,pathToWriteJSON)
+write.csv(monthEventOut$atts$stats,pathToWriteRatings)
+
 print("Writing plots for redsids of monthly lms...")
 # This outputs our residuals. Only plot if there are more than two data points
 for (i in 1:12){
@@ -166,15 +172,11 @@ for (i in 1:12){
     plot(thisMonthLM,1)
     dev.off()
   }else{
-    print("Insufficient data to plot month ",i)
+    print(paste0("Insufficient data to plot month ",i))
   }
 }
 
 
-print("Writing out data to JSON and ratings to csv...")
-#WRITE OUT DATA. GET STATS OR JSON OUTPUT
-out <- monthEventOut$toJSON()
-write(out,pathToWriteJSON)
-write.csv(monthEventOut$atts$stats,pathToWriteRatings)
+
 
 
