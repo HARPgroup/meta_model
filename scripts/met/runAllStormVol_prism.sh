@@ -6,8 +6,7 @@ gageSQL="
 
 copy ( select hydrocode
 FROM dh_feature
-WHERE bundle = 'usgsgage'
-LIMIT 2
+WHERE bundle = 'watershed' AND ftype = 'usgs_full_drainage'
 ) to :'fname';"
 # turn off the expansion of the asterisk
 set -f
@@ -22,8 +21,8 @@ done
 
 filename="/home/cobrogan/${gage_coverage_file}"
 for i in `cat $filename`; do
-  echo "Running: sbatch /opt/model/meta_model/run_model stormVol_prism \"$i\" auto geo"
-  #sbatch /opt/model/meta_model/run_model raster_met stormVol_prism "$i" auto geo 
+  echo "Running: sbatch /opt/model/meta_model/run_model raster_met stormVol_prism \"$i\" auto geo"
+  sbatch /opt/model/meta_model/run_model raster_met stormVol_prism "$i" auto geo 
 done
 
 First one below giving trouble:

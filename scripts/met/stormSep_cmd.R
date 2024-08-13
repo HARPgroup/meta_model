@@ -32,11 +32,11 @@ pathToWrite <- args[4]
 #until best fit is found. This becomes baseline flow, brk
 hreg <- function(x, limit = 1){
   #What is the numeric percentile of x that is of percent limit?
-  lim <- as.numeric(quantile(x,limit))
+  lim <- as.numeric(quantile(x,limit,na.rm = TRUE))
   #Give all of x below the percentile of limit:
   x <- x[x <= lim]
   #Get all percentiles of x from 0 to 100% by 0.1%:
-  lns <- as.numeric(quantile(x, seq(0,1,0.001)))
+  lns <- as.numeric(quantile(x, seq(0,1,0.001),na.rm = TRUE))
   #Keep only values above 0
   lns <- lns[lns != 0]
   #A vector for mean square error
@@ -45,7 +45,7 @@ hreg <- function(x, limit = 1){
   #horizontal regression of the data in x
   for (i in 1:length(lns)){
     line <- lns[i]
-    mse[i] <- mean((x - line)^2)
+    mse[i] <- mean((x - line)^2,na.rm = TRUE)
   }
   #Return the percentile x that created the minimum least square error:
   return(lns[which.min(mse)])
