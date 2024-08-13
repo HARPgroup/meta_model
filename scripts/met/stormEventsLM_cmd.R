@@ -167,12 +167,12 @@ print("Writing plots for redsids of monthly lms...")
 # This outputs our residuals. Only plot if there are more than two data points
 for (i in 1:12){
   thisMonthLM <- monthEventOut$atts$lms[[i]]
-  if(length(thisMonthLM$residuals) > 2){
-    png(paste0(pathToWritePlots,"/USGSgage",pathDetails,"_Month",i,".png"))
-    plot(thisMonthLM,1)
-    dev.off()
-  }else{
+  if(is.logical(thisMonthLM) || length(thisMonthLM$residuals) <= 2){
     print(paste0("Insufficient data to plot month ",i))
+  }else{
+    # png(paste0(pathToWritePlots,"/USGSgage",pathDetails,"_Month",i,".png"))
+    plot(thisMonthLM,1)
+    # dev.off()
   }
 }
 
