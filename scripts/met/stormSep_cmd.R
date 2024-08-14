@@ -39,16 +39,23 @@ hreg <- function(x, limit = 1){
   lns <- as.numeric(quantile(x, seq(0,1,0.001),na.rm = TRUE))
   #Keep only values above 0
   lns <- lns[lns != 0]
-  #A vector for mean square error
-  mse <- numeric(length(lns))
-  #For each values in lns, determine the mean square error if this is a
-  #horizontal regression of the data in x
-  for (i in 1:length(lns)){
-    line <- lns[i]
-    mse[i] <- mean((x - line)^2,na.rm = TRUE)
+  #If all data points are 0 or below, lns will now be empty. In these cases,
+  #return 0
+  if(length(lns) == 0){
+    out <- 0
+  }else{
+    #A vector for mean square error
+    mse <- numeric(length(lns))
+    #For each values in lns, determine the mean square error if this is a
+    #horizontal regression of the data in x
+    for (i in 1:length(lns)){
+      line <- lns[i]
+      mse[i] <- mean((x - line)^2,na.rm = TRUE)
+    }
+    #Return the percentile x that created the minimum least square error:
+    out <- lns[which.min(mse)]
   }
-  #Return the percentile x that created the minimum least square error:
-  return(lns[which.min(mse)])
+  return(out)
 }
 
 print("Finding baseflow and local mins/maxes")
