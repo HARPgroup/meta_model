@@ -4,6 +4,7 @@ set segment=$2
 set tempdir=$3
 
 set tempbase=`basename $tempdir`
+install -d $MODEL_ROOT/tmp/$user-scratch
 cd $MODEL_ROOT/tmp/$user-scratch
 rm -Rf $tempbase
 

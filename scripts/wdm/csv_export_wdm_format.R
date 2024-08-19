@@ -48,9 +48,20 @@ if (length(argst) >= 8) {
 }
 
 message(paste("Time field style", time_fields, "count of args is", length(argst)) )
+
+timecol_adapt <- function(tdata) {
+  # convert from known variations
+  cnames <- colnames(tdata)
+  if ("yr" %in% cnames) { tdata$year <- tdata$yr }
+  if ("mo" %in% cnames) { tdata$month <- tdata$mo }
+  if ("da" %in% cnames) { tdata$day <- tdata$da }
+  if ("hr" %in% cnames) { tdata$hour <- tdata$hr }
+  return(tdata)
+}
   
 hydr <- fread(input_path)
 # must rename first several columns in case they are not time formatted, or not named at all
+hydr <- timecol_adapt(hydr)
 bnames <- colnames(hydr)
 if (!("year" %in% bnames)) {
    message("WARNING: CSV file does not have year column, and this code is made to assume the standard wdm2text format of year, month, day, hour, value")

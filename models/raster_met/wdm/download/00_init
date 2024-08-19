@@ -6,8 +6,8 @@ if [ "$geo_config" = "" ]; then
 fi
 . $wdm_config
 
-# TBD:
-# for re-do grid summary (time-consuming)
-# grid2land.sh $data_start $data_end $basedir $outdir $i
-# a2l_one $sdatemins $edatemins $outdir $lsegdir $i
-# LongTermAvgRNMax $lsegdir/met2date $lsegdir/RNMax 1 $i
+if [ ! -d "$tempdir" ]; then
+  mkdir $tempdir
+fi
+
+cd $tempdir

@@ -16,6 +16,6 @@ if (!(-e $inp)) then
   exit
 endif
 
-echo $inp | $HSPF_EXEC 
-
+#echo $inp | $HSPF_EXEC 
+cbp run_river.csh $scenario $segment
 # @todo: put in run execution checks like normal HSPF has
