@@ -6,10 +6,8 @@ if [ "$geo_config" = "" ]; then
 fi
 . $wdm_config
 
-if [ "$MET_PROCESS_METHOD" == "cbp6" ]; then
-  exit
+if [ ! -d "$tempdir" ]; then
+  mkdir $tempdir
 fi
 
-# Get data for an entire time period
-#          - resample (if needed)
-#         - temporal disaggregation (if needed)
+cd $tempdir
