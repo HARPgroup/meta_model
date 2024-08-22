@@ -1,0 +1,17 @@
+#!/bin/bash
+# loads the args, the raster specific config and change to tempdir
+wdm_config=`find_config wdm.config`
+if [ "$geo_config" = "" ]; then
+  wdm_config="$META_MODEL_ROOT/models/raster_met/wdm/wdm.config"
+fi
+. $wdm_config
+
+cd $CBP_ROOT/input/unformatted/$scenario
+echo "$segment $MET_DATA_SOURCE $scenario $varkey $sYear $eYear 1 1 1 1 1 1 1" | wdm_insert_ALL
+# now copy
+# for this prad_scen=met_scen=$scenario
+install -D "met_${segment}.wdm" $CBP_ROOT/input/scenario/climate/met/$scenario/
+install -D "prad_${segment}.wdm" $CBP_ROOT/input/scenario/climate/prad/$scenario/
+rm met_${segment}.wdm
+rm prad_${segment}.wdm
+
