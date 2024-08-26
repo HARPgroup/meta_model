@@ -51,6 +51,12 @@ print("Reading in data from arguments...")
 comp_data <- read.csv(comp_dataFilePath,
                       stringsAsFactors = FALSE)
 
+#If there are no non-NA flow values (may occur for a gage record that is
+#incongruous with precip data timeframe), exit script and warn user
+if(all(is.na(comp_data$obs_flow)) || all(is.na(comp_data$precip_cfs))){
+  stop("No data was found in comp_data. Check to ensure precip and flow files have been populated.")
+}
+
 #Can we learn anything based on what stormSep gives us? e.g. the number of
 #storms that occur in a given week, month, day, etc.?
 #First, create a dataset where USGS flow is not NA
@@ -97,13 +103,25 @@ getRollPrecip <- function(comp_data,stormDuration,
   sDate <- as.Date(endDate)
   #Get the index in comp_date df where the endDate occurs
   dateIndex <- grep(endDate,comp_data[,obs_date])
+  
+  #Adjust storm duration as needed. Necessary for daymet below:
+  stormDurationAdj <- stormDuration
+  
+  #It is possible that dateIndex is NULL if the observed date doesn't exist in
+  #comp_data. This could happen in daymet during leap years. So, check the next
+  #day if the first doesn't exist and reduce the storm duration by 1
+  if(length(dateIndex) == 0){
+    dateIndex <- grep(sDate+ 1,comp_data[,obs_date])
+    stormDurationAdj <- stormDurationAdj - 1
+  }
+  
   #Get all values from the precipColName in comp_data for the target duration
   #adjusted for the storm duration. So, if there is a five-day storm,
   #stormDuration is 5. If we are interested in rolling 7-day precip prior to and
   #throughout the storm, we'd want rollingDur = 7. So, we need dateIndex - 7 - 5
   #The precip data is in:
   precipData <- comp_data[,precipColName]
-  precipStorm <- precipData[(dateIndex - rollingDur - stormDuration + 2) : dateIndex]
+  precipStorm <- precipData[(dateIndex - rollingDur - stormDurationAdj + 2) : dateIndex]
   #Return total precip. Adjust for NAs that may occur due to indexing numbers
   #prior to start of comp_data
   totalPrecip <- sum(precipStorm * 86400,na.rm = TRUE)
