@@ -1,17 +1,35 @@
 #!/bin/bash
 # loads the args, the raster specific config and change to tempdir
 wdm_config=`find_config wdm.config`
-if [ "$geo_config" = "" ]; then
+if [ "$wdm_config" = "" ]; then
   wdm_config="$META_MODEL_ROOT/models/raster_met/wdm/wdm.config"
 fi
 . $wdm_config
 
+echo "Changing to: cd $CBP_ROOT/input/unformatted/$scenario"
 cd $CBP_ROOT/input/unformatted/$scenario
-echo "$segment $MET_DATA_SOURCE $scenario $varkey $sYear $eYear 1 1 1 1 1 1 1" | wdm_insert_ALL
-# now copy
+# now copy message and blank wdms TODO: support append mode
 # for this prad_scen=met_scen=$scenario
-install -D "met_${segment}.wdm" $CBP_ROOT/input/scenario/climate/met/$scenario/
-install -D "prad_${segment}.wdm" $CBP_ROOT/input/scenario/climate/prad/$scenario/
-rm met_${segment}.wdm
-rm prad_${segment}.wdm
+cp $CBP_ROOT/message.wdm ./
+echo "cp $CBP_ROOT/config/blank_wdm/blank_prad.wdm prad_$coverage.wdm"
+echo "cp $CBP_ROOT/config/blank_wdm/blank_met.wdm met_$coverage.wdm"
+cp $CBP_ROOT/config/blank_wdm/blank_prad.wdm prad_$coverage.wdm
+cp $CBP_ROOT/config/blank_wdm/blank_met.wdm met_$coverage.wdm
+# Update the RNMax file to reflect the date range
+# this is done on the source data set that has the entire time series
+LongTermAvgRNMax $RNMAX_DATA_SOURCE $RNMAX_DATA_PATH 1 $coverage
+# make a copy of the this coverages RNMax file locally
+RNdir=`dirname ${oDir}`
+echo "install -D $RNMAX_DATA_PATH/${coverage}.RNMax ${RNdir}/RNMax/${coverage}.RNMax"
+install -D $RNMAX_DATA_PATH/${coverage}.RNMax ${RNdir}/RNMax/${coverage}.RNMax
+# Populate the WDM files with the new data
+echo " echo \"$coverage $MET_DATA_SOURCE $scenario $varkey $start_year $end_year 1 1 1 1 1 1 1\" | wdm_insert_ALL"
+echo "$coverage $MET_DATA_SOURCE $scenario $varkey $start_year $end_year 1 1 1 1 1 1 1" | wdm_insert_ALL
+# now copy the newly populated WDMs to the model directory
+echo "install -D \"met_${coverage}.wdm\" $CBP_ROOT/input/scenario/climate/met/$scenario/met_${coverage}.wdm"
+install -D "met_${coverage}.wdm" $CBP_ROOT/input/scenario/climate/met/$scenario/met_${coverage}.wdm
+echo "install -D \"prad_${coverage}.wdm\" $CBP_ROOT/input/scenario/climate/prad/$scenario/prad_${coverage}.wdm"
+install -D "prad_${coverage}.wdm" $CBP_ROOT/input/scenario/climate/prad/$scenario/prad_${coverage}.wdm
+echo "rm met_${coverage}.wdm"
+echo "rm prad_${coverage}.wdm"
 
