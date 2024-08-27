@@ -28,8 +28,9 @@ image_directory_path <- argst[4]
 #image_directory_path <- '/media/model/p532/out/land/hsp2_2022/images' # needs to be commented when running on the server 
 model_version <- argst[5]
 lseg_ftype <- argst[6]
-# todo: fix this
+# todo: fix these
 save_url <- omsite
+landuse <- 'for' #allow to have a zoom in on a particular lu
 
 # Get the data
 pwater <- fread(pwater_file_path)
@@ -157,7 +158,7 @@ dat$Runit <- as.data.frame(rowSums(as.data.frame(pwater[,c(suro_cols,ifwo_cols,a
 # Runoff boxplot
 fname <- paste0(
   'Runit_boxplot_year',
-  landseg, '.png'
+  lseg_name, '.png'
 )
 fpath <-  paste(
   image_directory_path,
