@@ -17,3 +17,4 @@ for i in `ls $NLDAS_ROOT/out/lseg_csv/${BASELINE_MET_SCENARIO}/${coverage}.*`; d
 done
 csv_name=`basename $COVERAGE_WDM_CSV`
 echo "install -D $COVERAGE_WDM_CSV $oDir/$csv_name"
+install -D $COVERAGE_WDM_CSV $oDir/$csv_name

@@ -22,11 +22,12 @@ argst <- commandArgs(trailingOnly = T)
 land_segment_name <- argst[1]
 scenario_name <- argst[2]
 pwater_file_path <- argst[3] 
-cbp_export_dir=Sys.getenv(c('CBP_EXPORT_DIR'))[1]
-image_directory_path <- argst[5] # paste0(cbp_export_dir,'/land/', scenario, '/images')
+image_directory_path <- argst[4] 
+#cbp_export_dir=Sys.getenv(c('CBP_EXPORT_DIR'))[1]
+#image_directory_path <- paste0(cbp_export_dir,'/land/', scenario, '/images')
 #image_directory_path <- '/media/model/p532/out/land/hsp2_2022/images' # needs to be commented when running on the server 
-model_version <- argst[6]
-lseg_ftype <- argst[7]
+model_version <- argst[5]
+lseg_ftype <- argst[6]
 
 # Get the data
 pwater <- fread(pwater_file_path)
@@ -72,10 +73,11 @@ model <- RomProperty$new(
   ), 
   TRUE
 )
-model$save(TRUE)
+message(paste("Saving landseg model", model$propcode, model$entity_type, model$featureid, model$propcode))
 if (is.na(model$pid)) {
   model$propname = landseg$name
   model$varid = ds$get_vardef('om_model_element')$varid
+#  message(paste("Saving landseg model", model$propname, model$varid, model$featureid, $model$propcode))
   model$save(TRUE)
 }
 
