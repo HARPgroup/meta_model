@@ -21,20 +21,22 @@ omsite = "http://deq1.bse.vt.edu:81"
 argst <- commandArgs(trailingOnly = T)
 land_segment_name <- argst[1]
 scenario_name <- argst[2]
-pwater_file_path <- argst[3] 
+pwater_file_path <- argst[3] #test: pwater_file_path <- "http://deq1.bse.vt.edu:81/p6/out/land/subsheds/eos/N51113_0111-0211-0411.csv"
 image_directory_path <- argst[4] 
 #cbp_export_dir=Sys.getenv(c('CBP_EXPORT_DIR'))[1]
 #image_directory_path <- paste0(cbp_export_dir,'/land/', scenario, '/images')
 #image_directory_path <- '/media/model/p532/out/land/hsp2_2022/images' # needs to be commented when running on the server 
 model_version <- argst[5]
 lseg_ftype <- argst[6]
+# todo: fix this
+save_url <- omsite
 
 # Get the data
 pwater <- fread(pwater_file_path)
-pwater$date <- as.Date(pwater$index, format = "%m/%d/%Y %H:%M")
-pwater$week <- week(pwater$date)
-pwater$month <- month(pwater$date)
-pwater$year <- year(pwater$date)
+pwater$week <- week(pwater$thisdate)
+pwater$month <- month(pwater$thisdate)
+pwater$year <- year(pwater$thisdate)
+pwater <- as.data.frame(pwater)
 
 minyr <- min(pwater$year)
 maxyr <- max(pwater$year)
@@ -130,3 +132,45 @@ model_out_file <- RomProperty$new(
 )
 model_out_file$save(TRUE)
 
+# do basic plotting
+# extract and combine columns
+lu_prefix <- paste0(landuse,'_') # this insure we don't have redundant matches
+lu_dat_cols <- c('thisdate', names(pwater)[names(pwater) %like% lu_prefix])
+lu_pwater <- pwater[,lu_dat_cols]
+# now get SURO, IFWO and AGWO
+suro_cols <- names(pwater)[names(pwater) %like% "suro"]
+suro <- as.data.frame(rowSums(as.data.frame(pwater[,suro_cols])))[,1]
+suro$year <- as.data.frame(pwater$year)
+names(suro) <- 'suro'
+# interflow IFWO
+ifwo_cols <- names(pwater)[names(pwater) %like% "ifwo"]
+ifwo <- as.data.frame(rowSums(as.data.frame(pwater[,ifwo_cols])))[,1]
+names(ifwo) <- 'ifwo'
+# now do AGWO
+agwo_cols <- names(pwater)[names(pwater) %like% "agwo"]
+agwo <- as.data.frame(rowSums(as.data.frame(pwater[,agwo_cols])))[,1]
+names(agwo) <- 'agwo'
+
+dat <- pwater[,c('year', 'thisdate', 'month')]
+dat$Runit <- as.data.frame(rowSums(as.data.frame(pwater[,c(suro_cols,ifwo_cols,agwo_cols)])))[,1]
+
+# Runoff boxplot
+fname <- paste0(
+  'Runit_boxplot_year',
+  landseg, '.png'
+)
+fpath <-  paste(
+  image_directory_path,
+  fname,
+  sep='/'
+)
+furl <- paste(
+  save_url,
+  fname,
+  sep='/'
+)
+png(fpath)
+boxplot(as.numeric(dat$Runit) ~ dat$year, ylim=c(0,3))
+dev.off()
+message(paste("Saved file: ", fname, "with URL", furl))
+vahydro_post_metric_to_scenprop(model_scenario$pid, 'dh_image_file', furl, 'Runit_boxplot_year', 0.0, ds)
