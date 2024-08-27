@@ -141,7 +141,6 @@ lu_pwater <- pwater[,lu_dat_cols]
 # now get SURO, IFWO and AGWO
 suro_cols <- names(pwater)[names(pwater) %like% "suro"]
 suro <- as.data.frame(rowSums(as.data.frame(pwater[,suro_cols])))[,1]
-suro$year <- as.data.frame(pwater$year)
 names(suro) <- 'suro'
 # interflow IFWO
 ifwo_cols <- names(pwater)[names(pwater) %like% "ifwo"]
@@ -157,7 +156,7 @@ dat$Runit <- as.data.frame(rowSums(as.data.frame(pwater[,c(suro_cols,ifwo_cols,a
 
 # Runoff boxplot
 fname <- paste0(
-  'Runit_boxplot_year',
+  'Runit_boxplot_year_',
   lseg_name, '.png'
 )
 fpath <-  paste(
