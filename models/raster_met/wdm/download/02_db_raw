@@ -1,7 +1,7 @@
 #!/bin/bash
 # loads the args, the raster specific config and change to tempdir
 wdm_config=`find_config wdm.config`
-if [ "$geo_config" = "" ]; then
+if [ "$wdm_config" = "" ]; then
   wdm_config="$META_MODEL_ROOT/models/raster_met/wdm/wdm.config"
 fi
 . $wdm_config
@@ -24,8 +24,6 @@ echo "No disagregation requested"
 # BEGIN - actually loading local data
 echo "Aggregating precip for $coverage from "$datasource
 outfile=`basename $COVERAGE_PRECIP_FILE`
-tstime=`TZ="$TZ" date -d "$START_DATE" +'%s'`
-tsendtime=`TZ="$TZ" date -d "$END_DATE" +'%s'`
 echo "calculated tstime $tstime=TZ=\"$TZ\" date -d \"$START_DATE\" +'%s'"
 echo "calculated tsendtime $tsendtime=TZ=\"$TZ\" date -d \"$END_DATE\" +'%s'"
 echo "$MET_SCRIPT_PATH/sh/calc_raster_ts $coverage $varkey $RASTER_SQL_FILE /tmp/$outfile $db_host $db_name $tstime $tsendtime"
