@@ -1,18 +1,13 @@
 # Compare two met CSV files
 basepath='/var/www/R';
 source("/var/www/R/config.R")
+library("data.table")
 
 message("Use: Rscript met_compare_ts.R entity_type featureid varkey met_file1 met_file2 ")
-# load the feature -- get feature hydroid
-# find the dh_timeseries_weather record for this event
-# attach an image property to the record
-# return 
-# met_file1="http://deq1.bse.vt.edu:81/met/nldas2/precip/N51101-nldas2.csv"; 
-# met_file2="http://deq1.bse.vt.edu:81/met/nldas2/out/lseg_csv/1984010100-2022123123/A51101.PRC"
 
-lseg="N51113" # H51113 N51047 N51113
-scen1="nldas2"
-scen2="1984010100-2022123123"
+lseg="N51660" # H51113 N51047 N51113
+scen1="nldas2_resamptile"
+scen2="met2date" #"1984010100-2022123123"
 met_file1=paste(omsite,"met/out/lseg_csv",scen1,paste0(lseg,".PRC"), sep="/")
 met_file2=paste(omsite,"met/out/lseg_csv",scen2,paste0(lseg,".PRC"), sep="/")
 met1 <- fread(met_file1)
@@ -41,6 +36,7 @@ met_co_daily <-
      group by yr, mo, da
     "
   )
+
 plot(met_co_daily$met1 ~ met_co_daily$met2, main=lseg)
 
 quantile(met_co$met1, probs=c(0,0.25,0.5,0.8, 0.9, 0.95,0.99,1.0))
