@@ -34,6 +34,13 @@ pathToWritePlots=$RESID_PLOTS
 # this data with unique names
 plotDetails=$USGS_GAGE
 
+#Create plot directory if it does not exist
+if [ ! -d $RESID_PLOTS ]; then
+  echo "Creating plot directory at $RESID_PLOTS"
+  mkdir -p $RESID_PLOTS
+fi
+
+
 cmd="Rscript $META_MODEL_ROOT/scripts/met/stormEventsLM_cmd.R $comp_dataFilePath $stormStatsPath $stormPath $rollingDur $json_file $rate_file $pathToWritePlots $plotDetails $STORMSEP_REGRESSION_METHOD"
 echo "Running: $cmd"
 eval $cmd
