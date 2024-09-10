@@ -21,10 +21,10 @@ done
 
 filename="/home/cobrogan/${gage_coverage_file}"
 for i in `cat $filename`; do
-  echo "Running: sbatch /opt/model/meta_model/run_model raster_met stormVol_prism \"$i\" auto geo"
-  sbatch /opt/model/meta_model/run_model raster_met stormVol_prism "$i" auto geo 
+  echo "Running: sbatch /opt/model/meta_model/run_model raster_met stormVol_nldas2 \"$i\" auto geo"
+  sbatch /opt/model/meta_model/run_model raster_met stormVol_nldas2 "$i" auto geo 
 done
 
-First one below giving trouble:
-Running: sbatch /opt/model/meta_model/run_model raster_met stormVol_prism "usgs_01613900" auto geo
-Running: sbatch /opt/model/meta_model/run_model raster_met stormVol_prism "usgs_01616100" auto geo
+#First one below giving trouble:
+sbatch /opt/model/meta_model/run_model raster_met stormVol_nldas2 "usgs_ws_01613900" auto geo
+sbatch /opt/model/meta_model/run_model raster_met stormVol_nldas2 "usgs_ws_01616100" auto geo
