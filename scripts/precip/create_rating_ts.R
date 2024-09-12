@@ -7,9 +7,17 @@ if (length(argst) != 4){
   q()
 }
 
+#A file with a timeseries to which the rating will be joined based on month or
+#month/day/year based on rating_timescale below
 base_ts_file <- argst[1]
+#The rating file that should contain monthly ratings if rating_timescale is
+#monthly or should otherwise be obs_date and rating
 rating_file <- argst[2]
+#The file path to which write the timeseries ratings
 rating_ts_file <- argst[3]
+#Either monthly or obs_date and expresses what kind of ratings are in
+#rating_file. Monthly would contain a column "mo" that has 1:12 in it such that
+#there are only 12 rows in the dataset
 rating_timescale <- argst[4]
 
 # Load the data
@@ -29,18 +37,29 @@ if (!all(req_cols %in% r_names)) {
   q()
 }
 
-# merge
+# Based on rating_timescale, join the ratings data frame to base_ts based on the
+# month or the observed date obs_date. The output file will have a start_date
+# and end_date column as the monthly data will be grouped by month
 if (rating_timescale == 'monthly') {
   rating_sql <- "
-    select a.obs_date, b.rating
-    from base_ts as a
+    select mon_base_ts.start_date,
+    mon_base_ts.end_date,
+    b.rating
+    from (
+      select min(a.obs_date) as start_date,
+      max(a.obs_date) as end_date,
+      mo,yr
+      from base_ts as a
+      group by mo,yr
+    ) as mon_base_ts
     left outer join ratings as b
     on (
-      a.mo = b.mo
+      mon_base_ts.mo = b.mo
     )
-    order by a.obs_date
+    order by mon_base_ts.start_date
   "
 } else {
+  #For non-monthly ratings, include the start and end date
   rating_sql <- "
     select a.start_date, a.end_data, b.rating
     from base_ts as a

@@ -176,10 +176,15 @@ if(regressionMethod == "POWER"){
 }
 
 print("Writing out data to JSON and ratings to csv...")
+
+#Rename the ratings before writing them out
+ratingsOut <- monthEventOut$atts$stats
+names(ratings) <- c('mo', 'rating') 
+
 #WRITE OUT DATA. GET STATS OR JSON OUTPUT
 out <- monthEventOut$toJSON()
 write(out,pathToWriteJSON)
-write.csv(monthEventOut$atts$stats,pathToWriteRatings)
+write.csv(ratingsOut,pathToWriteRatings, row.names=FALSE)
 
 print("Writing plots for redsids of monthly lms...")
 # This outputs our residuals. Only plot if there are more than two data points
@@ -193,8 +198,4 @@ for (i in 1:12){
     # dev.off()
   }
 }
-
-
-
-
 
