@@ -179,7 +179,7 @@ print("Writing out data to JSON and ratings to csv...")
 
 #Rename the ratings before writing them out
 ratingsOut <- monthEventOut$atts$stats
-names(ratings) <- c('mo', 'rating') 
+names(ratingsOut) <- c('mo', 'rating') 
 
 #WRITE OUT DATA. GET STATS OR JSON OUTPUT
 out <- monthEventOut$toJSON()
