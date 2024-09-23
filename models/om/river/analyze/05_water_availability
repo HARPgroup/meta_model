@@ -1,0 +1,8 @@
+#!/bin/bash
+
+. $META_MODEL_ROOT/models/om/om.config
+
+# call the routine
+
+echo "Calling: Rscript /opt/model/meta_model/scripts/river/WA_export.R $pid $elid $scenario $BASELINE_SCENARIO"
+Rscript /opt/model/meta_model/scripts/river/WA_export.R $pid $elid $scenario $BASELINE_SCENARIO

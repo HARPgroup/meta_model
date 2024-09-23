@@ -1,0 +1,6 @@
+#!/bin/bash
+
+. $META_MODEL_ROOT/models/om/om.config
+
+pid=`/opt/model/meta_model/scripts/rest/get_model.R $segment $version`
+echo "PID: $pid"
