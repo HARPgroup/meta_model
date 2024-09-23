@@ -4,7 +4,6 @@
 basepath='/var/www/R';
 source("/var/www/R/config.R")
 library("lubridate")
-library("data")
 # Set up our data source
 ds <- RomDataSource$new(site, rest_uname = rest_uname)
 ds$get_token(rest_pw)
