@@ -6,8 +6,8 @@ if [ "$wdm_config" = "" ]; then
 fi
 . $wdm_config
 
-echo "Changing to: cd $CBP_ROOT/input/unformatted/$scenario"
-cd $CBP_ROOT/input/unformatted/$scenario
+echo "Changing to: cd $CBP_ROOT/input/unformatted/$MET_DATA_SOURCE"
+cd $CBP_ROOT/input/unformatted/$MET_DATA_SOURCE
 # now copy message and blank wdms TODO: support append mode
 # for this prad_scen=met_scen=$scenario
 cp $CBP_ROOT/message.wdm ./
@@ -23,13 +23,13 @@ RNdir=`dirname ${oDir}`
 echo "install -D $RNMAX_DATA_PATH/${coverage}.RNMax ${RNdir}/RNMax/${coverage}.RNMax"
 install -D $RNMAX_DATA_PATH/${coverage}.RNMax ${RNdir}/RNMax/${coverage}.RNMax
 # Populate the WDM files with the new data
-echo " echo \"$coverage $MET_DATA_SOURCE $scenario $varkey $start_year $end_year 1 1 1 1 1 1 1\" | wdm_insert_ALL"
-echo "$coverage $MET_DATA_SOURCE $scenario $varkey $start_year $end_year 1 1 1 1 1 1 1" | wdm_insert_ALL
+echo " echo \"$coverage $MET_DATA_SOURCE $scenario $METPRAD_SCEN $start_year $end_year 1 1 1 1 1 1 1\" | wdm_insert_ALL"
+echo "$coverage $MET_DATA_SOURCE $scenario $METPRAD_SCEN $start_year $end_year 1 1 1 1 1 1 1" | wdm_insert_ALL
 # now copy the newly populated WDMs to the model directory
-echo "install -D \"met_${coverage}.wdm\" $CBP_ROOT/input/scenario/climate/met/$scenario/met_${coverage}.wdm"
-install -D "met_${coverage}.wdm" $CBP_ROOT/input/scenario/climate/met/$scenario/met_${coverage}.wdm
-echo "install -D \"prad_${coverage}.wdm\" $CBP_ROOT/input/scenario/climate/prad/$scenario/prad_${coverage}.wdm"
-install -D "prad_${coverage}.wdm" $CBP_ROOT/input/scenario/climate/prad/$scenario/prad_${coverage}.wdm
+echo "install -D \"met_${coverage}.wdm\" $CBP_ROOT/input/scenario/climate/met/$METPRAD_SCEN/met_${coverage}.wdm"
+install -D "met_${coverage}.wdm" $CBP_ROOT/input/scenario/climate/met/$METPRAD_SCEN/met_${coverage}.wdm
+echo "install -D \"prad_${coverage}.wdm\" $CBP_ROOT/input/scenario/climate/prad/$METPRAD_SCEN/prad_${coverage}.wdm"
+install -D "prad_${coverage}.wdm" $CBP_ROOT/input/scenario/climate/prad/$METPRAD_SCEN/prad_${coverage}.wdm
 echo "rm met_${coverage}.wdm"
 echo "rm prad_${coverage}.wdm"
 
