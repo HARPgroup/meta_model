@@ -13,16 +13,17 @@ ds$get_token(rest_pw)
 argst <- commandArgs(trailingOnly = T)
 if (length(argst) < 7) {
   
-  message("Use: Rscript met_store_info.R datasource/scenario coverage_hydrocode coverage_bundle coverage_ftype model_version met_file")
-  message("Ex: Rscript met_store_info.R nldas2 N5113 landunit cbp6_landseg met_file")
+  message("Use: Rscript met_store_info.R $ddate datasource coverage_hydrocode coverage_bundle coverage_ftype model_version met_file")
+  message("Ex: Rscript met_store_info.R $ddate nldas2 N5113 landunit cbp6_landseg met_file")
   q('n')
 }
-scenario_name <- argst[1]
-coverage_hydrocode <- argst[2]
-coverage_bundle <- argst[3]
-coverage_ftype <- argst[4]
-model_version <- argst[5] 
-met_file <- argst[6]
+ddate <- argst[1]
+datasource <- argst[2]
+coverage_hydrocode <- argst[3]
+coverage_bundle <- argst[4]
+coverage_ftype <- argst[5]
+model_version <- argst[6] 
+met_file <- argst[7] 
 # load the feature -- get feature hydroid
 # find the dh_timeseries_weather record for this event
 # attach an image property to the record
@@ -41,8 +42,6 @@ feature <- RomFeature$new(
 # this will create or retrieve a model scenario to house this summary data.
 model <- om_model_object(feature, model_version)
 # if a matching model does not exist, this will go ahead and create one
-scenario <- om_get_model_scenario(model, scenario_name)
-
-met_data <- read.table(met_file, header = TRUE, sep=",")
-numrecs <- nrow(met_data)
-vahydro_post_metric_to_scenprop(scenario$pid, 'om_class_Constant', NULL, 'num_records', numrecs, ds)
+scenario <- om_get_model_scenario(model, data_source)
+# save raster file location
+vahydro_post_metric_to_scenprop(scenario$pid, 'dh_image_file', met_file, 'met_raster', 0.0, ds)
