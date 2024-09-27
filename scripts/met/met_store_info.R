@@ -4,7 +4,6 @@
 basepath='/var/www/R';
 source("/var/www/R/config.R")
 library("lubridate")
-library("data")
 # Set up our data source
 ds <- RomDataSource$new(site, rest_uname = rest_uname)
 ds$get_token(rest_pw)
@@ -12,8 +11,8 @@ ds$get_token(rest_pw)
 # Accepting command arguments:
 argst <- commandArgs(trailingOnly = T)
 if (length(argst) < 7) {
-  
-  message("Use: Rscript met_store_info.R datasource/scenario coverage_hydrocode coverage_bundle coverage_ftype model_version met_file")
+
+  message("Use: Rscript met_store_info.R scenario coverage_hydrocode coverage_bundle coverage_ftype model_version met_file")
   message("Ex: Rscript met_store_info.R nldas2 N5113 landunit cbp6_landseg met_file")
   q('n')
 }
@@ -39,7 +38,7 @@ feature <- RomFeature$new(
   TRUE
 )
 # this will create or retrieve a model scenario to house this summary data.
-model <- om_model_object(feature, model_version)
+model <- om_model_object(ds, feature, model_version)
 # if a matching model does not exist, this will go ahead and create one
 scenario <- om_get_model_scenario(model, scenario_name)
 
