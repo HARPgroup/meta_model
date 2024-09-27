@@ -5,14 +5,13 @@ set tempdir=$3
 set clean=0
 # we need more than the standard data here
 source $META_MODEL_ROOT/models/$MODEL/model_config
-echo "Script dir:  $SCRIPT_DIR "
 set tempbase=`basename $tempdir`
 
 # note: etm assumes that you are already inside the temp dir, or if you send the temp dir in
 #       that you want to create it, so we shiould change into it, then run without sending 
 #       directory arguments (5 and 6)
 echo "cd $tempdir" # e.g. run/standard, or run_bhat/OneCommandWSM_P6_STRLOAD_SCENCF
-echo "cbp run_etm.csh $scenario $segment"
+echo "MODEL_ROOT/run/standard/run_etm.csh $scenario $segment $MODEL_ROOT"
 # e.g. run/standard, or run_bhat/OneCommandWSM_P6_STRLOAD_SCENCF
 cd $tempdir
-cbp run_etm.csh $scenario $segment
+$MODEL_ROOT/run/standard/run_etm.csh $scenario $segment $MODEL_ROOT

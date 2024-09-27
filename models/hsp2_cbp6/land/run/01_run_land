@@ -12,6 +12,12 @@ cd $tempdir
 
 source $tree/run_bhatt/fragments/set_landuse
 echo "The real hsp2 is being used"
+echo "Getting VENV_MODEL='cbp get_config ${scenario} script VENV_MODEL'"
+set VENV_MODEL=`cbp get_config ${scenario} script VENV_MODEL`
+set VENV_CMD="$VENV_MODEL/bin/activate.csh"
+echo "Loading VENV: source $VENV_CMD"
+source $VENV_MODEL/bin/activate.csh
+
 foreach lu ($perlnds $implnds)
   echo running $lu for segment $seg land scenario $scenario
   set inp = $lu$seg'.h5'

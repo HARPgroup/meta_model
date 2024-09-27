@@ -6,7 +6,9 @@ set seg=$segment # this is for backwards compatibility with scripts source
 set tempdir=$3
 # Load configuration
 source $META_MODEL_ROOT/models/$MODEL/model_config
+# This does not appear to be needed in the p5 version of runs?
+# - Appears it is already done in the run_river.csh file
 # copy the final wdm back to the common scenario storage space
-cd $tempdir
-cp $seg'.wdm' $MODEL_ROOT/tmp/wdm/river/$scenario/stream/ -f
+#cd $tempdir
+#cp $seg'.wdm' $MODEL_ROOT/tmp/wdm/river/$scenario/stream/ -f
 

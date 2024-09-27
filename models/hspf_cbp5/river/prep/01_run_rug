@@ -7,5 +7,5 @@ echo "cd $tmp_dir"
 
 cd $tmp_dir
 clean=1
-cbp one_rug $scenario $segment $tmp_dir $clean
-
+echo "Run: cbp run_rug.csh $scenario $segment $MODEL_ROOT"
+$MODEL_ROOT/run/standard/run_rug.csh $scenario $segment $MODEL_ROOT

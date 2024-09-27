@@ -6,14 +6,16 @@ set tree = $MODEL_ROOT
 
 # Load configuration
 source $META_MODEL_ROOT/models/$MODEL/model_config
+set SEPTIC_WDMS = `cbp get_config ${scenario} script SEPTIC_WDMS`
 
 cd $tempdir
 ########## make stream wdms: copy the eos wdm then add upstream to it. ******
-cp -v $tree/config/blank_wdm/blank_ps_sep_rib_rpa_div_ams.wdm ps_sep_div_ams_$scenario'_'$seg'.wdm'
-echo $scenario, $seg | $tree/code/bin/combine_ps_sep_rib_rpa_div_ams_from_landsegs.exe
-if (-e problem) then
-  echo ' '
-  cat problem
-  exit
+cp -v $tree/config/blank_wdm/blank_ps_sep_div_ams.wdm ps_sep_div_ams_$scenario'_'$seg'.wdm'
+if ($SEPTIC_WDMS > 0) then 
+  echo $scenario, $seg | $tree/code/bin/combine_ps_sep_rib_rpa_div_ams_from_landsegs.exe
+  if (-e problem) then
+    echo ' '
+    cat problem
+    exit
+  endif
 endif
-
