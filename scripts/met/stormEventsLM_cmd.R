@@ -44,7 +44,7 @@ if(is.na(args[9])){
 }
 
 #Need plotBin R6 and mon_lm functions
-source("https://raw.githubusercontent.com/HARPgroup/HARParchive/master/HARP-2024-2025/functions/lm_analysis_plots.R")
+source("https://raw.githubusercontent.com/HARPgroup/meta_model/master/scripts/precip/lm_analysis_plots.R")
 
 print("Reading in data from arguments...")
 #Read in the combined precipitation and flow data for that USGS gage
