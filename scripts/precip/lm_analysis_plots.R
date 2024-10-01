@@ -16,15 +16,12 @@ plotBin <- R6Class(
       self.toJSON()
     },
     toJSON = function() {
-      # json_out <- jsonlite::serializeJSON(self)
-      # json_out[['data']] <- jsonlite::serializeJSON(self$data, pretty=TRUE)
-      # json_out[['atts']] <- jsonlite::serializeJSON(self$atts, pretty=TRUE)
-      # json_out[['r_col']] <- jsonlite::serializeJSON(self$r_col, pretty=TRUE)
+      #Write JSON files individually as separate strings/JSON dictionaries
       json_self <- jsonlite::serializeJSON(self)
       json_data <- jsonlite::serializeJSON(self$data, pretty=TRUE)
       json_atts <- jsonlite::serializeJSON(self$atts, pretty=TRUE)
       json_r_col <- jsonlite::serializeJSON(self$r_col, pretty=TRUE)
-      
+      #Combine into a single JSON array
       json_out <- paste0("[",json_self,",",json_data,",",json_atts,",",json_r_col,"]")
       
       return(json_out)
