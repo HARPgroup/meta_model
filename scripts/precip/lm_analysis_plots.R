@@ -29,17 +29,53 @@ plotBin <- R6Class(
       
       return(json_out)
     },
-    fromJSON = function(json_out) {
+    fromJSON = function(jsonFileOrString,fromJSONFile = FALSE) {
+      #Method takes two arguments:
+      #jsonFileOrString = Either a string with raw serialized JSON or a file
+      #                   path to a serialzed plotBin JSON file
+      #fromJSONFile = If jsonFileOrString is a file path, this MUST be TRUE.
+      #               Otherwise set to FALSE (default)
       
-      simplifyJSON <- gsub("^\\[","",json_out)
-      simplifyJSON <- gsub("\\]$","",simplifyJSON)
+      if(fromJSONFile){
+        #Read in the raw serialized JSON data as a large character
+        json_out <- readChar(jsonFileOrString, file.info(jsonFileOrString)$size)
+      }else{
+        #JSON is already input by user as character string
+        json_out <- jsonFileOrString
+      }
       
-      jsonAtts <- gsub("\\},\\{(.*)\\},\\{.*\\},\\{.*","\\{\\1\\}",simplifyJSON)
+      #The JSON is coming in as an array of dictionaries. To jsonlite::fromJSON
+      #can read these in, but the returned format is a messy, very long list
+      #that would take some effort to decipher programatically. Instead, we can
+      #parse the JSON for each component of plotBin that we need. This may be
+      #more complicated if the object grows significantly, but for now is quite
+      #simple. Using regular expression, we group the JSON dictionaries one at a
+      #time using parentheses. We search for data after the R6 environment
+      #dictionary by specifying our first group is after a literal bracket,
+      #literal curly brace, followed by any character any number of times
+      #enclosed by },{. We repeatedly look for },{ to find remaining
+      #dictionaries
+      dictionaryParse <-"\\[\\{.*\\},\\{(.+)\\},\\{(.+)\\},\\{(.*)\\}\\]" 
+      #As we select groups, we can store the JSON of that dictionary into a
+      #variable and use this variable to populate the various data within
+      #plotBin. It's important to note that this method is inherently tied to
+      #toJSON(). Any changes in the order with which data is written out in
+      #toJSON() must be reflected here
+      jsonData <- gsub(dictionaryParse,
+                       "\\{\\1\\}",
+                       json_out)
+      jsonAtts <- gsub(dictionaryParse,
+                       "\\{\\2\\}",
+                       json_out)
+      jsonR_Col <- gsub(dictionaryParse,
+                       "\\{\\3\\}",
+                       json_out)
       
-      json_out_df <- fromJSON(json_out)
-      self$data <- jsonlite::unserializeJSON(json_out[['data']])
-      self$atts <- json_out_df
-      self$r_col <- jsonlite::unserializeJSON(json_out[['r_col']])
+      #Populate data on self using unserializeJSON to read in the data using the
+      #'correct' format from the unserialized style
+      self$data <- jsonlite::unserializeJSON(jsonData)
+      self$atts <- jsonlite::unserializeJSON(jsonAtts)
+      self$r_col <- jsonlite::unserializeJSON(jsonR_Col)
     }
   )
 )
