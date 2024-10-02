@@ -26,7 +26,7 @@ plotBin <- R6Class(
       
       return(json_out)
     },
-    fromJSON = function(jsonFileOrString,fromFileTextURL = FALSE) {
+    fromJSON = function(jsonFileOrString,fromJSONFile = FALSE) {
       #Method takes two arguments:
       #jsonFileOrString = Either a string with raw serialized JSON or a file
       #                   path to a serialzed plotBin JSON file
