@@ -26,7 +26,7 @@ plotBin <- R6Class(
       
       return(json_out)
     },
-    fromJSON = function(jsonFileOrString,fromJSONFile = FALSE) {
+    fromJSON = function(jsonFileOrString,fromFileTextURL = FALSE) {
       #Method takes two arguments:
       #jsonFileOrString = Either a string with raw serialized JSON or a file
       #                   path to a serialzed plotBin JSON file
@@ -34,12 +34,15 @@ plotBin <- R6Class(
       #               Otherwise set to FALSE (default)
       
       if(fromJSONFile){
-        json_out <- RCurl::getURL(jsonFileOrString)
-        # testTemp <- tempfile()
-        # write(test,testTemp)
-        # #Read in the raw serialized JSON data as a large character
-        # json_out <- readChar(testTemp, file.info(testTemp)$size)
-        
+        #If fromJSONFile is TRUE, detect if jsonFileOrString is character data
+        #or a URL
+        if(grepl("^https?://",jsonFileOrString)){
+          #Read the URL as raw character data
+          json_out <- RCurl::getURL(jsonFileOrString)
+        }else{
+          #Read in the raw serialized JSON data as a large character
+          json_out <- readChar(testTemp, file.info(testTemp)$size)
+        }
       }else{
         #JSON is already input by user as character string
         json_out <- jsonFileOrString
