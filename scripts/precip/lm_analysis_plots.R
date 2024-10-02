@@ -34,8 +34,12 @@ plotBin <- R6Class(
       #               Otherwise set to FALSE (default)
       
       if(fromJSONFile){
-        #Read in the raw serialized JSON data as a large character
-        json_out <- readChar(jsonFileOrString, file.info(jsonFileOrString)$size)
+        json_out <- RCurl::getURL(jsonFileOrString)
+        # testTemp <- tempfile()
+        # write(test,testTemp)
+        # #Read in the raw serialized JSON data as a large character
+        # json_out <- readChar(testTemp, file.info(testTemp)$size)
+        
       }else{
         #JSON is already input by user as character string
         json_out <- jsonFileOrString
