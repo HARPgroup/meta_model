@@ -5,13 +5,14 @@
 suppressPackageStartupMessages(library(sqldf))
 suppressPackageStartupMessages(library(lubridate))
 
-startDate <- "1984-01-01"
-endDate <- "2023-12-31"
-csvInput <- "C:/Users/gcw73279.COV/Desktop/gitBackups/gitHome/usgs_ws_01668000-nldas-storm_volume-rating-ts.csv,C:/Users/gcw73279.COV/Desktop/gitBackups/gitHome/usgs_ws_01668000-daymet-storm_volume-rating-ts.csv,C:/Users/gcw73279.COV/Desktop/gitBackups/gitHome/usgs_ws_01668000-PRISM-storm_volume-rating-ts.csv"
-oldColInput <- 'rating'
-newColInput <- "nldas2_precip_hourly_tiled_16x16,daymet_mod_daily,prism_mod_daily"
-startDateCol <- 'start_date'
-endDateCol <- 'end_date'
+#Testing Variables:
+# startDate <- "1984-01-01"
+# endDate <- "2023-12-31"
+# csvInput <- "C:/Users/gcw73279.COV/Desktop/gitBackups/gitHome/usgs_ws_01668000-nldas-storm_volume-rating-ts.csv,C:/Users/gcw73279.COV/Desktop/gitBackups/gitHome/usgs_ws_01668000-daymet-storm_volume-rating-ts.csv,C:/Users/gcw73279.COV/Desktop/gitBackups/gitHome/usgs_ws_01668000-PRISM-storm_volume-rating-ts.csv"
+# oldColInput <- 'rating'
+# newColInput <- "nldas2_precip_hourly_tiled_16x16,daymet_mod_daily,prism_mod_daily"
+# startDateCol <- 'start_date'
+# endDateCol <- 'end_date'
 
 #Inputs to the script are to be character strings with literal commas separating
 #values.

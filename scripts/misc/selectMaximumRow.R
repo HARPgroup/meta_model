@@ -3,9 +3,10 @@
 #the day using the column name
 suppressPackageStartupMessages(library(sqldf))
 
-csvInput <- "C:/Users/gcw73279.COV/Desktop/gitBackups/gitHome/usgs_ws_01668000-nldas-storm_volume-rating-ts.csv,C:/Users/gcw73279.COV/Desktop/gitBackups/gitHome/usgs_ws_01668000-daymet-storm_volume-rating-ts.csv,C:/Users/gcw73279.COV/Desktop/gitBackups/gitHome/usgs_ws_01668000-PRISM-storm_volume-rating-ts.csv"
-ratingColumns <- "nldas2_precip_hourly_tiled_16x16,daymet_mod_daily,prism_mod_daily"
-defaultColumn <- "nldas2_precip_hourly_tiled_16x16"
+#Testing variables:
+# csvInput <- "C:/Users/gcw73279.COV/Desktop/gitBackups/gitHome/usgs_ws_01668000-nldas-storm_volume-rating-ts.csv,C:/Users/gcw73279.COV/Desktop/gitBackups/gitHome/usgs_ws_01668000-daymet-storm_volume-rating-ts.csv,C:/Users/gcw73279.COV/Desktop/gitBackups/gitHome/usgs_ws_01668000-PRISM-storm_volume-rating-ts.csv"
+# ratingColumns <- "nldas2_precip_hourly_tiled_16x16,daymet_mod_daily,prism_mod_daily"
+# defaultColumn <- "nldas2_precip_hourly_tiled_16x16"
 
 #Input ratings file
 csvInput <- argst[1]
