@@ -46,10 +46,10 @@ cat $ratings_sql_file | psql -h $db_host $db_name
 
 #Insert the ratings files into dh_timeseries under the appropriate scenario property
 #Call an RScript to create a batch insert query. Inputs to R script are scenarioPropVarkey, modelPropName, and coverage
-modelProp_sql="
-insert into dh_timeseries(tstime,tsendtime,tsvalue,featureid,varid,entity_type)
-"
-# turn off the expansion of the asterisk
+cmd="Rscript $META_MODEL_ROOT/scripts/met/insertRatings.R $ratingsVarkey $scenarioPropName $modelPropName $coverage $RATING_TS_FILE $ratings_sql_file"
+echo "Running: $cmd"
+eval $cmd
+
+# Run the SQL written out from insertRatings.R
 set -f
-echo -e $modelProp_sql > $scenarioProp_sql_file 
 cat $scenarioProp_sql_file | psql -h $db_host $db_name
