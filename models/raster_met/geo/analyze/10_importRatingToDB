@@ -59,10 +59,11 @@ from (
 	ON v.hydroid = :'ratings'
 	LEFT JOIN dh_timeseries AS dupe
 	ON (
-	a.tstime = dupe.tstime 
+		a.tstime = dupe.tstime 
 		AND a.tsendtime = dupe.tsendtime
 		AND a.featureid = dupe.featureid
 		AND a.entity_type = dupe.entity_type
+		AND v.hydroid = dupe.varid
 	)
 	WHERE dupe.tid IS NOT NULL) as b;
 "
