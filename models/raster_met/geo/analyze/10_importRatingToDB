@@ -55,7 +55,7 @@ SET
 	entity_type = b.entity_type
 FROM(
 	SELECT a.tstime, a.tsendtime, a.tsvalue, a.featureid, dupe.varid as varid, a.entity_type
-	FROM tmp_dh_timerseriesCOB AS dupe
+	FROM dh_timeseries AS dupe
 	INNER JOIN tmp_ratings AS a
 	ON (
 		dupe.tstime = a.tstime 
