@@ -7,7 +7,7 @@ fi
 . $geo_config
 
 #Put the new ratings files with variables for dh_timeseries onto dbase2
-baseFileName=`basename RATINGS_TODBASE_FILE`
+baseFileName=`basename $RATINGS_TODBASE_FILE`
 sftp $db_host:"/tmp/${baseFileName}" <<< "put ${RATINGS_TODBASE_FILE}"
 echo "File put on ${db_host}, now inserting files..."
 #Create a temporary table to read in the ratings files into dbase2. Then join and insert into dh_timeseries
