@@ -61,18 +61,18 @@ message(paste("Found feature with hydroid =", feature$hydroid))
 #Create a name for the model property to be created on the feature:
 model_name <- paste(coverage_hydrocode,model_version)
 
-message(paste("Creating model property on", feature$hydroid, "with propname =",model_name))
+message(paste("Creating/finding model property on", feature$hydroid, "with propname =",model_name))
 # if a matching model does not exist, this will go ahead and create one using
 # romProperty
 model <- om_model_object(ds, feature, model_version, 
                          model_name = model_name)
-message(paste("Model property with propname =",model$propname," created with pid =",model$pid))
+message(paste("Model property with propname =",model$propname," created/found with pid =",model$pid))
 
 # this will create or retrieve a model scenario to house this summary data using
 # romProperty
-message(paste("Creating model scenario on", model$pid, "with propname =",scenarioPropName))
+message(paste("Creating/finding model scenario on", model$pid, "with propname =",scenarioPropName))
 scenario <- om_get_model_scenario(ds, model, scenarioPropName)
-message(paste("Scenario property with propname =",scenario$propname," created with pid =",scenario$pid))
+message(paste("Scenario property with propname =",scenario$propname," created/found with pid =",scenario$pid))
 
 #Add featureid and entity_type to ratings for proper export to dh_timeseries
 ratings$featureid <- scenario$pid
