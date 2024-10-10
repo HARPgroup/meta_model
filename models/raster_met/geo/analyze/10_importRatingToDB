@@ -45,27 +45,31 @@ WHERE dupe.tid IS NULL;
 \\set hydrocode  '$coverage' \n
 SELECT hydroid AS ratings FROM dh_variabledefinition WHERE varkey = :'ratingsVarkey' \\gset \n
 
-UPDATE dh_timeseries AS a SET
+UPDATE dh_timeseries AS a 
+SET
     tstime = b.tstime,
     tsendtime = b.tsendtime,
 	tsvalue = b.tsvalue,
 	featureid = b.featureid,
 	varid = b.varid,
 	entity_type = b.entity_type
-from (
-	SELECT a.tstime, a.tsendtime, a.tsvalue, a.featureid, v.hydroid as varid, a.entity_type
-	FROM tmp_ratings AS a
-	LEFT JOIN dh_variabledefinition as v
-	ON v.hydroid = :'ratings'
-	LEFT JOIN dh_timeseries AS dupe
+FROM(
+	SELECT a.tstime, a.tsendtime, a.tsvalue, a.featureid, dupe.varid as varid, a.entity_type
+	FROM tmp_dh_timerseriesCOB AS dupe
+	INNER JOIN tmp_ratings AS a
 	ON (
-		a.tstime = dupe.tstime 
-		AND a.tsendtime = dupe.tsendtime
-		AND a.featureid = dupe.featureid
-		AND a.entity_type = dupe.entity_type
-		AND v.hydroid = dupe.varid
+		dupe.tstime = a.tstime 
+		AND dupe.tsendtime = a.tsendtime
+		AND dupe.featureid = a.featureid
+		AND dupe.entity_type = a.entity_type
+		AND dupe.varid = :'ratings'
 	)
-	WHERE dupe.tid IS NOT NULL) as b;
+) as b
+WHERE a.varid = :'ratings'
+  AND a.tstime IN (SELECT tstime from tmp_ratings)
+  AND a.tsendtime IN (SELECT tsendtime from tmp_ratings)
+  AND a.featureid IN (SELECT featureid from tmp_ratings)
+  AND a.entity_type IN (SELECT entity_type from tmp_ratings)
 "
 
 # turn off the expansion of the asterisk
