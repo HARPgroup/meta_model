@@ -13,17 +13,17 @@ sftp $db_host:"/tmp/" <<< "put ${RATINGS_TODBASE_FILE}"
 echo "File put on ${db_host}, now inserting files..."
 #Create a temporary table to read in the ratings files into dbase2. Then join and insert into dh_timeseries
 ratings_sql="
-\\set ratingsVarkey '$RATINGS_VARKEY' \n
-\\set scenarioPropName '$SCENARIO_PROP_NAME' \n
-\\set hydrocode  '$coverage' \n
-SELECT hydroid AS ratingsVarid FROM dh_variabledefinition WHERE varkey = :'ratingsVarkey' \\gset \n
-
 CREATE TEMPORARY TABLE tmp_ratings as
 SELECT tstime,tsendtime,tsvalue,featureid,entity_type
 FROM dh_timeseries
 LIMIT 0;
 
 COPY tmp_ratings FROM '/tmp/${baseFileName}' with csv header;
+
+\\set ratingsVarkey '$RATINGS_VARKEY' \n
+\\set scenarioPropName '$SCENARIO_PROP_NAME' \n
+\\set hydrocode  '$coverage' \n
+SELECT hydroid AS ratingsVarid FROM dh_variabledefinition WHERE varkey = :'ratingsVarkey' \\gset \n
 
 INSERT INTO dh_timeseries ( tstime,tsendtime, tsvalue, featureid, varid, entity_type)
 SELECT a.tstime, a.tsendtime, a.tsvalue, a.featureid, v.hydroid, a.entity_type
@@ -39,6 +39,11 @@ ON (
  AND v.hydroid = dupe.varid
 )
 WHERE dupe.tid IS NULL;
+
+\\set ratingsVarkey '$RATINGS_VARKEY' \n
+\\set scenarioPropName '$SCENARIO_PROP_NAME' \n
+\\set hydrocode  '$coverage' \n
+SELECT hydroid AS ratingsVarid FROM dh_variabledefinition WHERE varkey = :'ratingsVarkey' \\gset \n
 
 UPDATE dh_timeseries AS a SET
     tstime = b.tstime,
