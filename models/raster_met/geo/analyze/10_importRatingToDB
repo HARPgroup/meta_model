@@ -16,7 +16,7 @@ ratings_sql="
 \\set ratingsVarkey '$RATINGS_VARKEY' \n
 \\set scenarioPropName '$SCENARIO_PROP_NAME' \n
 \\set hydrocode  '$coverage' \n
-SELECT hydroid AS ratingsVarid FROM dh_variabledefinition WHERE varkey = :'ratingsVarkey' \\gset \n
+SELECT varHydroid AS ratingsVarid FROM dh_variabledefinition WHERE varkey = :'ratingsVarkey' \\gset \n
 
 CREATE TEMPORARY TABLE tmp_ratings as
 SELECT tstime,tsendtime,tsvalue,featureid,entity_type
@@ -29,7 +29,7 @@ INSERT INTO dh_timeseries ( tstime,tsendtime, tsvalue, featureid, varid, entity_
 SELECT a.tstime, a.tsendtime, a.tsvalue, a.featureid, v.hydroid, a.entity_type
 FROM tmp_ratings AS a
 LEFT JOIN dh_variabledefinition as v
-ON v.hydroid = :'hydroid'
+ON v.hydroid = :'varHydroid'
 LEFT JOIN dh_timeseries AS dupe
 ON (
  a.tstime = dupe.tstime 
@@ -51,7 +51,7 @@ from (
 	SELECT a.tstime, a.tsendtime, a.tsvalue, a.featureid, v.hydroid as varid, a.entity_type
 	FROM tmp_ratings AS a
 	LEFT JOIN dh_variabledefinition as v
-	ON v.hydroid = :'hydroid'
+	ON v.hydroid = :'varHydroid'
 	LEFT JOIN dh_timeseries AS dupe
 	ON (
 	a.tstime = dupe.tstime 
