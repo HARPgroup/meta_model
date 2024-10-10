@@ -22,7 +22,7 @@ SELECT tstime,tsendtime,tsvalue,featureid,entity_type
 FROM dh_timeseries
 LIMIT 0;
 
-COPY tmp_ratings FROM '${RATINGS_DBASE_FILE}' with csv header;
+COPY tmp_ratings FROM '/tmp/${baseFileName}' with csv header;
 
 INSERT INTO dh_timeseries ( tstime,tsendtime, tsvalue, featureid, varid, entity_type)
 SELECT a.tstime, a.tsendtime, a.tsvalue, a.featureid, v.hydroid, a.entity_type
