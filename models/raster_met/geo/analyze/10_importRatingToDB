@@ -23,13 +23,13 @@ COPY tmp_ratings FROM '/tmp/${baseFileName}' with csv header;
 \\set ratingsVarkey '$RATINGS_VARKEY' \n
 \\set scenarioPropName '$SCENARIO_PROP_NAME' \n
 \\set hydrocode  '$coverage' \n
-SELECT hydroid AS ratingsVarid FROM dh_variabledefinition WHERE varkey = :'ratingsVarkey' \\gset \n
+SELECT hydroid AS ratings FROM dh_variabledefinition WHERE varkey = :'ratingsVarkey' \\gset \n
 
 INSERT INTO dh_timeseries ( tstime,tsendtime, tsvalue, featureid, varid, entity_type)
 SELECT a.tstime, a.tsendtime, a.tsvalue, a.featureid, v.hydroid, a.entity_type
 FROM tmp_ratings AS a
 LEFT JOIN dh_variabledefinition as v
-ON v.hydroid = :'ratingsVarid'
+ON v.hydroid = :'ratings'
 LEFT JOIN dh_timeseries AS dupe
 ON (
  a.tstime = dupe.tstime 
@@ -43,7 +43,7 @@ WHERE dupe.tid IS NULL;
 \\set ratingsVarkey '$RATINGS_VARKEY' \n
 \\set scenarioPropName '$SCENARIO_PROP_NAME' \n
 \\set hydrocode  '$coverage' \n
-SELECT hydroid AS ratingsVarid FROM dh_variabledefinition WHERE varkey = :'ratingsVarkey' \\gset \n
+SELECT hydroid AS ratings FROM dh_variabledefinition WHERE varkey = :'ratingsVarkey' \\gset \n
 
 UPDATE dh_timeseries AS a SET
     tstime = b.tstime,
@@ -56,7 +56,7 @@ from (
 	SELECT a.tstime, a.tsendtime, a.tsvalue, a.featureid, v.hydroid as varid, a.entity_type
 	FROM tmp_ratings AS a
 	LEFT JOIN dh_variabledefinition as v
-	ON v.hydroid = :'ratingsVarid'
+	ON v.hydroid = :'ratings'
 	LEFT JOIN dh_timeseries AS dupe
 	ON (
 	a.tstime = dupe.tstime 
