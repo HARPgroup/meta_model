@@ -64,5 +64,6 @@ from (
 # turn off the expansion of the asterisk
 set -f
 #Delete previous dh_timeseries entries
+echo "Writing sql insert to $ratings_sql_file"
 echo -e $ratings_sql > $ratings_sql_file 
 cat $ratings_sql_file | psql -h $db_host $db_name
