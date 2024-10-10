@@ -7,8 +7,8 @@
 # coverage_bundle <- 'watershed'
 # model_version <- 'met1.0'
 # scenarioPropName <- 'simple_lm'
-# ratingsFile <- "http://deq1.bse.vt.edu:81/met/stormVol_nldas2_tiled/out/usgs_ws_01668000-nldas-storm_volume-rating-ts.csv"
-
+# ratingsFile <- "http://deq1.bse.vt.edu:81/met/stormVol_prism/out/usgs_ws_02021500-PRISM-storm_volume-rating-ts.csv"
+# 
 
 #Load in hydrotools and connect to REST
 library(hydrotools)

@@ -25,26 +25,6 @@ COPY tmp_ratings FROM '/tmp/${baseFileName}' with csv header;
 \\set hydrocode  '$coverage' \n
 SELECT hydroid AS ratings FROM dh_variabledefinition WHERE varkey = :'ratingsVarkey' \\gset \n
 
-INSERT INTO dh_timeseries ( tstime,tsendtime, tsvalue, featureid, varid, entity_type)
-SELECT a.tstime, a.tsendtime, a.tsvalue, a.featureid, v.hydroid, a.entity_type
-FROM tmp_ratings AS a
-LEFT JOIN dh_variabledefinition as v
-ON v.hydroid = :'ratings'
-LEFT JOIN dh_timeseries AS dupe
-ON (
- a.tstime = dupe.tstime 
- AND a.tsendtime = dupe.tsendtime
- AND a.featureid = dupe.featureid
- AND a.entity_type = dupe.entity_type
- AND v.hydroid = dupe.varid
-)
-WHERE dupe.tid IS NULL;
-
-\\set ratingsVarkey '$RATINGS_VARKEY' \n
-\\set scenarioPropName '$SCENARIO_PROP_NAME' \n
-\\set hydrocode  '$coverage' \n
-SELECT hydroid AS ratings FROM dh_variabledefinition WHERE varkey = :'ratingsVarkey' \\gset \n
-
 UPDATE dh_timeseries AS a 
 SET
     tstime = b.tstime,
@@ -70,6 +50,27 @@ WHERE a.varid = :'ratings'
   AND a.tsendtime IN (SELECT tsendtime from tmp_ratings)
   AND a.featureid IN (SELECT featureid from tmp_ratings)
   AND a.entity_type IN (SELECT entity_type from tmp_ratings)
+
+
+\\set ratingsVarkey '$RATINGS_VARKEY' \n
+\\set scenarioPropName '$SCENARIO_PROP_NAME' \n
+\\set hydrocode  '$coverage' \n
+SELECT hydroid AS ratings FROM dh_variabledefinition WHERE varkey = :'ratingsVarkey' \\gset \n
+
+INSERT INTO dh_timeseries ( tstime,tsendtime, tsvalue, featureid, varid, entity_type)
+SELECT a.tstime, a.tsendtime, a.tsvalue, a.featureid, v.hydroid, a.entity_type
+FROM tmp_ratings AS a
+LEFT JOIN dh_variabledefinition as v
+ON v.hydroid = :'ratings'
+LEFT JOIN dh_timeseries AS dupe
+ON (
+ a.tstime = dupe.tstime 
+ AND a.tsendtime = dupe.tsendtime
+ AND a.featureid = dupe.featureid
+ AND a.entity_type = dupe.entity_type
+ AND v.hydroid = dupe.varid
+)
+WHERE dupe.tid IS NULL;
 "
 
 # turn off the expansion of the asterisk
