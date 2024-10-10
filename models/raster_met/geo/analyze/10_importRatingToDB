@@ -49,7 +49,7 @@ WHERE a.varid = :'ratings'
   AND a.tstime IN (SELECT tstime from tmp_ratings)
   AND a.tsendtime IN (SELECT tsendtime from tmp_ratings)
   AND a.featureid IN (SELECT featureid from tmp_ratings)
-  AND a.entity_type IN (SELECT entity_type from tmp_ratings)
+  AND a.entity_type IN (SELECT entity_type from tmp_ratings);
 
 
 \\set ratingsVarkey '$RATINGS_VARKEY' \n
