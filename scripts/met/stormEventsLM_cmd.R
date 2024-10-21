@@ -19,12 +19,29 @@ library("jsonlite")
 #regression or linear regression
 args <- commandArgs(trailingOnly = TRUE)
 print("Setting arguments...")
+
+#Set args for examples
+args[1]<-"http://deq1.bse.vt.edu:81/met/stormVol_prism/precip/usgs_ws_01615000-PRISM-daily.csv"
+args[2]<-"http://deq1.bse.vt.edu:81/met/stormVol_prism/flow/usgs_ws_01615000-stormevent-stats.csv"
+args[3]<-"http://deq1.bse.vt.edu:81/met/stormVol_prism/flow/usgs_ws_01615000-stormevent-flow.csv"
+args[4]<-1
+
+# /met/stormVol_prism/precip
+# "http://deq1.bse.vt.edu:81/met/stormVol_prism/precip/usgs_ws_01615000-PRISM-daily.csv"
 comp_dataFilePath <- args[1]
+# /met/stormVol_prism/flow
+# "http://deq1.bse.vt.edu:81/met/stormVol_prism/flow/usgs_ws_01615000-stormevent-stats.csv"
 stormStatsPath <- args[2]
+# /met/stormVol_prism/flow
+# "http://deq1.bse.vt.edu:81/met/stormVol_prism/flow/usgs_ws_01615000-stormevent-flow.csv"
 stormPath <- args[3]
+# 1
 rollingDur <- as.numeric(args[4])
 pathToWriteJSON <- args[5]
 pathToWriteRatings <- args[6]
+pathToWriteData <- args[7]
+
+
 
 if(is.na(args[7])){
   regressionMethod <- "LINEAR"
@@ -85,7 +102,7 @@ stormIDs <- unique(stormEvents$stormID)
 #full stormDuration
 getRollPrecip <- function(comp_data,stormDuration,
                           rollingDur,endDate,
-                          precipColName = "prism_p_cfs",
+                          precipColName = "prism_cfs",
                           obs_date = "obs_date"){
   #Convert input date to date, just in case
   sDate <- as.Date(endDate)
@@ -107,12 +124,16 @@ getRollPrecip <- function(comp_data,stormDuration,
 #Add to stormStats the sum of precipitation from the 3-, 7-, and 14-day periods
 #leading up to the storm and including the full storm duration. Convert to MG
 cfToMG <- 12*12*12/231/1000000
+
+# add MG column to comp_data ####################################
+comp_data$precip_MG<-cfToMG*86400*comp_data$precip_cfs
+
 #Only precip during the storm iteself
 print("Finding rolling precip over each storm duration...")
 stormStats$rollDayWStorm_MG <- mapply(SIMPLIFY = TRUE, USE.NAMES = FALSE,
                                             FUN = getRollPrecip, stormDuration = stormStats$durAll,
                                             endDate = stormStats$endDate,
-                                            MoreArgs = list(comp_data = comp_data,rollingDur = rollingDur,
+                                            MoreArgs = list(comp_data = comp_data, rollingDur = rollingDur,
                                                             precipColName = "precip_cfs",
                                                             obs_date = "obs_date")
 )
@@ -151,10 +172,66 @@ if(regressionMethod == "POWER"){
                                mo_var = "beginMonth")
 }
 
+# # adding predicted flow and event number column to comp_data ##################################
+# comp_data[,"predicted_flow_MG"]=numeric()
+# comp_data[,"event"]=numeric()
+
+# comp_data$predicted_flow<-NA
+# comp_data$predicted_flow<-as.numeric(comp_data$predicted_flow)
+
+# adding predicted flow to storm stats also
+stormStats[,"predicted_flow_MG"]=numeric()
+
+# Set start and end dtates as dates
+stormStats$startDate <- as.Date(stormStats$startDate)
+stormStats$endDate <- as.Date(stormStats$endDate)
+
+# Add in predicted flow data
+predict.flow <- function(precip_data,storm_data,ratings_data){
+  # Create empty dataframe, for values ot be added to
+  predicted_data <- comp_data[0,]
+  # Find predicted values for each month
+  for(i in 1:12){
+    # Obtaining coefficients
+    month <- as.numeric(i)
+    coefficients <- ratings_data$atts$lms[[month]]$coefficients
+    intercept <- coefficients[1]
+    slope <- coefficients[2]
+    # Getting STorm Data from the correct month
+    print("Obtaining data from input month")
+    storm_data_new <- subset(storm_data, beginMonth %in% month )
+    # Expanding storm stat_data_new to account for startdate enddate
+    storm_data_new <- data.frame(
+      obs_date = as.Date(unlist(mapply(seq, storm_data_new$startDate, storm_data_new$endDate, by='day'))),
+      event = rep(storm_data_new$ID, times = storm_data_new$endDate - storm_data_new$startDate + 1),
+      predicted_flow_MG = rep(storm_data_new$predicted_flow_MG, times = storm_data_new$endDate - storm_data_new$startDate + 1)
+    )
+    # Getting correct precip data
+    precip_data_new <- subset(precip_data, obs_date %in% storm_data_new$obs_date)
+    # Inserting predicted flow into precip data frame (guessing column name? Units?)
+    print("Calculating predicted flow")
+    storm_data_new$predicted_flow_MG <- slope*precip_data_new$precip_MG + intercept
+    
+    #Adding data to dataframe
+    # predicted_data$predicted_flow_MG <- with(predicted_data,precip_data_new$predicted_flow[match(obs_date,precip_data_new$obs_date)]
+    predicted_data <- merge(precip_data, storm_data_new, by="obs_date", all.x = TRUE)
+  }
+  return(predicted_data)
+  }
+
+predicted_data <- predict.flow(comp_data,stormStats,monthEventOut)
+
+example_error<- data.frame(PREDICTED_TEST$obs_date,PREDICTED_TEST$obs_flow - PREDICTED_TEST$predicted_flow_MG)
+
+### Spot check
+
+
+
 print("Writing out data to JSON and ratings to csv...")
 #WRITE OUT DATA. GET STATS OR JSON OUTPUT
 out <- monthEventOut$toJSON()
 write(out,pathToWriteJSON)
 write.csv(monthEventOut$atts$stats,pathToWriteRatings)
+write.csv(predicted_data,pathToWriteData)
 
 
