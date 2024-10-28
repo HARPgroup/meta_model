@@ -187,9 +187,9 @@ stormStats$startDate <- as.Date(stormStats$startDate)
 stormStats$endDate <- as.Date(stormStats$endDate)
 
 # Add in predicted flow data
-predict.flow <- function(precip_data,storm_data,ratings_data){
+predict.flow <- function(storm_data,ratings_data){
   # Create empty dataframe, for values ot be added to
-  predicted_data <- comp_data[0,]
+  predicted_data <- storm_data[0,]
   # Find predicted values for each month
   for(i in 1:12){
     # Obtaining coefficients
@@ -198,33 +198,20 @@ predict.flow <- function(precip_data,storm_data,ratings_data){
     intercept <- coefficients[1]
     slope <- coefficients[2]
     # Getting STorm Data from the correct month
-    print("Obtaining data from input month")
+    message("Obtaining data from input month")
     storm_data_new <- subset(storm_data, beginMonth %in% month )
-    # Expanding storm stat_data_new to account for startdate enddate
-    storm_data_new <- data.frame(
-      obs_date = as.Date(unlist(mapply(seq, storm_data_new$startDate, storm_data_new$endDate, by='day'))),
-      event = rep(storm_data_new$ID, times = storm_data_new$endDate - storm_data_new$startDate + 1),
-      predicted_flow_MG = rep(storm_data_new$predicted_flow_MG, times = storm_data_new$endDate - storm_data_new$startDate + 1)
-    )
-    # Getting correct precip data
-    precip_data_new <- subset(precip_data, obs_date %in% storm_data_new$obs_date)
     # Inserting predicted flow into precip data frame (guessing column name? Units?)
-    print("Calculating predicted flow")
-    storm_data_new$predicted_flow_MG <- slope*precip_data_new$precip_MG + intercept
+    message("Calculating predicted flow")
+    storm_data_new$predicted_flow_MG <- slope*storm_data_new$rollDayWStorm_MG + intercept
     
     #Adding data to dataframe
     # predicted_data$predicted_flow_MG <- with(predicted_data,precip_data_new$predicted_flow[match(obs_date,precip_data_new$obs_date)]
-    predicted_data <- merge(precip_data, storm_data_new, by="obs_date", all.x = TRUE)
+    predicted_data <- rbind(predicted_data,storm_data_new)
   }
   return(predicted_data)
   }
 
-predicted_data <- predict.flow(comp_data,stormStats,monthEventOut)
-
-example_error<- data.frame(PREDICTED_TEST$obs_date,PREDICTED_TEST$obs_flow - PREDICTED_TEST$predicted_flow_MG)
-
-### Spot check
-
+predicted_data <- predict.flow(stormStats,monthEventOut)
 
 
 print("Writing out data to JSON and ratings to csv...")
