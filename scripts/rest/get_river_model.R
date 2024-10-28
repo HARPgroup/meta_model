@@ -10,8 +10,8 @@ suppressPackageStartupMessages(library(jsonlite)) #for exporting values as json
 argst <- commandArgs(trailingOnly = T)
 river_seg <- argst[1]
 scenario_name <- argst[2]
-model_version <- argst[4]
-rseg_ftype <- argst[5]
+model_version <- argst[3]
+rseg_ftype <- argst[4]
 
 # Set up our data source
 ds <- RomDataSource$new(site, rest_uname = rest_uname)
