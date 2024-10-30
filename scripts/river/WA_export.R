@@ -28,11 +28,15 @@ PoF <- as.integer(argst[6]) #minimum instream flow coefficient, default to 0.9
 # pid = 5714522 ; elid = 352006 ; runid_dem = 11 ; runid_base = 0 ; CPL <- 30 ; PoF <- 0.9
 
 #Set defaults 
-if (!length(argst) == 6) { #set defaults if not all arguments are provided 
+if (length(argst) < 4) { #set defaults if not all arguments are provided 
   runid_base <- 0 
+  message("Not all required inputs provided, defaults will be used")
+}
+if (length(argst) < 5) {
   CPL <- 90 #default to a 90-day critical period length 
+}
+if (length(argst) < 6) {
   PoF <- 0.9 #default to 0.9 for percent of instream flow required 
-  print("Not all required inputs provided, defaults will be used")
 }
 
 demand_scenario <- paste0('runid_', runid_dem)
@@ -57,8 +61,8 @@ obj <- metrics_data[metrics_data$pid == pid, ]
 #Calculate Qavailable and WA
 obj$Qout_mif <- PoF*obj$lCPL_Qout_base #min instream flow (cfs)
 obj$Qavailable_cfs <- round((obj$lCPL_Qout_dem - obj$Qout_mif), digits = 3) #available flow (cfs): Qavailable = Qdemand - PoF*Qbaseline 
+obj$Qavailable_mgd <- obj$Qavailable_cfs / 1.547
 obj$WA_mgd = round((obj$Qavailable_cfs / 1.547) + (obj$Smin_mg / CPL), digits = 3)
-
 #Get scenario 
 sceninfo <- list(
   varkey = 'om_scenario',
@@ -72,3 +76,5 @@ scenprop <- RomProperty$new( ds, sceninfo, TRUE)
 #Export metrics to VAhydro
 vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, paste0('Qavailable_', CPL, '_mgd'), obj$Qavailable_cfs / 1.547, ds)
 vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, paste0('WA_', CPL, '_mgd'), obj$WA_mgd, ds)
+
+message(paste("Calculating available flow as (", obj$lCPL_Qout_dem, "-", obj$Qout_mif, ")/1.547 =",obj$Qavailable_mgd))
