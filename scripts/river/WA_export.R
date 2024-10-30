@@ -57,12 +57,15 @@ metrics_data <- om_vahydro_metric_grid(
 
 #Get object of interest using the given pid and elid 
 obj <- metrics_data[metrics_data$pid == pid, ]
+basin_data <- fn_extract_basin(metrics_data, obj$riverseg)
+obj$Smin_basin_mg <- sum(basin_data$Smin_mg)
 
 #Calculate Qavailable and WA
 obj$Qout_mif <- PoF*obj$lCPL_Qout_base #min instream flow (cfs)
 obj$Qavailable_cfs <- round((obj$lCPL_Qout_dem - obj$Qout_mif), digits = 3) #available flow (cfs): Qavailable = Qdemand - PoF*Qbaseline 
 obj$Qavailable_mgd <- obj$Qavailable_cfs / 1.547
 obj$WA_mgd = round((obj$Qavailable_cfs / 1.547) + (obj$Smin_mg / CPL), digits = 3)
+obj$WA_basin_mgd = round((obj$Qavailable_cfs / 1.547) + (obj$smin_basin_mg / CPL), digits = 3)
 #Get scenario 
 sceninfo <- list(
   varkey = 'om_scenario',
@@ -76,5 +79,7 @@ scenprop <- RomProperty$new( ds, sceninfo, TRUE)
 #Export metrics to VAhydro
 vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, paste0('Qavailable_', CPL, '_mgd'), obj$Qavailable_cfs / 1.547, ds)
 vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, paste0('WA_', CPL, '_mgd'), obj$WA_mgd, ds)
+vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, paste0('WA_', CPL, '_mgd'), obj$WA_basin_mgd, ds)
 
-message(paste("Calculating available flow as (", obj$lCPL_Qout_dem, "-", obj$Qout_mif, ")/1.547 =",obj$Qavailable_mgd))
+message(paste("Calculated available flow as (", obj$lCPL_Qout_dem, "-", obj$Qout_mif, ")/1.547 =",obj$Qavailable_mgd))
+message(paste("Calculating basinwide available flow as ", obj$Qavailable_mgd, "+", obj$smin_basin_mg, "/", CPL, "=",obj$WA_basin_mgd))
