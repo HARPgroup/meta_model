@@ -1,0 +1,14 @@
+#!/bin/bash
+# loads the args, the raster specific config and change to temp dir
+geo_config=`find_config geo.config`
+if [ "$geo_config" = "" ]; then
+  geo_config="$META_MODEL_ROOT/models/raster_met/geo/geo.config"
+fi
+. $geo_config
+
+
+#Add a model property and the appropriate scenario property onto the coverage
+cmd="Rscript $META_MODEL_ROOT/scripts/met/metModelandScenario.R $coverage $COVERAGE_BUNDLE $COVERAGE_FTYPE $MET_MODEL_VERSION $SCENARIO_PROP_NAME $RATING_TS_FILE $RATINGS_TODBASE_FILE"
+echo "Running: $cmd"
+eval $cmd
+

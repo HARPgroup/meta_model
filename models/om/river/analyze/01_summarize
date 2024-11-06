@@ -1,6 +1,31 @@
 #!/bin/bash
 
 . $META_MODEL_ROOT/models/om/om.config
+runid=$scenario
+object_class=`Rscript $META_MODEL_ROOT/scripts/rest/get_property.R dh_properties $pid object_class propcode`
+custom1=`Rscript $META_MODEL_ROOT/scripts/rest/get_property.R dh_properties $pid custom1 propcode`
+custom2=`Rscript $META_MODEL_ROOT/scripts/rest/get_property.R dh_properties $pid custom2 propcode`
 
-pid=`/opt/model/meta_model/scripts/rest/get_model.R $segment $version`
-echo "PID: $pid"
+sum_script="/opt/model/om/R/summarize/${object_class}.R"
+echo "Looking for $sum_script "
+cd /var/www/R
+if test -f "$sum_script"; then
+  if [ $pid -gt 0 ]; then
+    echo "Running: Rscript $sum_script $pid $elid $runid " >&2
+    Rscript $sum_script $pid $elid $runid
+    #rm tempfile
+    rm "runlog${runid}.${elid}.log"
+  fi
+fi
+
+c1_script="/opt/model/om/R/summarize/${custom1}.R"
+echo "Looking for $c1_script "
+if test -f "$c1_script"; then
+  if [ $pid -gt 0 ]; then
+    echo "Running: Rscript $c1_script $pid $elid $runid " >&2
+    Rscript $c1_script $pid $elid $runid 
+    #rm tempfile
+  fi
+else 
+  echo "Could not find custom1 summary script $c1_script" >&2 
+fi

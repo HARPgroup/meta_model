@@ -6,5 +6,13 @@ if [ "$ama_config" = "" ]; then
 fi
 . $ama_config
 
-if [[ "$GEO_MET_MODEL" != "lm_simple" ]]; then
-  exit
+#Output temporary file:
+outfile="${coverage}-ratings.csv"
+
+echo "Calling: Rscript Rscript $META_MODEL_ROOT/scripts/misc/join_cols_fromCSVs.R $START_DATE $END_DATE $AMALGAMATE_RATINGS_PATHS $EXISTING_RATINGS_COLUMNS $RATINGS_VARKEYS $EXISTING_START_DATE_COLUMNS $EXISTING_END_DATE_COLUMNS $outfile"
+Rscript $META_MODEL_ROOT/scripts/misc/join_cols_fromCSVs.R $START_DATE $END_DATE $AMALGAMATE_RATINGS_PATHS $EXISTING_RATINGS_COLUMNS $RATINGS_VARKEYS $EXISTING_START_DATE_COLUMNS $EXISTING_END_DATE_COLUMNS $outfile
+
+# note: the install -D command create the destination directory path if it doesn't exist
+echo "Running: install -D $outfile $COVERAGE_FLOW_FILE"
+install -D $outfile $COVERAGE_RATING_FILE
+

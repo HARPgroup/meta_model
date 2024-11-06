@@ -4,3 +4,14 @@ if (! $?MODEL_ROOT) then
   echo "Variable MODEL_ROOT is undefined.  Assuming /var/www/html/om."
   set MODEL_ROOT="/var/www/html/om"
 endif
+if ( ! $?MODEL_BIN ) then
+  set MODEL_BIN=$MODEL_ROOT/run_model.php
+endif
+if ( ! $?SCRIPT_DIR ) then
+  set SCRIPT_DIR=$META_MODEL_ROOT/scripts
+endif
+
+set START_DATE=`cbp get_config $scenario script START_DATE`
+set END_DATE=`cbp get_config $scenario script END_DATE`
+set START_YEAR=`date -d "$START_DATE" +%Y`
+set END_YEAR=`date -d "$END_DATE" +%Y`
