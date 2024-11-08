@@ -17,25 +17,13 @@ library("jsonlite")
 #6 = Path out to write csv of the regresison stats/ratings to
 #7 = STORMSEP_REGRESSION_METHOD = Should the regressions performed be power
 #regression or linear regression
+
 args <- commandArgs(trailingOnly = TRUE)
 print("Setting arguments...")
 
-#Set args for examples
-args[1]<-"http://deq1.bse.vt.edu:81/met/stormVol_prism/precip/usgs_ws_01615000-PRISM-daily.csv"
-args[2]<-"http://deq1.bse.vt.edu:81/met/stormVol_prism/flow/usgs_ws_01615000-stormevent-stats.csv"
-args[3]<-"http://deq1.bse.vt.edu:81/met/stormVol_prism/flow/usgs_ws_01615000-stormevent-flow.csv"
-args[4]<-1
-
-# /met/stormVol_prism/precip
-# "http://deq1.bse.vt.edu:81/met/stormVol_prism/precip/usgs_ws_01615000-PRISM-daily.csv"
 comp_dataFilePath <- args[1]
-# /met/stormVol_prism/flow
-# "http://deq1.bse.vt.edu:81/met/stormVol_prism/flow/usgs_ws_01615000-stormevent-stats.csv"
 stormStatsPath <- args[2]
-# /met/stormVol_prism/flow
-# "http://deq1.bse.vt.edu:81/met/stormVol_prism/flow/usgs_ws_01615000-stormevent-flow.csv"
 stormPath <- args[3]
-# 1
 rollingDur <- as.numeric(args[4])
 pathToWriteJSON <- args[5]
 pathToWriteRatings <- args[6]
@@ -172,13 +160,6 @@ if(regressionMethod == "POWER"){
                                mo_var = "beginMonth")
 }
 
-# # adding predicted flow and event number column to comp_data ##################################
-# comp_data[,"predicted_flow_MG"]=numeric()
-# comp_data[,"event"]=numeric()
-
-# comp_data$predicted_flow<-NA
-# comp_data$predicted_flow<-as.numeric(comp_data$predicted_flow)
-
 # adding predicted flow to storm stats also
 stormStats[,"predicted_flow_MG"]=numeric()
 
@@ -213,6 +194,15 @@ predict.flow <- function(storm_data,ratings_data){
 
 predicted_data <- predict.flow(stormStats,monthEventOut)
 
+# Adding Error using rating = 1 - abs(qobs-qmodel)/qobs
+predicted_data$rating <- 1-(abs(predicted_data$volumeAboveBaseQMG-predicted_data$predicted_flow_MG)/predicted_data$volumeAboveBaseQMG)
+
+# Optional: removing ratings if they ar enot between -1 and 1
+# predicted_data$rating <- replace(predicted_data$rating, -1 > predicted_data$rating, NA)
+# predicted_data$rating <- replace(predicted_data$rating, 1 < predicted_data$rating, NA)
+
+# default to r-squared value for the month
+# 
 
 print("Writing out data to JSON and ratings to csv...")
 #WRITE OUT DATA. GET STATS OR JSON OUTPUT
@@ -220,5 +210,3 @@ out <- monthEventOut$toJSON()
 write(out,pathToWriteJSON)
 write.csv(monthEventOut$atts$stats,pathToWriteRatings)
 write.csv(predicted_data,pathToWriteData)
-
-
