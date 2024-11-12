@@ -24,32 +24,29 @@ COPY tmp_ratings FROM '/tmp/${baseFileName}' with csv header;
 \\set scenarioPropName '$SCENARIO_PROP_NAME' \n
 \\set hydrocode  '$coverage' \n
 SELECT hydroid AS ratings FROM dh_variabledefinition WHERE varkey = :'ratingsVarkey' \\gset \n
-
+--Maybe delete all values for this varid from dh_timeseries where we are between our start/end date
+--
 UPDATE dh_timeseries AS a 
 SET
-    tstime = b.tstime,
-    tsendtime = b.tsendtime,
-	tsvalue = b.tsvalue,
-	featureid = b.featureid,
-	varid = b.varid,
-	entity_type = b.entity_type
+	tsvalue = b.tsvalue
 FROM(
 	SELECT a.tstime, a.tsendtime, a.tsvalue, a.featureid, dupe.varid as varid, a.entity_type
-	FROM dh_timeseries AS dupe
-	INNER JOIN tmp_ratings AS a
+	FROM tmp_ratings as a
+	INNER JOIN dh_timeseries AS dupe
 	ON (
 		dupe.tstime = a.tstime 
 		AND dupe.tsendtime = a.tsendtime
 		AND dupe.featureid = a.featureid
 		AND dupe.entity_type = a.entity_type
-		AND dupe.varid = :'ratings'
 	)
+	WHERE dupe.varid = :ratings
 ) as b
-WHERE a.varid = :'ratings'
-  AND a.tstime IN (SELECT tstime from tmp_ratings)
-  AND a.tsendtime IN (SELECT tsendtime from tmp_ratings)
-  AND a.featureid IN (SELECT featureid from tmp_ratings)
-  AND a.entity_type IN (SELECT entity_type from tmp_ratings);
+WHERE a.varid = :ratings
+  AND a.tstime = b.tstime
+  AND a.tsendtime = b.tsendtime
+  AND a.featureid = b.featureid
+  AND a.entity_type = b.entity_type
+
 
 
 \\set ratingsVarkey '$RATINGS_VARKEY' \n
@@ -61,7 +58,7 @@ INSERT INTO dh_timeseries ( tstime,tsendtime, tsvalue, featureid, varid, entity_
 SELECT a.tstime, a.tsendtime, a.tsvalue, a.featureid, v.hydroid, a.entity_type
 FROM tmp_ratings AS a
 LEFT JOIN dh_variabledefinition as v
-ON v.hydroid = :'ratings'
+ON v.hydroid = :ratings
 LEFT JOIN dh_timeseries AS dupe
 ON (
  a.tstime = dupe.tstime 
