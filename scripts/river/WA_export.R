@@ -4,7 +4,8 @@ site <- "http://deq1.bse.vt.edu/d.dh"    #Specify the site of interest, either d
 # Load Libraries
 basepath='/var/www/R';
 source(paste(basepath,'config.R',sep='/'))
-library(hydrotools)
+suppressPackageStartupMessages(library(hydrotools))
+suppressPackageStartupMessages(library(lubridate))
 
 # authenticate
 ds <- RomDataSource$new(site, rest_uname)
@@ -27,11 +28,15 @@ PoF <- as.integer(argst[6]) #minimum instream flow coefficient, default to 0.9
 # pid = 5714522 ; elid = 352006 ; runid_dem = 11 ; runid_base = 0 ; CPL <- 30 ; PoF <- 0.9
 
 #Set defaults 
-if (!length(argst) == 6) { #set defaults if not all arguments are provided 
+if (length(argst) < 4) { #set defaults if not all arguments are provided 
   runid_base <- 0 
+  message("Not all required inputs provided, defaults will be used")
+}
+if (length(argst) < 5) {
   CPL <- 90 #default to a 90-day critical period length 
+}
+if (length(argst) < 6) {
   PoF <- 0.9 #default to 0.9 for percent of instream flow required 
-  print("Not all required inputs provided, defaults will be used")
 }
 
 demand_scenario <- paste0('runid_', runid_dem)
@@ -52,12 +57,15 @@ metrics_data <- om_vahydro_metric_grid(
 
 #Get object of interest using the given pid and elid 
 obj <- metrics_data[metrics_data$pid == pid, ]
+basin_data <- fn_extract_basin(metrics_data, obj$riverseg)
+obj$Smin_basin_mg <- sum(basin_data$Smin_mg)
 
 #Calculate Qavailable and WA
 obj$Qout_mif <- PoF*obj$lCPL_Qout_base #min instream flow (cfs)
 obj$Qavailable_cfs <- round((obj$lCPL_Qout_dem - obj$Qout_mif), digits = 3) #available flow (cfs): Qavailable = Qdemand - PoF*Qbaseline 
+obj$Qavailable_mgd <- obj$Qavailable_cfs / 1.547
 obj$WA_mgd = round((obj$Qavailable_cfs / 1.547) + (obj$Smin_mg / CPL), digits = 3)
-
+obj$WA_basin_mgd = round((obj$Qavailable_cfs / 1.547) + (obj$smin_basin_mg / CPL), digits = 3)
 #Get scenario 
 sceninfo <- list(
   varkey = 'om_scenario',
@@ -71,3 +79,7 @@ scenprop <- RomProperty$new( ds, sceninfo, TRUE)
 #Export metrics to VAhydro
 vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, paste0('Qavailable_', CPL, '_mgd'), obj$Qavailable_cfs / 1.547, ds)
 vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, paste0('WA_', CPL, '_mgd'), obj$WA_mgd, ds)
+vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, paste0('WA_', CPL, '_mgd'), obj$WA_basin_mgd, ds)
+
+message(paste("Calculated available flow as (", obj$lCPL_Qout_dem, "-", obj$Qout_mif, ")/1.547 =",obj$Qavailable_mgd))
+message(paste("Calculating basinwide available flow as ", obj$Qavailable_mgd, "+", obj$smin_basin_mg, "/", CPL, "=",obj$WA_basin_mgd))
