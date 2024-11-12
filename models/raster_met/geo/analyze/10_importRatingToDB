@@ -25,7 +25,7 @@ COPY tmp_ratings FROM '/tmp/${baseFileName}' with csv header;
 \\set hydrocode  '$coverage' \n
 SELECT hydroid AS ratings FROM dh_variabledefinition WHERE varkey = :'ratingsVarkey' \\gset \n
 --Maybe delete all values for this varid from dh_timeseries where we are between our start/end date
---
+
 UPDATE dh_timeseries AS a 
 SET
 	tsvalue = b.tsvalue
