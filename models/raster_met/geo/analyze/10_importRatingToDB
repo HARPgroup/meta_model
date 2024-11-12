@@ -24,7 +24,6 @@ COPY tmp_ratings FROM '/tmp/${baseFileName}' with csv header;
 \\set scenarioPropName '$SCENARIO_PROP_NAME' \n
 \\set hydrocode  '$coverage' \n
 SELECT hydroid AS ratings FROM dh_variabledefinition WHERE varkey = :'ratingsVarkey' \\gset \n
---Maybe delete all values for this varid from dh_timeseries where we are between our start/end date
 
 UPDATE dh_timeseries AS a 
 SET
@@ -46,8 +45,6 @@ WHERE a.varid = :ratings
   AND a.tsendtime = b.tsendtime
   AND a.featureid = b.featureid
   AND a.entity_type = b.entity_type;
-
-
 
 \\set ratingsVarkey '$RATINGS_VARKEY' \n
 \\set scenarioPropName '$SCENARIO_PROP_NAME' \n
