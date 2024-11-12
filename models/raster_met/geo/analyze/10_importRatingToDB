@@ -45,7 +45,7 @@ WHERE a.varid = :ratings
   AND a.tstime = b.tstime
   AND a.tsendtime = b.tsendtime
   AND a.featureid = b.featureid
-  AND a.entity_type = b.entity_type
+  AND a.entity_type = b.entity_type;
 
 
 
