@@ -2,11 +2,11 @@
 #stores ratings:
 
 #Example Inputs:
-# coverage_hydrocode <- "usgs_ws_01668000"
+# coverage_hydrocode <- "usgs_ws_02021500"
 # coverage_ftype <- 'usgs_full_drainage'
 # coverage_bundle <- 'watershed'
 # model_version <- 'met1.0'
-# scenarioPropName <- 'simple_lm'
+# scenarioPropName <- 'storm_volume'
 # ratingsFile <- "http://deq1.bse.vt.edu:81/met/stormVol_prism/out/usgs_ws_02021500-PRISM-storm_volume-rating-ts.csv"
 # 
 
