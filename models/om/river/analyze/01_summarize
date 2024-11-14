@@ -6,6 +6,20 @@ object_class=`Rscript $META_MODEL_ROOT/scripts/rest/get_property.R dh_properties
 custom1=`Rscript $META_MODEL_ROOT/scripts/rest/get_property.R dh_properties $pid custom1 propcode`
 custom2=`Rscript $META_MODEL_ROOT/scripts/rest/get_property.R dh_properties $pid custom2 propcode`
 
+# Summarize all children
+elid=$2
+manifest="$OM_OUT_DIR/manifest.${runid}.${elid}.log"
+# Children first, so we filter out the river seg elid
+for i in `cat $manifest | grep -v $elid`; do
+  $META_MODEL_ROOT/scripts/om/summarize_element $runid $i $DRUPAL_ROOT
+done 
+
+$META_MODEL_ROOT/scripts/om/summarize_element $runid $elid $DRUPAL_ROOT
+
+
+exit
+
+## This should now be handled in the summarize_element script above
 sum_script="/opt/model/om/R/summarize/${object_class}.R"
 echo "Looking for $sum_script "
 cd /var/www/R
