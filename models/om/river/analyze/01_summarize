@@ -7,14 +7,15 @@ custom1=`Rscript $META_MODEL_ROOT/scripts/rest/get_property.R dh_properties $pid
 custom2=`Rscript $META_MODEL_ROOT/scripts/rest/get_property.R dh_properties $pid custom2 propcode`
 
 # Summarize all children
-elid=$2
-manifest="$OM_OUT_DIR/manifest.${runid}.${elid}.log"
+manifest="$OM_DATA_DIR/manifest.${runid}.${elid}.log"
 # Children first, so we filter out the river seg elid
 for i in `cat $manifest | grep -v $elid`; do
-  $META_MODEL_ROOT/scripts/om/summarize_element $runid $i $DRUPAL_ROOT
+  echo "Running: $META_MODEL_ROOT/scripts/om/summarize_element $i $runid $DRUPAL_ROOT"
+  $META_MODEL_ROOT/scripts/om/summarize_element $i $runid $DRUPAL_ROOT
 done 
 
-$META_MODEL_ROOT/scripts/om/summarize_element $runid $elid $DRUPAL_ROOT
+echo "Sumarizing container: $META_MODEL_ROOT/scripts/om/summarize_element $elid $runid $DRUPAL_ROOT"
+$META_MODEL_ROOT/scripts/om/summarize_element $elid $runid $DRUPAL_ROOT
 
 
 exit

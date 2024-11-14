@@ -13,5 +13,5 @@ cd /var/www/html/om
 cd /opt/model/p6/vadeq/
 . hspf_config
 # get river seg from om elementid
-riverseg=`/opt/model/meta_model/scripts/om/get_elid_riverseg`
+/opt/model/meta_model/run_model om $3 "${16}" auto river analyze 01
 /opt/model/meta_model/run_model om $3 "${16}" auto river analyze 05
