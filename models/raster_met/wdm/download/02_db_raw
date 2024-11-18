@@ -26,8 +26,8 @@ echo "Aggregating precip for $coverage from "$datasource
 outfile=`basename $COVERAGE_PRECIP_FILE`
 echo "calculated tstime $tstime=TZ=\"$TZ\" date -d \"$START_DATE\" +'%s'"
 echo "calculated tsendtime $tsendtime=TZ=\"$TZ\" date -d \"$END_DATE\" +'%s'"
-echo "$MET_SCRIPT_PATH/sh/calc_raster_ts $coverage $varkey $RASTER_SQL_FILE /tmp/$outfile $db_host $db_name $tstime $tsendtime"
-$MET_SCRIPT_PATH/sh/calc_raster_ts $coverage $varkey $RASTER_SQL_FILE /tmp/$outfile $db_host $db_name $tstime $tsendtime
+echo "$MET_SCRIPT_PATH/sh/calc_raster_ts $coverage $varkey $RASTER_SQL_FILE /tmp/$outfile $db_host $db_name $COVERAGE_BUNDLE $COVERAGE_FTYPE $tstime $tsendtime"
+$MET_SCRIPT_PATH/sh/calc_raster_ts $coverage $varkey $RASTER_SQL_FILE /tmp/$outfile $db_host $db_name $COVERAGE_BUNDLE $COVERAGE_FTYPE $tstime $tsendtime
 sftp ${db_host}:"/tmp/$outfile" "${tempdir}/${outfile}"
 install -D "${tempdir}/${outfile}" $COVERAGE_PRECIP_FILE
 
