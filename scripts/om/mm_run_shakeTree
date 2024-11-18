@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# This is a hybrid script to run the model with parameters from the command line
+# we will eventually include an option to use purely meta-model syntax and get all configs
+# from the .con file 
+# - the challenges being non-defined $startdate $enddate $cache_date $force_overwrite
+#   arguments. These are additional beyond normal MM args
+
+# just run with all args from calling
+cd /var/www/html/om 
+/usr/bin/php -f /var/www/html/om/run_shakeTree.php $@
+
+cd /opt/model/p6/vadeq/
+. hspf_config
+# get river seg from om elementid
+/opt/model/meta_model/run_model om $3 "${16}" auto river analyze 01
+/opt/model/meta_model/run_model om $3 "${16}" auto river analyze 05
