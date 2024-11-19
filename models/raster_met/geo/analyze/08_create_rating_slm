@@ -8,7 +8,15 @@ fi
 
 echo "Creating model rating timeseries."
 
+
 rating_file=`basename $RATING_TS_FILE`
-echo "Rscript $META_MODEL_ROOT/scripts/precip/create_rating_ts.R \"$COVERAGE_PRECIP_FILE\" \"$RATING_FILE\" \"$rating_file\" monthly"
-Rscript $META_MODEL_ROOT/scripts/precip/create_rating_ts.R "$COVERAGE_PRECIP_FILE" "$RATING_FILE" "$rating_file" monthly
+
+if [[ "$RATING_EXPANSION" != "true" ]]; then
+  RATING_TS_SCALE=monthly
+else
+  RATING_TS_SCALE=weekly
+fi
+
+echo "Rscript $META_MODEL_ROOT/scripts/precip/create_rating_ts.R \"$COVERAGE_PRECIP_FILE\" \"$RATING_FILE\" \"$rating_file\" \"$RATING_TS_SCALE\""
+Rscript $META_MODEL_ROOT/scripts/precip/create_rating_ts.R "$COVERAGE_PRECIP_FILE" "$RATING_FILE" "$rating_file" $RATING_TS_SCALE
 install -D $rating_file $RATING_TS_FILE
