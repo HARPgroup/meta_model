@@ -29,7 +29,7 @@ r_names <- names(ratings)
 if (rating_timescale == 'monthly') {
   req_cols = c('mo', 'rating')
 } else {
-  req_cols = c('obs_date', 'rating')
+  req_cols = c('start_date', 'end_date', 'rating')
 }
 # check for required cols
 if (!all(req_cols %in% r_names)) {
@@ -61,7 +61,7 @@ if (rating_timescale == 'monthly') {
 } else {
   #For non-monthly ratings, include the start and end date
   rating_sql <- "
-    select a.start_date, a.end_data, b.rating
+    select a.start_date, a.end_date, b.rating
     from base_ts as a
     left outer join ratings as b
     on (
