@@ -15,7 +15,7 @@ ds$get_token(rest_pw)
 ## WA_cpl = Qdemand_cpl - MIF*Qbase_cpl + Smin_cpl/CPL
 ### Where CPL = Critical Period Length 
 
-# Read Args
+# Read Args argst=c(4713892, 231299, 13, 1000) argst=c(4711414, 229549, 13, 1000)
 argst <- commandArgs(trailingOnly=T)
 pid <- as.integer(argst[1])
 elid <- as.integer(argst[2])
@@ -57,6 +57,10 @@ metrics_data <- om_vahydro_metric_grid(
 
 #Get object of interest using the given pid and elid 
 obj <- metrics_data[metrics_data$pid == pid, ]
+if (!("Smin_mg" %in% names(obj))) {
+  message(paste(obj$propname, "(pid=", obj$pid,")","does not have storage information. Exiting."))
+  q("n")
+}
 basin_data <- fn_extract_basin(metrics_data, obj$riverseg)
 obj$Smin_basin_mg <- sum(basin_data$Smin_mg)
 
@@ -65,7 +69,7 @@ obj$Qout_mif <- PoF*obj$lCPL_Qout_base #min instream flow (cfs)
 obj$Qavailable_cfs <- round((obj$lCPL_Qout_dem - obj$Qout_mif), digits = 3) #available flow (cfs): Qavailable = Qdemand - PoF*Qbaseline 
 obj$Qavailable_mgd <- obj$Qavailable_cfs / 1.547
 obj$WA_mgd = round((obj$Qavailable_cfs / 1.547) + (obj$Smin_mg / CPL), digits = 3)
-obj$WA_basin_mgd = round((obj$Qavailable_cfs / 1.547) + (obj$smin_basin_mg / CPL), digits = 3)
+obj$WA_basin_mgd = round((obj$Qavailable_cfs / 1.547) + (obj$Smin_basin_mg / CPL), digits = 3)
 #Get scenario 
 sceninfo <- list(
   varkey = 'om_scenario',

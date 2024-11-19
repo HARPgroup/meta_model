@@ -1,0 +1,19 @@
+#!/bin/csh
+set scenario=$1
+set h5file=$2
+set tempdir=$3
+
+source $META_MODEL_ROOT/models/$MODEL/model_config
+
+set tempbase=`basename $tempdir`
+cd $MODEL_ROOT/tmp/
+echo "cd $MODEL_ROOT/tmp/"
+
+rm -Rf $tempbase/*
+
+if ( ! -d $tempdir ) then
+  echo "Cannot find $tempdir - exiting"
+  exit
+endif
+
+rm $h5file

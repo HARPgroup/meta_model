@@ -21,7 +21,7 @@ set image_file_path=$CBP_EXPORT_DIR/land/$scenario/images
 
 # load perlands and implnds variables
 source $MODEL_ROOT/run_bhatt/fragments/set_landuse
-foreach landuse ($perlnds $implnds)
+foreach landuse ($perlnds)
   set output_file_path="$CBP_EXPORT_DIR/land/$scenario/pwater/${landuse}${seg}_pwater.csv"
   Rscript $META_MODEL_ROOT/scripts/land/hsp_pwater.R $segment $scenario $landuse $output_file_path $image_file_path $vers $ftype
   Rscript $META_MODEL_ROOT/scripts/land/hsp_pwater_stats.R $segment $scenario $landuse $output_file_path $image_file_path $vers $ftype
