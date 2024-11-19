@@ -1,0 +1,33 @@
+#!/bin/csh
+set scenario=$1
+set segment=$2
+set luseg=$segment # backward compat
+set tree=$MODEL_ROOT # backward compat
+set tempdir=$3
+
+source $META_MODEL_ROOT/models/$MODEL/model_config
+
+set tempbase=`basename $tempdir`
+cd $MODEL_ROOT/tmp/
+echo "cd $MODEL_ROOT/tmp/"
+
+rm -Rf $tempbase/*
+
+if ( ! -d $tempdir ) then
+  echo "Creating $tempdir"
+  mkdir $tempdir
+endif
+
+source $tree/run_bhatt/fragments/set_landuse
+cd $tempdir
+  
+foreach lu ($perlnds $implnds)
+  echo running $lu for segment $seg land scenario $scenario
+  cp -v $tree/config/blank_wdm/land.wdm $lu$seg'.wdm'
+  #set inp = $tree/tmp/uci/land/$lu/$scenario/$lu$seg'.uci'
+  cp $tree/tmp/uci/land/$lu/$scenario/$lu$seg'.uci' ./
+  set inp = $lu$seg'.uci'
+  set h5file = $lu$seg'.h5'
+  echo "Trying $HSP_EXEC import_uci $inp $h5file"
+  $HSP_EXEC import_uci $inp $h5file
+end

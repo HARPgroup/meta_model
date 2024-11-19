@@ -11,10 +11,11 @@ fi
 echo "Copying baseline met data from $NLDAS_ROOT/out/lseg_csv/${BASELINE_MET_SCENARIO}/${coverage}.*"
 echo "into directory $oDir"
 for i in `ls $NLDAS_ROOT/out/lseg_csv/${BASELINE_MET_SCENARIO}/${coverage}.*`; do
-  wdm_file_name=`basename $i`
-  echo "install -D $i $oDir/$wdm_file_name"
-  install -D $i $oDir/$wdm_file_name
+  csv_file_name=`basename $i`
+  echo "install -D $i $oDir/$csv_file_name"
+  install -D $i $oDir/$csv_file_name
 done
+echo "Copying met scenario specific precip CSV into model tree"
 csv_name=`basename $COVERAGE_WDM_CSV`
 echo "install -D $COVERAGE_WDM_CSV $oDir/$csv_name"
 install -D $COVERAGE_WDM_CSV $oDir/$csv_name

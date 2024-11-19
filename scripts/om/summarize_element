@@ -13,6 +13,7 @@ DRUPAL_ROOT=$3
 # with a call to a shell script that runs the model, then runs a R summary script 
 
 # Get info about this element, including its object_class
+echo "Changing to Drupal: cd $DRUPAL_ROOT"
 cd $DRUPAL_ROOT
 info=`drush scr modules/om/src/om_get_element_info.php $elid`
 cd /var/www/R

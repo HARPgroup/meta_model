@@ -78,7 +78,7 @@ model <- RomProperty$new(
 )
 message(paste("Saving landseg model", model$propcode, model$entity_type, model$featureid, model$propcode))
 if (is.na(model$pid)) {
-  model$propname = landseg$name
+  model$propname = paste(landseg$name,model_version)
   model$varid = ds$get_vardef('om_model_element')$varid
 #  message(paste("Saving landseg model", model$propname, model$varid, model$featureid, $model$propcode))
   model$save(TRUE)
@@ -174,3 +174,23 @@ boxplot(as.numeric(dat$Runit) ~ dat$year, ylim=c(0,3))
 dev.off()
 message(paste("Saved file: ", fname, "with URL", furl))
 vahydro_post_metric_to_scenprop(model_scenario$pid, 'dh_image_file', furl, 'Runit_boxplot_year', 0.0, ds)
+
+Runits <- zoo(as.numeric(as.character( dat$Runit )), order.by = as.POSIXct(dat$thisdate));
+loflows <- group2(Runits, "calendar")
+l90 <- loflows["90 Day Min"]
+ndx = which.min(as.numeric(l90[,"90 Day Min"]))
+l90_RUnit = round(loflows[ndx,]$"90 Day Min",6)
+l90_year = loflows[ndx,]$"year"
+
+if (is.na(l90_RUnit)) {
+  l90_Runit = 0.0
+  l90_year = 0
+}
+l90prop <- vahydro_post_metric_to_scenprop(model_scenario$pid, 'om_class_Constant', NULL, 'l90_RUnit', l90_RUnit, ds)
+l90yr_prop <- vahydro_post_metric_to_scenprop(model_scenario$pid, 'om_class_Constant', NULL, 'l90_year', l90_year, ds)
+
+Runit <- mean(as.numeric(dat$Runit) )
+if (is.na(Runit)) {
+  Runit = 0.0
+}
+Runitprop <- vahydro_post_metric_to_scenprop(model_scenario$pid, 'om_class_Constant', NULL, 'Runit', Runit, ds)
