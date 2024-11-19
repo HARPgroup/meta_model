@@ -19,23 +19,23 @@ library("jsonlite")
 #8 = Plot name details
 #9 = STORMSEP_REGRESSION_METHOD = Should the regressions performed be power
 #regression or linear regression
+
 args <- commandArgs(trailingOnly = TRUE)
 print("Setting arguments...")
+
+
 comp_dataFilePath <- args[1]
 stormStatsPath <- args[2]
 stormPath <- args[3]
 rollingDur <- as.numeric(args[4])
 pathToWriteJSON <- args[5]
 pathToWriteRatings <- args[6]
-pathToWritePlots <- args[7]
-#The USGS gage number or hydro ID of the coverage that will be used to store
-#this data with unique names
-pathDetails <- args[8]
+pathToWriteData <- args[7]
 
-if(is.na(args[9])){
+if(is.na(args[8])){
   regressionMethod <- "LINEAR"
 }else{
-  regressionMethod <- args[9]
+  regressionMethod <- args[8]
   if(!(regressionMethod %in% c("POWER","LINEAR"))){
     print(paste0("No method exists for ",regressionMethod," regression. Performing linear regression instead. Check config file..."))
     regressionMethod <- "LINEAR"
@@ -97,7 +97,7 @@ stormIDs <- unique(stormEvents$stormID)
 #full stormDuration
 getRollPrecip <- function(comp_data,stormDuration,
                           rollingDur,endDate,
-                          precipColName = "prism_p_cfs",
+                          precipColName = "prism_cfs",
                           obs_date = "obs_date"){
   #Convert input date to date, just in case
   sDate <- as.Date(endDate)
@@ -131,12 +131,16 @@ getRollPrecip <- function(comp_data,stormDuration,
 #Add to stormStats the sum of precipitation from the 3-, 7-, and 14-day periods
 #leading up to the storm and including the full storm duration. Convert to MG
 cfToMG <- 12*12*12/231/1000000
+
+# add MG column to comp_data ####################################
+comp_data$precip_MG<-cfToMG*86400*comp_data$precip_cfs
+
 #Only precip during the storm iteself
 print("Finding rolling precip over each storm duration...")
 stormStats$rollDayWStorm_MG <- mapply(SIMPLIFY = TRUE, USE.NAMES = FALSE,
                                             FUN = getRollPrecip, stormDuration = stormStats$durAll,
                                             endDate = stormStats$endDate,
-                                            MoreArgs = list(comp_data = comp_data,rollingDur = rollingDur,
+                                            MoreArgs = list(comp_data = comp_data, rollingDur = rollingDur,
                                                             precipColName = "precip_cfs",
                                                             obs_date = "obs_date")
 )
@@ -175,6 +179,52 @@ if(regressionMethod == "POWER"){
                                mo_var = "beginMonth")
 }
 
+# adding predicted flow to storm stats also
+stormStats[,"predicted_flow_MG"]=numeric()
+
+# Set start and end dtates as dates
+stormStats$startDate <- as.Date(stormStats$startDate)
+stormStats$endDate <- as.Date(stormStats$endDate)
+
+# Add in predicted flow data
+predict.flow <- function(storm_data,ratings_data){
+  # Create empty dataframe, for values ot be added to
+  predicted_data <- storm_data[0,]
+  # Find predicted values for each month
+  for(i in 1:12){
+    # Obtaining coefficients
+    month <- as.numeric(i)
+    coefficients <- ratings_data$atts$lms[[month]]$coefficients
+    intercept <- coefficients[1]
+    slope <- coefficients[2]
+    # Getting STorm Data from the correct month
+    message("Obtaining data from input month")
+    storm_data_new <- subset(storm_data, beginMonth %in% month )
+    # Inserting predicted flow into precip data frame (guessing column name? Units?)
+    message("Calculating predicted flow")
+    storm_data_new$predicted_flow_MG <- slope*storm_data_new$rollDayWStorm_MG + intercept
+    
+    #Adding data to dataframe
+    # predicted_data$predicted_flow_MG <- with(predicted_data,precip_data_new$predicted_flow[match(obs_date,precip_data_new$obs_date)]
+    predicted_data <- rbind(predicted_data,storm_data_new)
+  }
+  return(predicted_data)
+  }
+
+predicted_data <- predict.flow(stormStats,monthEventOut)
+
+# Adding Error using rating = 1 - abs(qobs-qmodel)/qobs
+predicted_data$rating <- 1-(abs(predicted_data$volumeAboveBaseQMG-predicted_data$predicted_flow_MG)/predicted_data$volumeAboveBaseQMG)
+
+# Optional: removing ratings if they ar enot between -1 and 1
+# predicted_data$rating <- replace(predicted_data$rating, -1 > predicted_data$rating, NA)
+# predicted_data$rating <- replace(predicted_data$rating, 1 < predicted_data$rating, NA)
+
+
+
+# default to r-squared value for the month
+# 
+
 print("Writing out data to JSON and ratings to csv...")
 
 #Rename the ratings before writing them out
@@ -184,18 +234,5 @@ names(ratingsOut) <- c('mo', 'rating')
 #WRITE OUT DATA. GET STATS OR JSON OUTPUT
 out <- monthEventOut$toJSON()
 write(out,pathToWriteJSON)
-write.csv(ratingsOut,pathToWriteRatings, row.names = FALSE)
-
-print("Writing plots for redsids of monthly lms...")
-# This outputs our residuals. Only plot if there are more than two data points
-for (i in 1:12){
-  thisMonthLM <- monthEventOut$atts$lms[[i]]
-  if(is.logical(thisMonthLM) || length(thisMonthLM$residuals) <= 2){
-    print(paste0("Insufficient data to plot month ",i))
-  }else{
-    # png(paste0(pathToWritePlots,"/USGSgage",pathDetails,"_Month",i,".png"))
-    plot(thisMonthLM,1)
-    # dev.off()
-  }
-}
-
+write.csv(monthEventOut$atts$stats,pathToWriteRatings)
+write.csv(predicted_data,pathToWriteData)
