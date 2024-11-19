@@ -43,6 +43,9 @@ json_data_lm <- prettify(
   serializeJSON(data_lm), 
   indent = 2
 )
+
+
+
 message(paste0("Write json in new file path: ",json_write_path))
 write(json_data_lm, json_write_path)
 ratings <- data_lm$atts$stats

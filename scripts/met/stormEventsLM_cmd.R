@@ -21,6 +21,7 @@ library("jsonlite")
 args <- commandArgs(trailingOnly = TRUE)
 print("Setting arguments...")
 
+
 comp_dataFilePath <- args[1]
 stormStatsPath <- args[2]
 stormPath <- args[3]

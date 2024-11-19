@@ -16,11 +16,6 @@ source("https://raw.githubusercontent.com/HARPgroup/meta_model/master/scripts/pr
 args <- commandArgs(trailingOnly = TRUE)
 print("Setting arguments...")
 
-#############################
-args[1] <- "http://deq1.bse.vt.edu:81/met/simple_lm_PRISM/precip/usgs_ws_01615000-PRISM-weekly.csv"
-args[2] <- "http://deq1.bse.vt.edu:81/met/simple_lm_PRISM/stats/usgs_ws_01615000-PRISM-lm_simple-model.json"
-#############################
-
 weekly_dataFilePath <- args[1]
 StatsPath <- args[2]
 outPath <- args[3]
@@ -65,16 +60,8 @@ predict.flow.weekly <- function(precip_data,simple_lm_model){
 
 predicted_data <- predict.flow.weekly(precip_data,simpleLMs)
 
-predicted_data$rating <- 1-(abs(predicted_data$obs_flow-predicted_data$predicted_flow_cfs)/predicted_data$obs_flow)
+predicted_data$rating <- 1-(abs(predicted_data$predicted_flow_cfs-predicted_data$obs_flow)/predicted_data$obs_flow)
 
-#######################
-suppressPackageStartupMessages(library(ggplot2))
-ggplot(data = predicted_data, mapping = aes(x=start_date,y=rating))+
-  geom_point(size=0.8)+
-  theme_bw()+
-  ggtitle("Simple LM Ratings Results")+
-  ylim(-375,0)
-#########################
 
 # Write out new dataframe
 write.csv(predicted_data,outPath)
