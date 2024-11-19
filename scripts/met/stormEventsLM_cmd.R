@@ -202,6 +202,8 @@ predicted_data$rating <- 1-(abs(predicted_data$volumeAboveBaseQMG-predicted_data
 # predicted_data$rating <- replace(predicted_data$rating, -1 > predicted_data$rating, NA)
 # predicted_data$rating <- replace(predicted_data$rating, 1 < predicted_data$rating, NA)
 
+
+
 # default to r-squared value for the month
 # 
 
@@ -211,3 +213,5 @@ out <- monthEventOut$toJSON()
 write(out,pathToWriteJSON)
 write.csv(monthEventOut$atts$stats,pathToWriteRatings)
 write.csv(predicted_data,pathToWriteData)
+
+
