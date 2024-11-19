@@ -31,5 +31,7 @@ install -D "met_${coverage}.wdm" $CBP_ROOT/input/scenario/climate/met/$METPRAD_S
 echo "install -D \"prad_${coverage}.wdm\" $CBP_ROOT/input/scenario/climate/prad/$METPRAD_SCEN/prad_${coverage}.wdm"
 install -D "prad_${coverage}.wdm" $CBP_ROOT/input/scenario/climate/prad/$METPRAD_SCEN/prad_${coverage}.wdm
 echo "rm met_${coverage}.wdm"
+rm met_${coverage}.wdm
 echo "rm prad_${coverage}.wdm"
+rm prad_${coverage}.wdm
 
