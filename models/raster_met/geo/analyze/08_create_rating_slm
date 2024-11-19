@@ -6,11 +6,7 @@ if [ "$geo_config" = "" ]; then
 fi
 . $geo_config
 
-if [[ "$GEO_MET_MODEL" != "lm_simple" ]]; then
-  exit
-fi
-
-echo "Creating simple linear model Rating timeseries."
+echo "Creating model rating timeseries."
 
 rating_file=`basename $RATING_TS_FILE`
 echo "Rscript $META_MODEL_ROOT/scripts/precip/create_rating_ts.R \"$COVERAGE_PRECIP_FILE\" \"$RATING_FILE\" \"$rating_file\" monthly"

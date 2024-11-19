@@ -1,0 +1,20 @@
+#!/bin/bash
+# loads the args, the raster specific config and change to tempdir
+wdm_config=`find_config wdm.config`
+if [ "$wdm_config" = "" ]; then
+  wdm_config="$META_MODEL_ROOT/models/raster_met/wdm/wdm.config"
+fi
+. $wdm_config
+
+# note: we use varkey here as the "pdname" attribute since this var seems somewhat superfluous
+#       and the varkey will in fact associate with a specific time period dataset
+echo "Copying baseline met data from $NLDAS_ROOT/out/lseg_csv/${BASELINE_MET_SCENARIO}/${coverage}.*"
+echo "into directory $oDir"
+for i in `ls $NLDAS_ROOT/out/lseg_csv/${BASELINE_MET_SCENARIO}/${coverage}.*`; do
+  wdm_file_name=`basename $i`
+  echo "install -D $i $oDir/$wdm_file_name"
+  install -D $i $oDir/$wdm_file_name
+done
+csv_name=`basename $COVERAGE_WDM_CSV`
+echo "install -D $COVERAGE_WDM_CSV $oDir/$csv_name"
+install -D $COVERAGE_WDM_CSV $oDir/$csv_name

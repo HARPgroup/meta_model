@@ -29,7 +29,7 @@ flow_data <- read.csv(flow_csv)
 precip_data <- read.csv(precip_csv)
 print("creating comp_data")
 daily_data <- sqldf(
-  "select a.obs_date, a.precip_in as precip_in, a.precip_mm as precip_mm, 
+  "select a.obs_date, a.precip_in as precip_in, 
   a.yr, a.mo, a.da, a.wk,
   b.obs_flow, dra as area_sqmi
   from precip_data as a

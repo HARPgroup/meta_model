@@ -9,6 +9,7 @@ echo "Loading defaults"
 source $MODEL_ROOT/config/control/script/default.con
 # load model scenario specifics
 source $MODEL_ROOT/config/control/script/${scenario}.con
+echo "SCRIPT_DIR = $SCRIPT_DIR"
 setenv MODEL_VERSION_CODE $MODEL_VERSION_CODE
 if (! $?modules ) then
    echo "CAN NOT FIND modules setting, what the hell?"

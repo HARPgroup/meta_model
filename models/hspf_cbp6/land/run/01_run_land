@@ -8,4 +8,5 @@ echo "Changing to $tempdir"
 #cd $MODEL_ROOT/$MY_HOME/$SCRIPT_DIR
 cd $tempdir
 
+echo "Running: $MODEL_ROOT/$MY_HOME/$SCRIPT_DIR/bhatt_run_land_oneseg.csh $scenario $segment $tempdir $MODEL_ROOT"
 $MODEL_ROOT/$MY_HOME/$SCRIPT_DIR/bhatt_run_land_oneseg.csh $scenario $segment $tempdir $MODEL_ROOT

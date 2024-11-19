@@ -32,23 +32,30 @@ pathToWrite <- args[4]
 #until best fit is found. This becomes baseline flow, brk
 hreg <- function(x, limit = 1){
   #What is the numeric percentile of x that is of percent limit?
-  lim <- as.numeric(quantile(x,limit))
+  lim <- as.numeric(quantile(x,limit,na.rm = TRUE))
   #Give all of x below the percentile of limit:
   x <- x[x <= lim]
   #Get all percentiles of x from 0 to 100% by 0.1%:
-  lns <- as.numeric(quantile(x, seq(0,1,0.001)))
+  lns <- as.numeric(quantile(x, seq(0,1,0.001),na.rm = TRUE))
   #Keep only values above 0
   lns <- lns[lns != 0]
-  #A vector for mean square error
-  mse <- numeric(length(lns))
-  #For each values in lns, determine the mean square error if this is a
-  #horizontal regression of the data in x
-  for (i in 1:length(lns)){
-    line <- lns[i]
-    mse[i] <- mean((x - line)^2)
+  #If all data points are 0 or below, lns will now be empty. In these cases,
+  #return 0
+  if(length(lns) == 0){
+    out <- 0
+  }else{
+    #A vector for mean square error
+    mse <- numeric(length(lns))
+    #For each values in lns, determine the mean square error if this is a
+    #horizontal regression of the data in x
+    for (i in 1:length(lns)){
+      line <- lns[i]
+      mse[i] <- mean((x - line)^2,na.rm = TRUE)
+    }
+    #Return the percentile x that created the minimum least square error:
+    out <- lns[which.min(mse)]
   }
-  #Return the percentile x that created the minimum least square error:
-  return(lns[which.min(mse)])
+  return(out)
 }
 
 print("Finding baseflow and local mins/maxes")
@@ -318,9 +325,10 @@ for (i in 1:(length(x) - 1)){
     stormsep[[length(stormsep) + 1]] <- store
   }
 }
-print(paste0(length(stormsep)," storms found. Writing data."))
+message(paste0(length(stormsep)," storms found. Writing data."))
 #Write out the full flow data with the stormIDs to create a file from which the
 #storms may easily be extracted
+message(paste("Writing storms to", pathToWrite))
 write.csv(baseQ,
           pathToWrite,
           row.names = FALSE)

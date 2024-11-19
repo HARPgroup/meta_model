@@ -28,8 +28,20 @@ rollingDur=$STORM_INCLUDE_DURATION
 # even though we might have need fo the stats, but they are included in the json file
 json_file=`basename $MODEL_JSON`
 rate_file=`basename $RATING_FILE`
+# Directory to store plots in. 
+pathToWritePlots=$RESID_PLOTS
+# The USGS gage number or hydro ID of the coverage that will be used to store
+# this data with unique names
+plotDetails=$USGS_GAGE
 
-cmd="Rscript $META_MODEL_ROOT/scripts/met/stormEventsLM_cmd.R $comp_dataFilePath $stormStatsPath $stormPath $rollingDur $json_file $rate_file $STORMSEP_REGRESSION_METHOD"
+#Create plot directory if it does not exist
+if [ ! -d $RESID_PLOTS ]; then
+  echo "Creating plot directory at $RESID_PLOTS"
+  mkdir -p $RESID_PLOTS
+fi
+
+
+cmd="Rscript $META_MODEL_ROOT/scripts/met/stormEventsLM_cmd.R $comp_dataFilePath $stormStatsPath $stormPath $rollingDur $json_file $rate_file $pathToWritePlots $plotDetails $STORMSEP_REGRESSION_METHOD"
 echo "Running: $cmd"
 eval $cmd
 install -D $json_file "$MODEL_JSON" 

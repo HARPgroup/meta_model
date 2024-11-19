@@ -1,15 +1,12 @@
 #!/bin/bash
-
-ddate=$1
-datasource=$2
-tempdir=$3
-
-# loads the raster specific config
-raster_config=`find_config raster.config`
-if [ "$raster_config" = "" ]; then
-  raster_config="$META_MODEL_ROOT/models/raster_met/raster.config"
+# loads the met specific config
+met_config=`find_config met.config`
+if [ "$met_config" = "" ]; then
+  met_config="$META_MODEL_ROOT/models/raster_met/met/met.config"
 fi
-. $raster_config
+echo "Loading met_config from $met_config"
+. $met_config
+
 
 echo "Trying to reproject $src_files for $ddate"
 for originalFile in $src_files; do
@@ -21,12 +18,12 @@ for originalFile in $src_files; do
   echo "Reprojecting raster..."
   echo "gdalwarp $originalFile -t_srs EPSG:4326 -of \"gtiff\" \"${originalFile}.repro.gtiff\""
   gdalwarp $originalFile -t_srs EPSG:4326 -of "gtiff" "${originalFile}.repro.gtiff"
-  if [ "$single_band" != "false" ]; then
-    echo "Extracting $single_band from ${originalFile}.repro.gtiff"
+  if [ "$TS_BAND" != "false" ]; then
+    echo "Extracting $TS_BAND from ${originalFile}.repro.gtiff"
     cp "${originalFile}.repro.gtiff" "${originalFile}.allbands.gtiff"
     echo "cp \"${originalFile}.repro.gtiff\" \"${originalFile}.allbands.gtiff\""
-    echo "gdal_translate -b $single_band -of gtiff \"${originalFile}.allbands.gtiff\" \"$originalFile.repro.gtiff\" "
-    gdal_translate -b $single_band -of gtiff "${originalFile}.allbands.gtiff" "$originalFile.repro.gtiff"
+    echo "gdal_translate -b $TS_BAND -of gtiff \"${originalFile}.allbands.gtiff\" \"$originalFile.repro.gtiff\" "
+    gdal_translate -b $TS_BAND -of gtiff "${originalFile}.allbands.gtiff" "$originalFile.repro.gtiff"
     rm "${originalFile}.allbands.gtiff"
   fi
 done

@@ -1,0 +1,33 @@
+#!/bin/bash
+# loads the args, the raster specific config and change to tempdir
+wdm_config=`find_config wdm.config`
+if [ "$wdm_config" = "" ]; then
+  wdm_config="$META_MODEL_ROOT/models/raster_met/wdm/wdm.config"
+fi
+. $wdm_config
+
+if [ "$MET_PROCESS_METHOD" == "cbp6" ]; then
+  exit
+fi
+echo "02_db_raw called for $scenario, $coverage"
+# Get data for an entire time period if this is just a raw export
+if [ "$RESAMPLE_VARKEY" != "" ]; then
+  exit
+fi
+echo "No Resampling requested"
+if [ "$DISAGGGREGATE_VARKEY" != "" ]; then
+  exit
+fi
+echo "No disagregation requested"
+
+
+# BEGIN - actually loading local data
+echo "Aggregating precip for $coverage from "$datasource
+outfile=`basename $COVERAGE_PRECIP_FILE`
+echo "calculated tstime $tstime=TZ=\"$TZ\" date -d \"$START_DATE\" +'%s'"
+echo "calculated tsendtime $tsendtime=TZ=\"$TZ\" date -d \"$END_DATE\" +'%s'"
+echo "$MET_SCRIPT_PATH/sh/calc_raster_ts $coverage $varkey $RASTER_SQL_FILE /tmp/$outfile $db_host $db_name $COVERAGE_BUNDLE $COVERAGE_FTYPE $tstime $tsendtime"
+$MET_SCRIPT_PATH/sh/calc_raster_ts $coverage $varkey $RASTER_SQL_FILE /tmp/$outfile $db_host $db_name $COVERAGE_BUNDLE $COVERAGE_FTYPE $tstime $tsendtime
+sftp ${db_host}:"/tmp/$outfile" "${tempdir}/${outfile}"
+install -D "${tempdir}/${outfile}" $COVERAGE_PRECIP_FILE
+

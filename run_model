@@ -12,11 +12,11 @@ if (! $?META_MODEL_ROOT ) then
   set META_MODEL_ROOT="/opt/model/meta_model"
 endif
 set IGNORE_PROBLEMS = 0
-
 # Get params from command arguments
 # and set up list of modules and steps to run
 source $META_MODEL_ROOT/model_get_args
 echo $run_steps
+#echo "Debug: args done"
 
 # set a couple defaults that can e overriden by the model
 set all_modules = ( land river )
@@ -40,7 +40,7 @@ endif
 
 
 echo "Beginning Run model=$model, scenario=$scenario, segment=$segment, work_path=$work_path, modules=$modules, run_steps=$run_steps,script=$script"
-
+install -d $work_path # insure that the work directory is in place
 # todo: set up places to look for plugins in various trees such as MODEL_ROOT
 set model_plugins=$META_MODEL_ROOT/models/$model
 setenv MODEL_ROOT "$MODEL_ROOT"
@@ -115,7 +115,7 @@ if ( -d $model_plugins ) then
         rm -Rf $work_path
       endif
     else
-      echo "Model cleanup NOT performed.  You will need to manually remove emp dir $work_path"
+      echo "Model cleanup NOT performed.  You will need to manually remove temp dir $work_path"
     endif 
   endif
 else

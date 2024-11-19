@@ -5,8 +5,6 @@
 #4 month variable
 #5 json write_path this is the full data_lm
 #5 csv write_path this is just stats
-
-
 suppressPackageStartupMessages(library("dataRetrieval"))
 suppressPackageStartupMessages(library("lubridate"))
 suppressPackageStartupMessages(library("sqldf"))
@@ -40,9 +38,10 @@ sample_data <- read.csv(data_location)
 print("Running mon_lm function")
 data_lm <- mon_lm_stats(sample_data,y_var,x_var,mo_var)
 
-
 message(paste0("Write json in new file path: ",json_write_path))
-write(json_data_lm, json_write_path)
+json_data_lm <- data_lm$toJSON()
+write(json_data_lm,json_write_path)
+
 ratings <- data_lm$atts$stats
 names(ratings) <- c('mo', 'rating') # this file should have either "mo", or "mo", "da", "yr" columns
 message(paste("Saving rating data to:", ratings_write_path))

@@ -264,8 +264,8 @@ ndx = which.min(as.numeric(l90[,"X90.Day.Min"]));
 l90_Qout = round(Qout_g2[ndx,]$"X90.Day.Min",6);
 l90_year = Qout_g2[ndx,]$"year";
 
-if (is.na(l90)) {
-  l90_Runit = 0.0
+if (is.na(l90_Qout)) {
+  l90_Qout = 0.0
   l90_year = 0
 }
 
@@ -274,8 +274,8 @@ ndx = which.min(as.numeric(l30[,"X30.Day.Min"]));
 l30_Qout = round(Qout_g2[ndx,]$"X30.Day.Min",6);
 l30_year = Qout_g2[ndx,]$"year";
 
-if (is.na(l30)) {
-  l30_Runit = 0.0
+if (is.na(l30_Qout)) {
+  l30_Qout = 0.0
   l30_year = 0
 }
 
@@ -284,8 +284,8 @@ ndx = which.min(as.numeric(l07[,"X7.Day.Min"]));
 l07_Qout = round(Qout_g2[ndx,]$"X7.Day.Min",6);
 l07_year = Qout_g2[ndx,]$"year";
 
-if (is.na(l07)) {
-  l07_Runit = 0.0
+if (is.na(l07_Qout)) {
+  l07_Qout = 0.0
   l07_year = 0
 }
 
@@ -294,8 +294,8 @@ ndx = which.min(as.numeric(l01[,"X1.Day.Min"]));
 l01_Qout = round(Qout_g2[ndx,]$"X1.Day.Min",6);
 l01_year = Qout_g2[ndx,]$"year";
 
-if (is.na(l01)) {
-  l01_Runit = 0.0
+if (is.na(l01_Qout)) {
+  l01_Qout = 0.0
   l01_year = 0
 }
 
@@ -355,5 +355,7 @@ names(values) <- c("imp_off", "l90_year")
 values_json <- serializeJSON(values) # converting to a json
 
 # exporting as json file 
-write(values_json, file= paste0(json_dir, river_seg, "_summ.json"), sep = ",", append = FALSE)
+jfile=paste0(json_dir, river_seg, "_summ.json")
+message(paste("Writing JSON info in", jfile))
+write(values_json, file=jfile, sep = ",", append = FALSE)
 

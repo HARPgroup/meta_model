@@ -1,0 +1,34 @@
+#!/bin/csh
+# Run post-process extract routine
+set scenario=$1
+set segment=$2
+set seg=$segment # this is for backwards compatibility with scripts source
+set tempdir=$3
+# Load configuration
+set modules="land" # set this so that the model_config will get land dates
+source $META_MODEL_ROOT/models/$MODEL/model_config
+cd $tempdir
+set tspan = `cbp get_config ${scenario} land TIME`
+set START_YEAR = $tspan[1]
+set END_YEAR = $tspan[4]
+
+if (! $?MODEL_VERSION_CODE) then
+  echo "Variable MODEL_VERSION_CODE is not defined. Cannot push results to REST" >> problem
+  exit
+endif
+set image_file_path=$CBP_EXPORT_DIR/land/$scenario/images
+
+# START_YEAR and END_YEAR are set in model_config script
+# this is the wrong setup here. This export creates OM exports
+# which should be in a separate app or an optional step
+if ( ! $?EXPORT_RUNOFF_OM ) then
+  echo "!!!! WARNING: Cannot Locate EXPORT_RUNOFF_OM"
+  exit
+endif
+
+if ( $EXPORT_RUNOFF_OM == 1 ) then
+  echo "TBD: Allow importing from CSV to OM database here.  "
+  echo "Ex: create_landseg_table.sh $segment $scenario p6 1 "
+else
+  echo "Land export is off EXPORT_RUNOFF_OM = $EXPORT_RUNOFF_OM, no runoff component file imported."
+endif

@@ -20,8 +20,14 @@ set ftype = $LAND_FTYPE
 set image_file_path=$CBP_EXPORT_DIR/land/$scenario/images
 
 set output_file_path="$CBP_EXPORT_DIR/land/$scenario/eos/${seg}_0111-0211-0411.csv"
-echo "Running: Rscript $META_MODEL_ROOT/scripts/land/hsp_ro_stats.R $segment $scenario $output_file_path"
-Rscript $META_MODEL_ROOT/scripts/land/hsp_ro_stats.R $segment $scenario $output_file_path
+echo "Running: Rscript $META_MODEL_ROOT/scripts/land/hsp_ro_stats.R $segment $scenario $output_file_path $image_file_path $vers $ftype"
+Rscript $META_MODEL_ROOT/scripts/land/hsp_ro_stats.R $segment $scenario $output_file_path $image_file_path $vers $ftype
+
+set RO_QA=`cbp get_config $scenario script RO_QA`
+if ( $RO_QA != 1 ) then
+  echo "Skipping detailed RO QA (to enable, set RO_QA = 1 in $MODEL_ROOT/config/control/script/${scenario}.con)"
+  exit
+endif
 
 # tbd: load each lu and process, OR, just use the already aggregated RO file
 # load perlands and implnds variables
