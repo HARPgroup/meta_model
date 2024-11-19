@@ -10,6 +10,8 @@ if [[ "$GEO_MET_MODEL" != "lm_simple" ]]; then
   exit
 fi
 
+echo "$RATING_EXPANSION"
+
 if [[ "$RATING_EXPANSION" != "true" ]]; then
   exit
 fi
