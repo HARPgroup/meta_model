@@ -62,6 +62,7 @@ predicted_data <- predict.flow.weekly(precip_data,simpleLMs)
 
 predicted_data$rating <- 1-(abs(predicted_data$predicted_flow_cfs-predicted_data$obs_flow)/predicted_data$obs_flow)
 
+predicted_data <- predicted_data[,c("start_date","end_date","rating")]
 
 # Write out new dataframe
 write.csv(predicted_data,outPath)
