@@ -76,9 +76,9 @@ if (rating_timescale == 'monthly') {
     from (
       select min(a.obs_date) as start_date,
       max(a.obs_date) as end_date,
-      wk,mo,yr
+      wk,yr
       from base_ts as a
-      group by wk,mo,yr
+      group by wk,yr
     ) as wk_base_ts
     left outer join ratings as b
     on (
