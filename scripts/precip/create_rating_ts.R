@@ -1,4 +1,5 @@
-# R file to take a rating file (monthly, or datetime based) and create a timeseries with ratings
+# R file to take a rating file (monthly, or datetime based) and create a timeseries 
+#with ratings
 library(sqldf)
 
 argst <- commandArgs(trailingOnly = T)
@@ -61,7 +62,7 @@ if (rating_timescale == 'monthly') {
 } else {
   #For non-monthly ratings, include the start and end date
   rating_sql <- "
-    select a.start_date, a.end_date, b.rating
+    select a.obs_date, a.obs_date, b.rating
     from base_ts as a
     left outer join ratings as b
     on (
