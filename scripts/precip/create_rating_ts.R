@@ -66,8 +66,8 @@ if (rating_timescale == 'monthly') {
     from base_ts as a
     left outer join ratings as b
     on (
-      a.start_date >= b.start_date
-      and a.end_date < b.end_date
+      a.obs_date >= b.start_date
+      and a.obs_date < b.end_date
     )
   "
 }
