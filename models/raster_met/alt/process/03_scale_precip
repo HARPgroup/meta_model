@@ -1,0 +1,15 @@
+#!/bin/bash
+# loads the args, the raster specific config and change to tempdir
+wdm_config=`find_config wdm.config`
+if [ "$alt_config" = "" ]; then
+  alt_config="$META_MODEL_ROOT/models/raster_met/alt/alt.config"
+fi
+. $alt_config
+
+# call Rscript to format data as WDM importable
+RSC="$META_MODEL_ROOT/scripts/met/scale_cc_ts.R"
+outfile=`basename $PRECIP_MOD_FILE`
+echo "Rscript $RSC $BASELINE_PRECIP_FILE $outfile $coverage precip_in $PRECIP_FACTOR_FILE "
+Rscript $RSC $BASELINE_PRECIP_FILE $outfile $coverage precip_in $PRECIP_FACTOR_FILE 
+
+install -D $outfile $PRECIP_MOD_FILE
