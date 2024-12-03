@@ -4,17 +4,29 @@ library("sqldf")
 #-arguments----
 argst <- commandArgs(trailingOnly = T)
 if (length(argst) < 4) {
-  message("Use: copy_row.R src_file newname srcname keycol ")
-  message("Ex: copy_row.R P10/factors/precip.csv newname srcname keycol ")
-  q("n")
+  message("Use: copy_row.R src_file newname srcname keycol [overwrite(=1)]")
+  message("Ex: copy_row.R P10/factors/precip.csv newname srcname keycol 1")
+  q("no")
 }
 src_file <- argst[1]
 newname <- argst[2]
 srcname <- argst[3]
 keycol <- argst[4]
+overwrite <- 1
+if (length(argst) > 4) {
+  overwrite <- as.integer(argst[5])
+}
 
 #-load file & manipulate----
 dtable <- read.csv(src_file, sep=',', check.names = F) 
+# Check for existing
+xrows <- sqldf(paste0("select * from dtable where ", keycol," = '", newname, "'"))
+if (nrow(xrows) >= 1) {
+  if (overwrite == 0) {
+    message(paste("Entry already exists for",newname,"and overwrite == 0. Exiting."))
+    q("no")
+  }
+}
 # remove existing for new line
 dtable <- sqldf(paste0("select * from dtable where ", keycol," <> '", newname, "'"))
 # create a copy
