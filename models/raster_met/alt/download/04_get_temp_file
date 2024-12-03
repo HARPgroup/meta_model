@@ -1,0 +1,28 @@
+#!/bin/bash
+# loads the args, the raster specific config and change to tempdir
+alt_config=`find_config alt.config`
+if [ "$alt_config" = "" ]; then
+  alt_config="$META_MODEL_ROOT/models/raster_met/alt/alt.config"
+fi
+. $alt_config
+
+# First we determine where the source file is.
+# In general, many of our BASELINE data sets may not have been made from 
+# raasters and residing in $MET_EXPORT_DIR/$BASELINE_MET_SCENARIO/et/${coverage}-${MET_DATA_SOURCE}-all.csv
+# But some may, so we check here. And then look for lseg_csv versions
+if [ ! -e $BASELINE_TEMP_FILE ]; then
+  echo "Cannot find $BASELINE_TEMP_FILE. Looking for $BASEMODEL_TEMP_FILE"
+  if [ ! -e $BASEMODEL_TEMP_FILE ]; then
+    echo "Error: Cannot find $BASEMODEL_TEMP_FILE . Exiting." 
+    echo "Error: Cannot find $BASEMODEL_TEMP_FILE . Exiting." > $tmpdir/problem
+    exit
+  fi
+fi
+
+# once we have the ET file and TEMP file we can scale TEMP then calculate ET
+output_file=`basename $BASELINE_TEMP_FILE`
+echo "Converting WDM headerless file to CSV."
+echo "Rscript $META_MODEL_ROOT/scripts/wdm/wdm_export_csv_format.R $BASEMODEL_TEMP_FILE $output_file temp featureid $segment"
+Rscript $META_MODEL_ROOT/scripts/wdm/wdm_export_csv_format.R $BASEMODEL_TEMP_FILE $output_file temp featureid $segment
+echo "install -D $output_file $BASELINE_TEMP_FILE"
+install -D $output_file $BASELINE_TEMP_FILE

@@ -9,7 +9,8 @@ fi
 # call Rscript to format data as WDM importable
 RSC="$META_MODEL_ROOT/scripts/met/scale_cc_ts.R"
 outfile=`basename $TEMP_MOD_FILE`
-echo "Rscript $RSC $BASELINE_TEMP_FILE $outfile $coverage TEMP_in $TEMP_FACTOR_FILE "
-Rscript $RSC $BASELINE_TEMP_FILE $outfile $coverage TEMP_in $TEMP_FACTOR_FILE 
+echo "Rscript $RSC $BASELINE_TEMP_FILE $outfile $coverage temp $TEMP_FACTOR_FILE "
+Rscript $RSC $BASELINE_TEMP_FILE $outfile $coverage temp $TEMP_FACTOR_FILE 
 
 install -D $outfile $TEMP_MOD_FILE
+

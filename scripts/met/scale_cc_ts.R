@@ -20,12 +20,16 @@ target_mo_data <- factor_data[which(factor_data$FIPS_NHL == target_id),]
 target_factors <- as.data.frame(t(target_mo_data[,month.abb]))
 target_factors$mo <- c(1:nrow(target_factors))
 names(target_factors) <- c('pct', 'mo')
-target_factors$factor <- (100.0 + target_factors$pct) / 100.0
+target_factors$factor <- target_factors$pct / 100.0
 
+# applying a % increase to a negative/positive range is tricky
+# we must take the absolute magnitude of the base value when multiplying
+# for a + base value and + change, the result is +, a + factor = increase
+# for a negative base value and positive change, the result is positive
 met_data_adjusted <- sqldf(
   paste0(
     "select a.featureid, a.obs_date, a.tstime, a.tsendtime, a.yr, a.mo, a.da, a.hr, 
-     a.",col_name," * b.factor as ", col_name," 
+     (a.",col_name," + abs(a.", col_name,") * b.factor) as ", col_name," 
      from met_data as a 
      left outer join target_factors as b 
      on (a.mo = b.mo)
