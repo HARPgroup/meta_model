@@ -1,9 +1,17 @@
 library("sqldf")
-col_name = "precip_in"
-target_id = "N51137"
-src_file = "http://deq1.bse.vt.edu:81/met/nldas2_resamptile/precip/N51137-nldas2-all.csv"
-factor_file = "/media/model/met/RCP45_Ensemble_CRT_2041_2070_P10/factors/precip.csv"
-dest_file = "/tmp/adjustd_nldas2.csv"
+
+argst <- commandArgs(trailingOnly = T)
+if (length(argst) < 5) {
+  message("Use: scale_cc_ts.R src_file dest_file target_id col_name factor_file")
+  message("Ex: scale_cc_ts.R src_file nldas2/precip/N51137-nldas2-all.csv cc10/precip/N51137-nldas2-all.csv N51137 precip_in P10/factors/precip.csv")
+  q("no")
+}
+
+src_file = argst[1]
+dest_file = argst[2]
+target_id = argst[3]
+col_name = argst[4]
+factor_file = argst[5]
 
 met_data <- read.csv(src_file)
 factor_data <- read.csv(factor_file)

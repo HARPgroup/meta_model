@@ -1,10 +1,11 @@
 #!/bin/bash
 target=$1
-bundle=$2
-ftype1=$3
-ftype2=$4
-DBHOST=$5
-DBNAME=$6
+bundle1=$2
+bundle2=$3
+ftype1=$4
+ftype2=$5
+DBHOST=$6
+DBNAME=$7
 
 q="WITH p6 as (
   select a.hydroid, a.hydrocode, b.dh_geofield_geom as geom
@@ -14,7 +15,7 @@ q="WITH p6 as (
     a.hydroid = b.entity_id
     and b.entity_type = 'dh_feature'
   )
-  where a.bundle = '$bundle'
+  where a.bundle = '$bundle2'
   and a.ftype = '$ftype2'
 ),
 p5 as (
@@ -25,7 +26,7 @@ p5 as (
     a.hydroid = b.entity_id
     and b.entity_type = 'dh_feature'
   )
-  where a.bundle = '$bundle'
+  where a.bundle = '$bundle1'
   and a.ftype = '$ftype1'
 )
 SELECT hydrocode from (
