@@ -1,8 +1,8 @@
 #!/bin/bash
 target=$1
 bundle1=$2
-bundle2=$3
-ftype1=$4
+ftype1=$3
+bundle2=$4
 ftype2=$5
 DBHOST=$6
 DBNAME=$7

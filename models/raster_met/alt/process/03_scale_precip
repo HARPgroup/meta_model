@@ -12,4 +12,5 @@ outfile=`basename $PRECIP_MOD_FILE`
 echo "Rscript $RSC $BASELINE_PRECIP_FILE $outfile $coverage precip_in $PRECIP_FACTOR_FILE "
 Rscript $RSC $BASELINE_PRECIP_FILE $outfile $coverage precip_in $PRECIP_FACTOR_FILE 
 
+echo "install -D $outfile $PRECIP_MOD_FILE"
 install -D $outfile $PRECIP_MOD_FILE

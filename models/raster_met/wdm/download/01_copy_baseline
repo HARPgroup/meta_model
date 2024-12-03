@@ -8,10 +8,10 @@ fi
 
 # note: we use varkey here as the "pdname" attribute since this var seems somewhat superfluous
 #       and the varkey will in fact associate with a specific time period dataset
-echo "Copying processed met data $COVERAGE_WDM_DIR/lseg_csv/"
-echo "into directory $oDir"
-for i in `ls $COVERAGE_WDM_DIR/${coverage}.*`; do
+echo "Copying baseline met data from $NLDAS_ROOT/out/lseg_csv/${BASELINE_MET_SCENARIO}/${coverage}.*"
+echo "into directory $COVERAGE_WDM_DIR/lseg_csv"
+for i in `ls $NLDAS_ROOT/out/lseg_csv/${BASELINE_MET_SCENARIO}/${coverage}.*`; do
   csv_file_name=`basename $i`
-  echo "install -D $i $oDir/$csv_file_name"
-  install -D $i $oDir/$csv_file_name
+  echo "install -D $i $COVERAGE_WDM_DIR/$csv_file_name"
+  install -D $i $COVERAGE_WDM_DIR/$csv_file_name
 done

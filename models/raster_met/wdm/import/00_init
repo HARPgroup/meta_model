@@ -6,3 +6,6 @@ if [ "$wdm_config" = "" ]; then
 fi
 . $wdm_config
 
+# insure that the new-fangled lseg_csv directory is linked to the old structure just in case it is needed 
+# (tho it should not be )
+ln -s $COVERAGE_WDM_DIR $NLDAS_ROOT/out/lseg_csv/${scenario}
