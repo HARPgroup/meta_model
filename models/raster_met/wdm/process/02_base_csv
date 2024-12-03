@@ -7,6 +7,7 @@ fi
 . $wdm_config
 
 # call Rscript to format data as WDM importable
+COVERAGE_WDM_CSV=$COVERAGE_WDM_DIR/${segment}.PRC
 outfile=`basename $COVERAGE_WDM_CSV`
 echo "Call: Rscript $META_MODEL_ROOT/scripts/wdm/csv_export_wdm_format.R $COVERAGE_PRECIP_FILE $outfile precip_in hour"
 Rscript $META_MODEL_ROOT/scripts/wdm/csv_export_wdm_format.R $COVERAGE_PRECIP_FILE $outfile precip_in hour
