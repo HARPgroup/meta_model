@@ -7,6 +7,7 @@ if (length(argst) < 5) {
   q("no")
 }
 
+argst <- commandArgs(trailingOnly = T)
 src_file = argst[1]
 dest_file = argst[2]
 target_id = argst[3]
@@ -40,8 +41,8 @@ if (method == 'add') {
 met_data_adjusted <- sqldf(
   paste0(
     "select a.featureid, a.obs_date, a.tstime, a.tsendtime, a.yr, a.mo, a.da, a.hr, ",
-     scale_sql,
-     "from met_data as a 
+     scale_sql, "
+     from met_data as a 
      left outer join target_factors as b 
      on (a.mo = b.mo)
      order by a.tsendtime
