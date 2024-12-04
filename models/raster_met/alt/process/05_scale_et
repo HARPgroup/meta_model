@@ -24,9 +24,9 @@ fi
 # once we have the ET file and TEMP file we can scale TEMP then calculate ET
 
 # call Rscript to format data as WDM importable
-RSC="$META_MODEL_ROOT/scripts/met/scale_cc_ts.R"
+RSC="$META_MODEL_ROOT/scripts/met/scale_et_cbp_hargreaves.R"
 outfile=`basename $ET_MOD_FILE`
 
-echo "Rscript $RSC $BASELINE_ET_FILE $outfile $coverage et_in $ET_FACTOR_FILE "
-#Rscript $RSC $BASELINE_ET_FILE $outfile $coverage et_in $ET_FACTOR_FILE
+echo "Rscript $RSC $BASELINE_ET_FILE $ASELINE_TEMP_FILE $MOD_TEMP_FILE et_in temp $outfile et_in $outfile"
+#Rscript $RSC $BASELINE_ET_FILE $ASELINE_TEMP_FILE $MOD_TEMP_FILE et_in temp $outfile et_in $outfile
 #install -D $outfile $ET_MOD_FILE
