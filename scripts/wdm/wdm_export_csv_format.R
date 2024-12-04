@@ -22,10 +22,11 @@ if (length(argst) >= 5) {
 
 dfile <- fread(input_path)
 names(dfile) <- c('yr','mo','da','hr', col_name)
-dfile$tsendtime <- as.integer(as.POSIXct(make_datetime(dfile$yr,dfile$mo,dfile$da,dfile$hr,tz = Sys.timezone())))
+dfile$obs_date <- as.POSIXct(make_datetime(dfile$yr,dfile$mo,dfile$da,dfile$hr,tz = Sys.timezone()))
+dfile$tsendtime <- as.integer(dfile$obs_date)
 dt <- dfile[2,]$tsendtime - dfile[1,]$tsendtime
 dfile$tstime <- dfile$tsendtime - dt
 if (!is.logical(add_col)) {
   dfile[,add_col] <- add_col_val
 }
-write.table(hydr_df, file = output_path, sep = ',', row.names = FALSE, col.names = TRUE, quote = FALSE)
+write.table(dfile, file = output_path, sep = ',', row.names = FALSE, col.names = TRUE, quote = FALSE)
