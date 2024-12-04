@@ -24,8 +24,8 @@ factor_data <- read.csv(factor_file)
 target_mo_data <- factor_data[which(factor_data$FIPS_NHL == target_id),]
 target_factors <- as.data.frame(t(target_mo_data[,month.abb]))
 target_factors$mo <- c(1:nrow(target_factors))
-names(target_factors) <- c('pct', 'mo')
-target_factors$factor <- target_factors$pct / 100.0
+names(target_factors) <- c('val', 'mo')
+target_factors$factor <- target_factors$val / 100.0
 
 # applying a % increase to a negative/positive range is tricky
 # we must take the absolute magnitude of the base value when multiplying
@@ -36,7 +36,7 @@ if (method == 'mult') {
 }
 if (method == 'add') {
   # additive
-  scale_sql = paste0("(a.", col_name," + b.factor) as ", col_name)
+  scale_sql = paste0("(a.", col_name," + val) as ", col_name)
 }
 met_data_adjusted <- sqldf(
   paste0(
