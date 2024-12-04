@@ -27,16 +27,15 @@ target_factors$mo <- c(1:nrow(target_factors))
 names(target_factors) <- c('val', 'mo')
 target_factors$factor <- target_factors$val / 100.0
 
-# applying a % increase to a negative/positive range is tricky
-# we must take the absolute magnitude of the base value when multiplying
-# for a + base value and + change, the result is +, a + factor = increase
-# for a negative base value and positive change, the result is positive
+# 2 methods supported: one uses value as a percent, the other, as an additive adjustment
+# method mult assuems that the value given is actually percent and needs to be converted to a factor
+# additive method assumes value is to be used as is
 if (method == 'mult') {
   scale_sql = paste0("(a.",col_name," + a.", col_name," * b.factor) as ", col_name)
 }
 if (method == 'add') {
   # additive
-  scale_sql = paste0("(a.", col_name," + val) as ", col_name)
+  scale_sql = paste0("(a.", col_name," + b.val) as ", col_name)
 }
 met_data_adjusted <- sqldf(
   paste0(
