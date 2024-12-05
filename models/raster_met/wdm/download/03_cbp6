@@ -1,8 +1,11 @@
 #!/bin/bash
 # loads the args, the raster specific config and change to tempdir
 wdm_config=`find_config wdm.config`
-if [ "$wdm_config" = "" ]; then
+if [ "$geo_config" = "" ]; then
   wdm_config="$META_MODEL_ROOT/models/raster_met/wdm/wdm.config"
 fi
 . $wdm_config
 
+if [[ "$MET_PROCESS_METHOD" != "cbp6" ]]; then
+  exit
+fi

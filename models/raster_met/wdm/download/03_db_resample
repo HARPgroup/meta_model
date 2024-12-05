@@ -6,6 +6,10 @@ if [ "$wdm_config" = "" ]; then
 fi
 . $wdm_config
 
+if [[ "$MET_PROCESS_METHOD" != *"raster"* ]]; then
+  exit
+fi
+
 # we bail unless RESAMPLE_VARKEY IS set and DISAGGREGATE_VARKEY is NOT set
 if [ "$RESAMPLE_VARKEY" == "" ]; then
   exit

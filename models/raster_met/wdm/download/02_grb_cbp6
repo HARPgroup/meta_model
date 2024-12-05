@@ -6,6 +6,10 @@ if [ "$wdm_config" = "" ]; then
 fi
 . $wdm_config
 
+if [[ $MET_PROCESS_METHOD != "cbp6" ]]; then
+  exit
+fi
+
 # TBD:
 # for re-do grid summary (time-consuming)
 # grid2land.sh $data_start $data_end $base_dir $outdir $i
