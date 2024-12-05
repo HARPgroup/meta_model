@@ -18,11 +18,12 @@ base_et_data <- read.csv(base_et_file)
 base_temp_data <- read.csv(base_temp_file)
 cc_temp_data <- read.csv(cc_temp_file)
 
-base_temp_data$RS
+# base_temp_data$RS
 
-# Hargreases is in the form ET = K * R * (T + 17.8)
+# Hargreaves is in the form ET = K * R * (T + 17.8)
 # The proportion of cc to baseline ET would be ETcc / ETbase = (K*R*(Tcc + 17.8) / (K*R*(Tbase + 17.8)
-# which simplifies to: (Tcc + 17.8)/(Tbase + 17.8)
+# IF K & R do not change, this simplifies to: (Tcc + 17.8)/(Tbase + 17.8)
+# - but actually K & R DO change
 et_factors <- ( cc_temp_data[,temp_col_name] + 17.8 ) / ( base_temp_data[,temp_col_name] + 17.8 )
 et_factors[which(base_et_data[,et_col_name] <= 0)] <- 1.0
 et_fqs <- quantile(et_factors,probs=c(0,0.01,0.10,0.5,0.9,0.99,1.0))
