@@ -35,7 +35,12 @@ landuse <- 'for' #allow to have a zoom in on a particular lu
 # Get the data
 pwater <- fread(pwater_file_path)
 pwater <- as.data.frame(pwater)
+pwater$year <- year(pwater$thisdate)
+pwater$month <- month(pwater$thisdate)
+pwater$week <- week(pwater$thisdate)
+pwater$day <- day(pwater$thisdate)
 pwater$date_only <- as.Date(paste(pwater$year, pwater$month, pwater$day,sep="-"))
+# now make a daily of all non-date columns
 pwater_nodate <- pwater[,!names(pwater) %in% c('thisdate','year','month','day','week','date_only')]
 pwater_daily <- aggregate(pwater_nodate, list(pwater$date_only), 'sum')
 pwater_daily$thisdate <- unique(pwater$date_only)
