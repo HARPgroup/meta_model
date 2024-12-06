@@ -6,8 +6,7 @@ if [ "$wdm_config" = "" ]; then
 fi
 . $wdm_config
 
-if [ ! -d "$tempdir" ]; then
-  mkdir $tempdir
-fi
 
-cd $tempdir
+if [[ $MET_PROCESS_METHOD != *"raster"* ]]; then
+  exit
+fi

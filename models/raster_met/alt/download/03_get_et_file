@@ -8,7 +8,7 @@ fi
 
 # First we determine where the source file is.
 # In general, many of our BASELINE data sets may not have been made from 
-# raasters and residing in $MET_EXPORT_DIR/$BASELINE_MET_SCENARIO/et/${coverage}-${MET_DATA_SOURCE}-all.csv
+# rasters and residing in $MET_EXPORT_DIR/$BASELINE_MET_SCENARIO/et/${coverage}_et.csv
 # But some may, so we check here. And then look for lseg_csv versions
 if [ ! -e $BASELINE_ET_FILE ]; then
   echo "Cannot find $BASELINE_ET_FILE. Looking for $BASEMODEL_ET_FILE"
