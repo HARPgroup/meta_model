@@ -14,6 +14,7 @@ print("Setting arguments...")
 stormStatsPath <- args[1]
 monthEventOut <- args[2]
 
+stormStats <- read.csv(stormStatsPath)
 
 # adding predicted flow to storm stats also
 stormStats[,"predicted_flow_MG"]=numeric()
