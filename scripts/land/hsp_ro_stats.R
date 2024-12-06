@@ -34,13 +34,19 @@ landuse <- 'for' #allow to have a zoom in on a particular lu
 
 # Get the data
 pwater <- fread(pwater_file_path)
-pwater$week <- week(pwater$thisdate)
-pwater$month <- month(pwater$thisdate)
-pwater$year <- year(pwater$thisdate)
 pwater <- as.data.frame(pwater)
+pwater$date_only <- as.Date(paste(pwater$year, pwater$month, pwater$day,sep="-"))
+pwater_nodate <- pwater[,!names(pwater) %in% c('thisdate','year','month','day','week','date_only')]
+pwater_daily <- aggregate(pwater_nodate, list(pwater$date_only), 'sum')
+pwater_daily$thisdate <- unique(pwater$date_only)
+pwater_daily$year <- year(pwater_daily$thisdate)
+pwater_daily$month <- month(pwater_daily$thisdate)
+pwater_daily$week <- week(pwater_daily$thisdate)
+pwater_daily$day <- day(pwater_daily$thisdate)
 
-minyr <- min(pwater$year)
-maxyr <- max(pwater$year)
+
+minyr <- min(pwater_daily$year)
+maxyr <- max(pwater_daily$year)
 # 1. Decomposition: 
 # response = trend + seasonal + random
 # $trend, $seasonal, and $random can be individually plotted from the stacked plot
@@ -136,23 +142,23 @@ model_out_file$save(TRUE)
 # do basic plotting
 # extract and combine columns
 lu_prefix <- paste0(landuse,'_') # this insure we don't have redundant matches
-lu_dat_cols <- c('thisdate', names(pwater)[names(pwater) %like% lu_prefix])
-lu_pwater <- pwater[,lu_dat_cols]
+lu_dat_cols <- c('thisdate', names(pwater_daily)[names(pwater_daily) %like% lu_prefix])
+lu_pwater <- pwater_daily[,lu_dat_cols]
 # now get SURO, IFWO and AGWO
-suro_cols <- names(pwater)[names(pwater) %like% "suro"]
-suro <- as.data.frame(rowSums(as.data.frame(pwater[,suro_cols])))[,1]
+suro_cols <- names(pwater_daily)[names(pwater_daily) %like% "suro"]
+suro <- as.data.frame(rowSums(as.data.frame(pwater_daily[,suro_cols])))[,1]
 names(suro) <- 'suro'
 # interflow IFWO
-ifwo_cols <- names(pwater)[names(pwater) %like% "ifwo"]
-ifwo <- as.data.frame(rowSums(as.data.frame(pwater[,ifwo_cols])))[,1]
+ifwo_cols <- names(pwater_daily)[names(pwater_daily) %like% "ifwo"]
+ifwo <- as.data.frame(rowSums(as.data.frame(pwater_daily[,ifwo_cols])))[,1]
 names(ifwo) <- 'ifwo'
 # now do AGWO
-agwo_cols <- names(pwater)[names(pwater) %like% "agwo"]
-agwo <- as.data.frame(rowSums(as.data.frame(pwater[,agwo_cols])))[,1]
+agwo_cols <- names(pwater_daily)[names(pwater_daily) %like% "agwo"]
+agwo <- as.data.frame(rowSums(as.data.frame(pwater_daily[,agwo_cols])))[,1]
 names(agwo) <- 'agwo'
 
-dat <- pwater[,c('year', 'thisdate', 'month')]
-dat$Runit <- as.data.frame(rowSums(as.data.frame(pwater[,c(suro_cols,ifwo_cols,agwo_cols)])))[,1]
+dat <- pwater_daily[,c('year', 'thisdate', 'month')]
+dat$Runit <- as.data.frame(rowSums(as.data.frame(pwater_daily[,c(suro_cols,ifwo_cols,agwo_cols)])))[,1]
 
 # Runoff boxplot
 fname <- paste0(
