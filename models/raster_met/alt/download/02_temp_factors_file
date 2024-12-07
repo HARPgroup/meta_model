@@ -12,12 +12,11 @@ if [ "$FACTOR_METHOD" != "LOOKUP" ]; then
 fi
 
 # call a postgis routine to find the nearest neighbor
-/opt/model/meta_model/scripts/misc/nearest_neighbor.sh A51083 landunit watershed cbp532_landseg vahydro dbase2 drupal.dh03
 SSC="$META_MODEL_ROOT/scripts/misc/nearest_neighbor.sh"
 # Copy the data from the nearest neighbor
 outfile=`basename $TEMP_MOD_FILE`
-echo "Running: $SSC $coverage $wdm_coverage_bundle $wdm_coverage_ftype $wdm_coverage_bundle $wdm_coverage_ftype $db_host $db_name"
-nn=`$SSC $coverage $wdm_coverage_bundle $wdm_coverage_ftype $wdm_coverage_bundle $neighbor_coverage_ftype $db_host $db_name`
+echo "Running: $SSC $coverage $COVERAGE_BUNDLE $COVERAGE_FTYPE $COVERAGE_BUNDLE $neighbor_coverage_ftype $db_host $db_name"
+nn=`$SSC $coverage $COVERAGE_BUNDLE $COVERAGE_FTYPE $COVERAGE_BUNDLE $neighbor_coverage_ftype $db_host $db_name`
 
 echo "Running: Rscript $META_MODEL_ROOT/scripts/misc/copy_row.R $TEMP_FACTOR_FILE $coverage $nn FIPS_NHL"
 Rscript $META_MODEL_ROOT/scripts/misc/copy_row.R $TEMP_FACTOR_FILE $coverage $nn FIPS_NHL

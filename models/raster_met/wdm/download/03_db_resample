@@ -7,14 +7,17 @@ fi
 . $wdm_config
 
 if [[ "$MET_PROCESS_METHOD" != *"raster"* ]]; then
+  echo "MET_PROCESS_METHOD IS $MET_PROCESS_METHOD, Skipping basic resample."
   exit
 fi
 
 # we bail unless RESAMPLE_VARKEY IS set and DISAGGREGATE_VARKEY is NOT set
 if [ "$RESAMPLE_VARKEY" == "" ]; then
+  echo "RESAMPLE_VARKEY not set. Skipping."
   exit
 fi
-if [ "$DISAGGGREGATE_VARKEY" != "" ]; then
+if [ "$DISAGGREGATE_VARKEY" != "" ]; then
+  echo "DISAGGREGATE_VARKEY IS set, Skipping basic resample."
   exit
 fi
 
@@ -24,8 +27,8 @@ outfile=`basename $COVERAGE_PRECIP_FILE`
 echo "calculated tstime $tstime=TZ=\"$TZ\" date -d \"$START_DATE\" +'%s'"
 echo "calculated tsendtime $tsendtime=TZ=\"$TZ\" date -d \"$END_DATE\" +'%s'"
 # do the actual export
-echo "$MET_SCRIPT_PATH/sh/resampled_raster_ts $coverage $wdm_coverage_ftype $varkey $RESAMPLE_VARKEY $RASTER_SQL_FILE /tmp/$outfile $db_host $db_name $tstime $tsendtime"
-$MET_SCRIPT_PATH/sh/resampled_raster_ts $coverage $ftype $wdm_coverage_ftype $varkey $RESAMPLE_VARKEY $RASTER_SQL_FILE /tmp/$outfile $db_host $db_name $tstime $tsendtime
+echo "$MET_SCRIPT_PATH/sh/resampled_raster_ts $coverage $COVERAGE_FTYPE $varkey $RESAMPLE_VARKEY $RASTER_SQL_FILE /tmp/$outfile $db_host $db_name $tstime $tsendtime"
+$MET_SCRIPT_PATH/sh/resampled_raster_ts $coverage $COVERAGE_FTYPE $varkey $RESAMPLE_VARKEY $RASTER_SQL_FILE /tmp/$outfile $db_host $db_name $tstime $tsendtime
 sftp ${db_host}:"/tmp/$outfile" "${tempdir}/${outfile}"
 echo "Installing: install -D "${tempdir}/${outfile}" $COVERAGE_PRECIP_FILE"
 install -D "${tempdir}/${outfile}" $COVERAGE_PRECIP_FILE

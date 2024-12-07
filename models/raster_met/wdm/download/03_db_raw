@@ -16,7 +16,7 @@ if [ "$RESAMPLE_VARKEY" != "" ]; then
   exit
 fi
 echo "No Resampling requested"
-if [ "$DISAGGGREGATE_VARKEY" != "" ]; then
+if [ "$DISAGGREGATE_VARKEY" != "" ]; then
   exit
 fi
 echo "No disagregation requested"

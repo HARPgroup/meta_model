@@ -1,0 +1,20 @@
+#!/bin/csh
+# Run post-process extract routine
+# note: this was moved from the hspf model tree, since the expected files were not correct.
+#       in fact, this script was also incomplete, and did not set output_file_path, so it crashed the run
+set scenario=$1
+set segment=$2
+set seg=$segment # this is for backwards compatibility with scripts source
+set tempdir=$3
+# Load configuration
+source $META_MODEL_ROOT/models/$MODEL/model_config
+cd $tempdir
+
+set scenario_alias = `cbp get_config $scenario script land_scenario_alias`
+echo "Found scenario_alias = $scenario_alias"
+if ( "$scenario_alias" != "" ) then
+  if ( ! -e $CBP_EXPORT_DIR/land/$scenario_alias ) then
+    echo "Linking scenario alias: ln -s $CBP_EXPORT_DIR/land/${scenario} $CBP_EXPORT_DIR/land/$scenario_alias" 
+    ln -s $CBP_EXPORT_DIR/land/${scenario} $CBP_EXPORT_DIR/land/$scenario_alias 
+  endif
+endif
