@@ -13,6 +13,6 @@ fi
 echo "Using predicted flow to find ratings"
 
 scr="Rscript $META_MODEL_ROOT/scripts/met/predict_flow.R"
-cmd="$scr $STORM_EVENT_STATS_FILE $MODEL_JSON"
+cmd="$scr $STORM_EVENT_STATS_FILE $MODEL_JSON $RATING_TS_FILE"
 echo "Running: $cmd"
 $cmd
