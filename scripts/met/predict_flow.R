@@ -12,9 +12,12 @@ print("Setting arguments...")
 
 # Inputs
 stormStatsPath <- args[1]
-monthEventOut <- args[2]
+JSONPath <- args[2]
+pathToWriteData <- args[3]
 
 stormStats <- read.csv(stormStatsPath)
+
+monthEventOut <- read_json(JSONPath)
 
 # adding predicted flow to storm stats also
 stormStats[,"predicted_flow_MG"]=numeric()
