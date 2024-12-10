@@ -9,7 +9,6 @@ set seg=$split[2]
 set tree=$MODEL_ROOT
 source $META_MODEL_ROOT/models/$MODEL/model_config
 echo "Changing to $tempdir"
-#cd $MODEL_ROOT/$MY_HOME/$SCRIPT_DIR
 cd $tempdir
 
 source $tree/run_bhatt/fragments/set_landuse

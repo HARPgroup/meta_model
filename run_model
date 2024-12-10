@@ -1,8 +1,9 @@
 #!/bin/csh
 if (${#argv} < 3) then
   echo "Use: run_model model_name scenario_name segment_id [module=all,land,river] [step=all,prep,run,link,analyze] [plugin=all,01_...]"
-  echo "Environment Variables:"
-  echo "  - MODEL_ROOT (required): the full path to the model executable."
+  echo "Optional Environment Variables:"
+  set mr = `pwd`
+  echo "  - MODEL_ROOT (required): the full path to the model executable. Default = pwd ($mr)"
   echo "  - IGNORE_PROBLEMS (0/1 optional): Proceed regardless of errors, i.e. ignore 'problem' file creation."
   exit
 endif
@@ -23,6 +24,7 @@ set all_modules = ( land river )
 set all_run_steps = ( prep run link analyze )
 
 # Load meta-model configuration
+setenv MODEL_ROOT "$MODEL_ROOT"
 if ( -f $META_MODEL_ROOT/models/$model/model_config ) then
   echo "Calling model_config with modules = $modules"
   source $META_MODEL_ROOT/models/$model/model_config
@@ -43,10 +45,8 @@ echo "Beginning Run model=$model, scenario=$scenario, segment=$segment, work_pat
 install -d $work_path # insure that the work directory is in place
 # todo: set up places to look for plugins in various trees such as MODEL_ROOT
 set model_plugins=$META_MODEL_ROOT/models/$model
-setenv MODEL_ROOT "$MODEL_ROOT"
 setenv MODEL_BIN "$MODEL_BIN"
 setenv META_MODEL_ROOT "$META_MODEL_ROOT"
-setenv SCRIPT_DIR "$SCRIPT_DIR"
 echo "setting MODEL to $model"
 setenv MODEL "$model"
 setenv START_YEAR "$START_YEAR"
