@@ -1,16 +1,15 @@
-#!/bin/csh
-set scenario=$1
-set segment=$2
-set tempdir=$3
-if ( ! -d $tempdir ) then
-  mkdir $tempdir
-endif
+#!/bin/bash
+# loads the args, the raster specific config and change to tempdir
+om_config=`find_config om.config`
+if [ "$om_config" = "" ]; then
+  om_config="$META_MODEL_ROOT/models/om/om.config"
+fi
+. $om_config
 
-# load model entity to get run_mode and flow_mode, timestep, start and end dates
-# probably can do this with get_prop function?
-# /usr/bin/php -f /var/www/html/om/run_shakeTree.php 1 elid runid sdate edate cdate xtype scen -1 6 normal varX=n 0 dt
-# xtype = shake tree or standard
-# - get elementid from segment and model_version (get version from config in scenario)
 # Example command:
 cd /var/www/html/om/ 
-/usr/bin/php -f /var/www/html/om/run_shakeTree.php 1 $elid $scenario $start_date $end_date $cache_date 2 37 -1 6 normal flow_mode=$flow_mode 0 $dt
+scr="/usr/bin/php -f /var/www/html/om/run_shakeTree.php"
+args="$SHAKE_TREE_MODE $elid $scenario $START_DATE $END_DATE $CACHE_DATE $RERUN_MODE $DOMAIN_ID $QA_MODE $RUN_MODE $RUN_METHOD flow_mode=$FLOW_MODE $DEBUG_MODE $DT"
+
+echo "Running: $scr $args"
+#$scr $args

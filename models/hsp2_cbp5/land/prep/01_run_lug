@@ -8,7 +8,6 @@ set clean=1
 #echo "source $META_MODEL_ROOT/models/$MODEL/model_config"
 source $META_MODEL_ROOT/models/$MODEL/model_config
 
-#cd $MODEL_ROOT/$MY_HOME/$SCRIPT_DIR
 cd $tempdir
 
 set cmd = "lug.exe"

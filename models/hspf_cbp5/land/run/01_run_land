@@ -6,7 +6,6 @@ set seg = $segment
 
 source $MODEL_ROOT/config/control/script/${scenario}.con
 echo "Changing to $tempdir"
-#cd $MODEL_ROOT/$MY_HOME/$SCRIPT_DIR
 #cd $tempdir
 
 # check cache date

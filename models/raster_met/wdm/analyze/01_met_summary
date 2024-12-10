@@ -1,14 +1,14 @@
 #!/bin/bash
 # loads the args, the raster specific config and change to temp dir
-geo_config=`find_config geo.config`
-if [ "$geo_config" = "" ]; then
-  geo_config="$META_MODEL_ROOT/models/raster_met/geo/geo.config"
+wdm_config=`find_config wdm.config`
+if [ "$wdm_config" = "" ]; then
+  wdm_config="$META_MODEL_ROOT/models/raster_met/wdm/wdm.config"
 fi
-. $geo_config
+. $wdm_config
 
 echo "Generating Coverage Meteorology Analytics"
 
 
-scr_args="$META_MODEL_ROOT/scripts/met/precip_coverage_summary.R $scenario $coverage $COVERAGE_BUNDLE $COVERAGE_FTYPE $MET_MODEL_VERSION $COVERAGE_PRECIP_FILE" 
+scr_args="$META_MODEL_ROOT/scripts/met/precip_coverage_summary.R $scenario $coverage $COVERAGE_BUNDLE $COVERAGE_FTYPE $MODEL_VERSION_CODE $COVERAGE_PRECIP_FILE" 
 echo "Rscript $scr_args"
 Rscript $scr_args 
