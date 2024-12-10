@@ -16,7 +16,7 @@ print("Setting arguments...")
 stormStatsPath <- args[1]
 # Outputs
 pathToWriteJSON <- args[2]
-pathTOWriteRatings <- args[3]
+pathToWriteRatings <- args[3]
 
 
 stormStats <- read.csv(stormStatsPath,stringsAsFactors = FALSE)
