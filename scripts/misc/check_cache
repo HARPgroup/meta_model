@@ -1,0 +1,34 @@
+#!/bin/bash
+# fpath = file to check
+# expiry = date/time/interval of expiration
+# expire_type(default date) = date_format yyyy/mm/dd format "X days" etc, epoch = unix timestamp
+fpath=$1
+expiry=$2
+if [ $# -gt 2 ]; then
+  expire_type=$3
+else
+  expire_type="date_format"
+fi
+
+fmd=`date -r $fpath "+%s"`
+currd=`date "+%s"`
+
+case $expire_type in
+  epoch)
+    rfd=$expiry
+  ;;
+
+  *)
+    # this should match date, properly formatted intervals, etc
+    rfd=`date -d "$expiry" "+%s"`
+  ;;
+
+esac
+
+# if the file date is > the refresh date, cache is valid
+if [[ $fmd -gt $rfd ]]; then
+  cache_status=1
+else
+  cache_status=0
+fi
+echo $cache_status
