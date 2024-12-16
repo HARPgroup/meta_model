@@ -1,5 +1,8 @@
 #!/bin/bash
 riverseg=$1
+dbname="model"
+dbhost="dbase2"
+
 sql="
 
 \\set srcid $2 \n
@@ -64,4 +67,4 @@ COMMIT; \n
 "
 
 set -f
-echo -e $sql
+echo -e $sql | psql -h $dbhost $dbname
