@@ -24,27 +24,19 @@ COPY tmp_ratings FROM '/tmp/${baseFileName}' with csv header;
 \\set scenarioPropName '$SCENARIO_PROP_NAME' \n
 \\set hydrocode  '$coverage' \n
 SELECT hydroid AS ratings FROM dh_variabledefinition WHERE varkey = :'ratingsVarkey' \\gset \n
+SELECT pid AS scenarioPID 
+FROM dh_properties as scen
+LEFT JOIN dh_properties as model
+model.pid =  scen.featureid
+LEFT JOIN dh_features as feat
+on feat.hydroid = model.featureid
+WHERE feat.hydrocode = :'hydrocode' 
+AND feat.bundle = '$COVERAGE_BUNDLE' 
+and feat.ftype = '$COVERAGE_FTYPE' \\gset \n
 
-UPDATE dh_timeseries AS a 
-SET
-	tsvalue = b.tsvalue
-FROM(
-	SELECT a.tstime, a.tsendtime, a.tsvalue, a.featureid, dupe.varid as varid, a.entity_type
-	FROM tmp_ratings as a
-	INNER JOIN dh_timeseries AS dupe
-	ON (
-		dupe.tstime = a.tstime 
-		AND dupe.tsendtime = a.tsendtime
-		AND dupe.featureid = a.featureid
-		AND dupe.entity_type = a.entity_type
-	)
-	WHERE dupe.varid = :ratings
-) as b
-WHERE a.varid = :ratings
-  AND a.tstime = b.tstime
-  AND a.tsendtime = b.tsendtime
-  AND a.featureid = b.featureid
-  AND a.entity_type = b.entity_type;
+DELETE FROM dh_timeseries
+WHERE varid = :ratings 
+AND featureid = :scenarioPID
 
 \\set ratingsVarkey '$RATINGS_VARKEY' \n
 \\set scenarioPropName '$SCENARIO_PROP_NAME' \n
