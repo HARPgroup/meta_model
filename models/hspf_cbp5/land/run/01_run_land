@@ -6,8 +6,10 @@ set seg = $segment
 
 source $MODEL_ROOT/config/control/script/${scenario}.con
 echo "Changing to $tempdir"
-#cd $MODEL_ROOT/$MY_HOME/$SCRIPT_DIR
 #cd $tempdir
+
+# check cache date
+fmd=`date -r $CBP_MODEL_OUT/land/$scenario/eos/${segment}_0111-0211-0411.csv "+%s"`
 
 echo "Calling: cbp run_land_oneseg.csh $scenario $segment $tempdir"
 #$MODEL_ROOT/run/standard/run_land_oneseg.csh $scenario $segment $tempdir

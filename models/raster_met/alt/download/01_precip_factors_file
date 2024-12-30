@@ -1,0 +1,22 @@
+#!/bin/bash
+# loads the args, the raster specific config and change to tempdir
+alt_config=`find_config alt.config`
+if [ "$alt_config" = "" ]; then
+  alt_config="$META_MODEL_ROOT/models/raster_met/alt/alt.config"
+fi
+. $alt_config
+
+if [ "$FACTOR_METHOD" != "LOOKUP" ]; then
+  echo "FACTOR_METHOD = $FACTOR_METHOD, not a file lookup method. Skipping."
+  exit
+fi
+
+# call Rscript to format data as WDM importable
+SSC="$META_MODEL_ROOT/scripts/misc/nearest_neighbor.sh"
+outfile=`basename $PRECIP_MOD_FILE`
+echo "Running: $SSC $coverage $COVERAGE_BUNDLE $COVERAGE_FTYPE $COVERAGE_BUNDLE $neighbor_coverage_ftype $db_host $db_name"
+nn=`$SSC $coverage $COVERAGE_BUNDLE $COVERAGE_FTYPE $COVERAGE_BUNDLE $neighbor_coverage_ftype $db_host $db_name`
+
+echo "Running: Rscript $META_MODEL_ROOT/scripts/misc/copy_row.R $PRECIP_FACTOR_FILE $coverage $nn FIPS_NHL"
+Rscript $META_MODEL_ROOT/scripts/misc/copy_row.R $PRECIP_FACTOR_FILE $coverage $nn FIPS_NHL
+

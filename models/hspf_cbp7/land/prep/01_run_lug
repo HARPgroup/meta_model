@@ -5,10 +5,8 @@ set tempdir=$3
 set clean=1
 
 # load all model config
-#echo "source $META_MODEL_ROOT/models/$MODEL/model_config"
 source $META_MODEL_ROOT/models/$MODEL/model_config
 
-#cd $MODEL_ROOT/$MY_HOME/$SCRIPT_DIR
 cd $tempdir
 
 echo "Using INFEXP = $INFEXP and LAND_QUIET = $LAND_QUIET"
