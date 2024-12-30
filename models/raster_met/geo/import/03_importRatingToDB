@@ -18,17 +18,17 @@ SELECT tstime,tsendtime,tsvalue,featureid,entity_type
 FROM dh_timeseries
 LIMIT 0;
 
-COPY tmp_ratings FROM '/tmp/${baseFileName}' with csv header;
+COPY tmp_ratings FROM '/tmp/${baseFileName}' with csv header NULL AS 'NA';
 
 \\set ratingsVarkey '$RATINGS_VARKEY' \n
 \\set scenarioPropName '$SCENARIO_PROP_NAME' \n
 \\set hydrocode  '$coverage' \n
 SELECT hydroid AS ratings FROM dh_variabledefinition WHERE varkey = :'ratingsVarkey' \\gset \n
-SELECT pid AS scenariopid 
+SELECT scen.pid as scenariopid
 FROM dh_properties as scen
 LEFT JOIN dh_properties as model
-model.pid =  scen.featureid
-LEFT JOIN dh_features as feat
+ON model.pid =  scen.featureid
+LEFT JOIN dh_feature as feat
 on feat.hydroid = model.featureid
 WHERE feat.hydrocode = :'hydrocode' 
 AND feat.bundle = '$COVERAGE_BUNDLE' 
@@ -38,7 +38,7 @@ and scen.propname = :'scenarioPropName' \\gset \n
 DELETE FROM dh_timeseries
 WHERE varid = :ratings 
 AND entity_type = 'dh_properties'
-AND featureid = :scenariopid
+AND featureid = :scenariopid;
 
 \\set ratingsVarkey '$RATINGS_VARKEY' \n
 \\set scenarioPropName '$SCENARIO_PROP_NAME' \n
