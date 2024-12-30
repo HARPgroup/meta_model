@@ -28,6 +28,20 @@ create temp table tmp_elem_targets as (
 
 
 insert into tmp_elem_targets (elementid, elemname, custom1, custom2)
+select elementid, elemname, custom1, custom2 from scen_model_element
+where scenarioid = 37
+   and custom1 = 'cbp6_flows'
+   and elementid in (
+     select a.src_id from tmp_elem_targets as b
+     left outer join map_model_linkages as a 
+     on ( a.dest_id = b.elementid )
+     where a.linktype = 1
+       and a.dest_id is not null
+   )
+;
+ \n
+
+insert into tmp_elem_targets (elementid, elemname, custom1, custom2)
    select elementid, elemname, custom1, custom2 from scen_model_element
    where scenarioid = 37
       and custom1 = 'cbp6_lrseg'
@@ -67,4 +81,5 @@ COMMIT; \n
 "
 
 set -f
+echo -e $sql 
 echo -e $sql | psql -h $dbhost $dbname
