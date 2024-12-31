@@ -48,4 +48,5 @@ if (is.na(model$pid)) {
   model$varid = ds$get_vardef('om_water_model_node')$varid
   model$save(TRUE)
 }
+message(paste("pid=",model$pid))
 cat(model$pid)
