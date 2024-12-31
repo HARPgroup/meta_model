@@ -5,7 +5,7 @@
 # coverage_hydrocode <- "usgs_ws_02021500"
 # coverage_ftype <- 'usgs_full_drainage'
 # coverage_bundle <- 'watershed'
-# model_version <- 'met1.0'
+# model_version <- 'met-1.0'
 # scenarioPropName <- 'storm_volume'
 # ratingsFile <- "http://deq1.bse.vt.edu:81/met/stormVol_prism/out/usgs_ws_02021500-PRISM-storm_volume-rating-ts.csv"
 # 
@@ -34,16 +34,6 @@ scenarioPropName <- argst[5]
 ratingsFile <- argst[6]
 #Area to write updated csv file to:
 pathToWrite <- argst[7]
-
-#Read in the ratings file
-ratings <- read.csv(ratingsFile)
-
-#Convert the ratings start and end dates to seconds after epoch to insert into
-#DB
-ratings$start_date_sec <- as.numeric(as.POSIXct(ratings$start_date,tz = "EST"))
-ratings$end_date_sec <- as.numeric(as.POSIXct(ratings$end_date,tz = "EST"))
-
-
 
 # load the base feature for the coverage using romFeature and ds:
 message(paste("Searching for feature hydrocode=", coverage_hydrocode,"with ftype",coverage_ftype))
@@ -74,15 +64,25 @@ message(paste("Creating/finding model scenario on", model$pid, "with propname ="
 scenario <- om_get_model_scenario(ds, model, scenarioPropName)
 message(paste("Scenario property with propname =",scenario$propname," created/found with pid =",scenario$pid))
 
-#Add featureid and entity_type to ratings for proper export to dh_timeseries
-ratings$featureid <- scenario$pid
-ratings$entity_type <- "dh_properties"
-#Create a nicely formatted timeseries that will be easy to export to dh_timeseries
-out <- data.frame(tstime = as.integer(ratings$start_date_sec),
-                  tsendtime = as.integer(ratings$end_date_sec),
-                  tsvalue = ratings$rating,
-                  featureid = ratings$featureid,
-                  entity_type = ratings$entity_type)
-#Write out the formatted timeseries
-message(paste("Writing out formatted timeseries to",pathToWrite))
-write.csv(out,pathToWrite,row.names = FALSE)
+if(!is.null(pathToWrite) & !is.null(ratingsFile)){
+  #Read in the ratings file
+  ratings <- read.csv(ratingsFile)
+  
+  #Convert the ratings start and end dates to seconds after epoch to insert into
+  #DB
+  ratings$start_date_sec <- as.numeric(as.POSIXct(ratings$start_date,tz = "EST"))
+  ratings$end_date_sec <- as.numeric(as.POSIXct(ratings$end_date,tz = "EST"))
+  
+  #Add featureid and entity_type to ratings for proper export to dh_timeseries
+  ratings$featureid <- scenario$pid
+  ratings$entity_type <- "dh_properties"
+  #Create a nicely formatted timeseries that will be easy to export to dh_timeseries
+  out <- data.frame(tstime = as.integer(ratings$start_date_sec),
+                    tsendtime = as.integer(ratings$end_date_sec),
+                    tsvalue = ratings$rating,
+                    featureid = ratings$featureid,
+                    entity_type = ratings$entity_type)
+  #Write out the formatted timeseries
+  message(paste("Writing out formatted timeseries to",pathToWrite))
+  write.csv(out,pathToWrite,row.names = FALSE)
+}
