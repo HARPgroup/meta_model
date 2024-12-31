@@ -42,22 +42,20 @@ WITH maxRating AS (
 	WHERE modelProp.propcode = :'metModel'
 		AND scenProp.propname = :'scenarioPropName'
 	GROUP BY modelProp.featureid,
-		to_timestamp(ts.tstime),
-		to_timestamp(ts.tsendtime)
+		ts.tstime,
+		ts.tsendtime
 ),
 bestRating AS (
 	SELECT modelProp.featureid AS featureid,
 		to_timestamp(ts.tstime) as tstime,
 		to_timestamp(ts.tsendtime) as tsendtime,
 		ts.tsvalue,
-		v.varkey 
+		ts.varid 
 	FROM dh_properties as modelProp
 	LEFT JOIN dh_properties as scenProp
 	ON scenProp.featureid = modelProp.pid
 	LEFT JOIN dh_timeseries as ts
 	ON ts.featureid = scenProp.pid
-	LEFT JOIN dh_variabledefinition as v
-	ON v.hydroid = ts.varid
 	INNER JOIN maxRating
 	ON ts.tstime = maxRating.tstime
 	AND ts.tsendtime = maxRating.tsendtime
@@ -65,7 +63,7 @@ bestRating AS (
 	AND modelProp.featureid = maxRating.featureid
   WHERE modelProp.propcode = :'metModel'
   		AND scenProp.propname = :'scenarioPropName'
-  ORDER BY ts.tstime
+  ORDER BY modelProp.featureid,ts.tstime
 )
 
 INSERT INTO dh_timeseries ( tstime,tsendtime, tsvalue, featureid, varid, entity_type )
