@@ -20,8 +20,8 @@ ON model.pid =  scen.featureid
 LEFT JOIN dh_feature as feat
 on feat.hydroid = model.featureid
 WHERE feat.hydrocode = :'hydrocode' 
-AND feat.bundle = '$ENTITY_BUNDLE' 
-and feat.ftype = '$ENTITY_FTYPE'
+AND feat.bundle = '$EXTENT_BUNDLE' 
+and feat.ftype = '$EXTENT_FTYPE'
 and scen.propname = :'scenarioPropName' \\gset \n
 
 DELETE FROM dh_timeseries
