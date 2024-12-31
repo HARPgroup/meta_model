@@ -2,11 +2,11 @@
 #stores ratings:
 
 #Example Inputs:
-# coverage_hydrocode <- "usgs_ws_02021500"
-# coverage_ftype <- 'usgs_full_drainage'
-# coverage_bundle <- 'watershed'
+# coverage_hydrocode <- "cbp6_met_coverage"
+# coverage_ftype <- 'cbp_met_grid'
+# coverage_bundle <- 'landunit'
 # model_version <- 'met-1.0'
-# scenarioPropName <- 'storm_volume'
+# scenarioPropName <- 'lm_simple'
 # ratingsFile <- "http://deq1.bse.vt.edu:81/met/stormVol_prism/out/usgs_ws_02021500-PRISM-storm_volume-rating-ts.csv"
 # 
 
@@ -57,6 +57,26 @@ message(paste("Creating/finding model property on", feature$hydroid, "with propn
 model <- om_model_object(ds, feature, model_version, 
                          model_name = model_name)
 message(paste("Model property with propname =",model$propname," created/found with pid =",model$pid))
+#If there are multiple model properties, om_model_object returns the first
+#without checking propname. This will instead create a new property if the model
+#name doesn't match the returned propname
+if(model$propname != model_name){
+  #Search for a property with the correct propname and other fields
+  model <- RomProperty$new(ds, list(featureid = feature$hydroid, 
+                                    entity_type = "dh_feature",
+                                    propname = model_name,
+                                    propcode = model_version), 
+                           TRUE)
+  #If nothing is found, create the new property
+  if (is.na(model$pid)) {
+    #Get the correct varid for the varkey used for the model
+    model$varid = ds$get_vardef(model_varkey)$varid
+    message(paste("Creating new feature model", model$propname, 
+                  model$varid, model$featureid, model$propcode))
+    #Save property
+    model$save(TRUE)
+  }
+}
 
 # this will create or retrieve a model scenario to house this summary data using
 # romProperty
@@ -64,7 +84,7 @@ message(paste("Creating/finding model scenario on", model$pid, "with propname ="
 scenario <- om_get_model_scenario(ds, model, scenarioPropName)
 message(paste("Scenario property with propname =",scenario$propname," created/found with pid =",scenario$pid))
 
-if(!is.null(pathToWrite) & !is.null(ratingsFile)){
+if(!is.na(pathToWrite) & !is.na(ratingsFile)){
   #Read in the ratings file
   ratings <- read.csv(ratingsFile)
   
