@@ -67,6 +67,7 @@ if(model$propname != model_name){
                                     propname = model_name,
                                     propcode = model_version), 
                            TRUE)
+  model_varkey <- "om_model_element"
   #If nothing is found, create the new property
   if (is.na(model$pid)) {
     #Get the correct varid for the varkey used for the model
