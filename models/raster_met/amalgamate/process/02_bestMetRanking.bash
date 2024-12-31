@@ -10,7 +10,7 @@ fi
 ratings_sql="
 \\set ratingsVarkey '$RATINGS_VARKEY' \n
 \\set scenarioPropName '$SCENARIO_PROP_NAME' \n
-\\set hydrocode  '$ENTITY_HYDROCODE' \n
+\\set hydrocode  '$EXTENT_HYDROCODE' \n
 \\set metModel '$MET_MODEL_VERSION' \n
 SELECT hydroid AS ratings FROM dh_variabledefinition WHERE varkey = :'ratingsVarkey' \\gset \n
 SELECT scen.pid as scenariopid
@@ -73,16 +73,6 @@ SELECT a.tstime, a.tsendtime, a.tsvalue,
   :scenariopid as featureid, a.varid,
   'dh_properties' AS entity_type
 FROM bestRating AS a
---This join is not really needed because of the delete above, but may serve as means of QA
-LEFT JOIN dh_timeseries AS dupe
-ON (
- a.tstime = dupe.tstime 
- AND a.tsendtime = dupe.tsendtime
- AND dupe.featureid = :scenariopid
- AND dupe.entity_type = 'dh_properties'
- AND a.hydroid = dupe.varid
-)
-WHERE dupe.tid IS NULL;
 "
 
 # turn off the expansion of the asterisk
