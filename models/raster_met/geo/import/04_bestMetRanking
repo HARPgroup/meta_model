@@ -8,7 +8,7 @@ fi
 
 #Establish and insert best-fit ratings. Delete existing ratings as needed.
 ratings_sql="
-\\set ratingsVarkey '$RATINGS_VARKEY' \n
+\\set ratingsVarkey '$RATINGS_BEST_VARKEY' \n
 \\set scenarioPropName '$SCENARIO_PROP_NAME' \n
 \\set hydrocode  '$coverage' \n
 \\set metModel '$MET_MODEL_VERSION' \n
@@ -41,6 +41,7 @@ WITH maxRating AS (
 		ON ts.featureid = scenProp.pid
 	WHERE modelProp.propcode = :'metModel'
 		AND scenProp.propname = :'scenarioPropName'
+		AND ts.featureid = :scenariopid
 	GROUP BY modelProp.featureid,
 		ts.tstime,
 		ts.tsendtime
@@ -63,6 +64,7 @@ bestRating AS (
 	AND modelProp.featureid = maxRating.featureid
   WHERE modelProp.propcode = :'metModel'
   		AND scenProp.propname = :'scenarioPropName'
+		AND ts.featureid = :scenariopid
   ORDER BY modelProp.featureid,ts.tstime
 )
 
