@@ -10,7 +10,7 @@ fi
 ratings_sql="
 \\set ratingsVarkey '$RATINGS_VARKEY' \n
 \\set scenarioPropName '$SCENARIO_PROP_NAME' \n
-\\set hydrocode  '$EXTENT_HYDROCODE' \n
+\\set hydrocode  '$coverage' \n
 \\set metModel '$MET_MODEL_VERSION' \n
 SELECT hydroid AS ratings FROM dh_variabledefinition WHERE varkey = :'ratingsVarkey' \\gset \n
 SELECT scen.pid as scenariopid
