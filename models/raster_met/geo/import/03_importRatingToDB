@@ -21,45 +21,30 @@ LIMIT 0;
 COPY tmp_ratings FROM '/tmp/${baseFileName}' with csv header NULL AS 'NA';
 
 \\set ratingsVarkey '$RATINGS_VARKEY' \n
-\\set scenarioPropName '$SCENARIO_PROP_NAME' \n
+\\set scenarioPropName '$scenario' \n
 \\set hydrocode  '$coverage' \n
 SELECT hydroid AS ratings FROM dh_variabledefinition WHERE varkey = :'ratingsVarkey' \\gset \n
-SELECT scen.pid as scenariopid
-FROM dh_properties as scen
-LEFT JOIN dh_properties as model
-ON model.pid =  scen.featureid
-LEFT JOIN dh_feature as feat
-on feat.hydroid = model.featureid
-WHERE feat.hydrocode = :'hydrocode' 
-AND feat.bundle = '$COVERAGE_BUNDLE' 
-and feat.ftype = '$COVERAGE_FTYPE'
+SELECT scen.pid as scenariopid  \n
+FROM dh_properties as scen  \n
+LEFT JOIN dh_properties as model  \n
+ON model.pid =  scen.featureid  \n
+LEFT JOIN dh_feature as feat  \n
+on feat.hydroid = model.featureid  \n
+WHERE feat.hydrocode = :'hydrocode'  \n
+AND feat.bundle = '$COVERAGE_BUNDLE'  \n
+and feat.ftype = '$COVERAGE_FTYPE'  \n
 and scen.propname = :'scenarioPropName' \\gset \n
 
-DELETE FROM dh_timeseries
-WHERE varid = :ratings 
-AND entity_type = 'dh_properties'
-AND featureid = :scenariopid;
+DELETE FROM dh_timeseries  \n
+WHERE varid = :ratings   \n
+AND entity_type = 'dh_properties'  \n
+AND featureid = :scenariopid;  \n
 
-\\set ratingsVarkey '$RATINGS_VARKEY' \n
-\\set scenarioPropName '$SCENARIO_PROP_NAME' \n
-\\set hydrocode  '$coverage' \n
-SELECT hydroid AS ratings FROM dh_variabledefinition WHERE varkey = :'ratingsVarkey' \\gset \n
-
-INSERT INTO dh_timeseries ( tstime,tsendtime, tsvalue, featureid, varid, entity_type)
-SELECT a.tstime, a.tsendtime, a.tsvalue, a.featureid, v.hydroid, a.entity_type
-FROM tmp_ratings AS a
-LEFT JOIN dh_variabledefinition as v
-ON v.hydroid = :ratings
---This join is not really needed because of the delete above, but may serve as means of QA
-LEFT JOIN dh_timeseries AS dupe
-ON (
- a.tstime = dupe.tstime 
- AND a.tsendtime = dupe.tsendtime
- AND a.featureid = dupe.featureid
- AND a.entity_type = dupe.entity_type
- AND v.hydroid = dupe.varid
-)
-WHERE dupe.tid IS NULL;
+INSERT INTO dh_timeseries ( tstime,tsendtime, tsvalue, featureid, varid, entity_type)  \n
+SELECT a.tstime, a.tsendtime, a.tsvalue, a.featureid, v.hydroid, a.entity_type  \n
+FROM tmp_ratings AS a  \n
+LEFT JOIN dh_variabledefinition as v  \n
+ON v.hydroid = :ratings;
 "
 
 # turn off the expansion of the asterisk

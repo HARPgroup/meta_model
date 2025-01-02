@@ -6,7 +6,8 @@
 # coverage_ftype <- 'cbp_met_grid'
 # coverage_bundle <- 'landunit'
 # model_version <- 'met-1.0'
-# scenarioPropName <- 'lm_simple'
+# rankingPropName <- 'simple_lm_PRISM'
+# amalgamatePropName <- 'amalgamate_simple_lm'
 # ratingsFile <- "http://deq1.bse.vt.edu:81/met/stormVol_prism/out/usgs_ws_02021500-PRISM-storm_volume-rating-ts.csv"
 # 
 
@@ -29,11 +30,14 @@ coverage_ftype <- argst[3]
 model_version <- argst[4] 
 #The model scenario property name specific to the workflow and defined in config
 #file
-scenarioPropName <- argst[5]
+rankingPropName <- argst[5]
+#The model scenario property name specific to the workflow and defined in config
+#file
+amalgamatePropName <- argst[6]
 #Input ratings file path to insert
-ratingsFile <- argst[6]
+ratingsFile <- argst[7]
 #Area to write updated csv file to:
-pathToWrite <- argst[7]
+pathToWrite <- argst[8]
 
 # load the base feature for the coverage using romFeature and ds:
 message(paste("Searching for feature hydrocode=", coverage_hydrocode,"with ftype",coverage_ftype))
@@ -81,9 +85,15 @@ if(model$propname != model_name){
 
 # this will create or retrieve a model scenario to house this summary data using
 # romProperty
-message(paste("Creating/finding model scenario on", model$pid, "with propname =",scenarioPropName))
-scenario <- om_get_model_scenario(ds, model, scenarioPropName)
-message(paste("Scenario property with propname =",scenario$propname," created/found with pid =",scenario$pid))
+message(paste("Creating/finding model scenario on", model$pid, "with propname =",rankingPropName))
+rankingScenario <- om_get_model_scenario(ds, model, rankingPropName)
+message(paste("Ranking Scenario property with propname =",rankingScenario$propname," created/found with pid =",rankingScenario$pid))
+
+# this will create or retrieve a model scenario to house the data selected by amalgamate
+message(paste("Creating/finding model scenario on", model$pid, "with propname =",amalgamatePropName))
+amalgamateScenario <- om_get_model_scenario(ds, model, amalgamatePropName)
+message(paste("Amalgamate Scenario property with propname =",amalgamateScenario$propname," created/found with pid =",amalgamateScenario$pid))
+
 
 if(!is.na(pathToWrite) & !is.na(ratingsFile)){
   #Read in the ratings file
@@ -95,7 +105,7 @@ if(!is.na(pathToWrite) & !is.na(ratingsFile)){
   ratings$end_date_sec <- as.numeric(as.POSIXct(ratings$end_date,tz = "EST"))
   
   #Add featureid and entity_type to ratings for proper export to dh_timeseries
-  ratings$featureid <- scenario$pid
+  ratings$featureid <- rankingScenario$pid
   ratings$entity_type <- "dh_properties"
   #Create a nicely formatted timeseries that will be easy to export to dh_timeseries
   out <- data.frame(tstime = as.integer(ratings$start_date_sec),
