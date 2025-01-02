@@ -64,7 +64,6 @@ bestRating AS (
 	AND modelProp.featureid = maxRating.featureid
   WHERE modelProp.propcode = :'metModel'
   		AND scenProp.propname = :'scenarioPropName'
-		AND ts.featureid = :scenariopid
   ORDER BY modelProp.featureid,ts.tstime
 )
 
