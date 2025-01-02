@@ -69,8 +69,9 @@ bestRating AS (
 
 INSERT INTO dh_timeseries ( tstime,tsendtime, tsvalue, featureid, varid, entity_type )
 SELECT a.tstime, a.tsendtime, a.tsvalue,
-  :scenariopid as featureid, a.varid,
-  'dh_properties' AS entity_type
+ :scenariopid as featureid,
+ :ratings as varid,
+ 'dh_properties' AS entity_type
 FROM bestRating AS a
 "
 
