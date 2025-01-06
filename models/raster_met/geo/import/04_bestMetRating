@@ -24,54 +24,55 @@ AND feat.bundle = '$COVERAGE_BUNDLE'
 and feat.ftype = '$COVERAGE_FTYPE'
 and scen.propname = :'scenarioPropName' \\gset \n
 
-DELETE FROM dh_timeseries
-WHERE varid = :ratings 
-AND entity_type = 'dh_properties'
-AND featureid = :scenariopid;
+DELETE FROM dh_timeseries \n
+WHERE varid = :ratings  \n
+AND entity_type = 'dh_properties' \n
+AND featureid = :scenariopid; \n
 
-WITH maxRating AS (
-	SELECT modelProp.featureid as featureid,
-		ts.tstime as tstime,
-		ts.tsendtime as tsendtime,
-		max(ts.tsvalue) as maxtsvalue
-	FROM dh_properties as modelProp
-	LEFT JOIN dh_properties as scenProp
-		ON scenProp.featureid = modelProp.pid
-	LEFT JOIN dh_timeseries as ts
-		ON ts.featureid = scenProp.pid
-	WHERE modelProp.propcode = :'metModel'
-		AND scenProp.propname IN (${SCENARIOS_TO_RANK})
-		AND ts.featureid = :scenariopid
-	GROUP BY modelProp.featureid,
-		ts.tstime,
-		ts.tsendtime
-),
-bestRating AS (
-	SELECT modelProp.featureid AS featureid,
-		ts.tstime as tstime,
-		ts.tsendtime as tsendtime,
-		ts.tsvalue,
-		ts.varid 
-	FROM dh_properties as modelProp
-	LEFT JOIN dh_properties as scenProp
-	ON scenProp.featureid = modelProp.pid
-	LEFT JOIN dh_timeseries as ts
-	ON ts.featureid = scenProp.pid
-	INNER JOIN maxRating
-	ON ts.tstime = maxRating.tstime
-	AND ts.tsendtime = maxRating.tsendtime
-	AND ts.tsvalue = maxRating.maxtsvalue
-	AND modelProp.featureid = maxRating.featureid
-  WHERE modelProp.propcode = :'metModel'
-  		AND scenProp.propname = :'scenarioPropName'
-  ORDER BY modelProp.featureid,ts.tstime
-)
+WITH maxRating AS ( \n
+	SELECT modelProp.featureid as featureid, \n
+		ts.tstime as tstime, \n
+		ts.tsendtime as tsendtime, \n
+		max(ts.tsvalue) as maxtsvalue \n
+	FROM dh_properties as modelProp \n
+	LEFT JOIN dh_properties as scenProp \n
+		ON scenProp.featureid = modelProp.pid \n
+	LEFT JOIN dh_timeseries as ts \n
+		ON ts.featureid = scenProp.pid \n
+	WHERE modelProp.propcode = :'metModel' \n
+		AND scenProp.propname IN (${SCENARIOS_TO_RANK}) \n
+		AND ts.featureid = :scenariopid \n
+	GROUP BY modelProp.featureid, \n
+		ts.tstime, \n
+		ts.tsendtime \n
+), \n
+bestRating AS ( \n
+	SELECT modelProp.featureid AS featureid, \n
+		ts.tstime as tstime, \n
+		ts.tsendtime as tsendtime, \n
+		scenProp.pid as tsvalue, \n
+		ts.varid  \n
+	FROM dh_properties as modelProp \n
+	LEFT JOIN dh_properties as scenProp \n
+	ON scenProp.featureid = modelProp.pid \n
+	LEFT JOIN dh_timeseries as ts \n
+	ON ts.featureid = scenProp.pid \n
+	INNER JOIN maxRating \n
+	ON ts.tstime = maxRating.tstime \n
+	AND ts.tsendtime = maxRating.tsendtime \n
+	AND ts.tsvalue = maxRating.maxtsvalue \n
+	AND modelProp.featureid = maxRating.featureid \n
+	WHERE modelProp.propcode = :'metModel' \n
+		AND scenProp.propname IN (${SCENARIOS_TO_RANK}) \n
+		AND ts.featureid = :scenariopid \n
+  ORDER BY modelProp.featureid,ts.tstime \n
+) \n
 
-INSERT INTO dh_timeseries ( tstime,tsendtime, tsvalue, featureid, varid, entity_type )
-SELECT a.tstime, a.tsendtime, a.tsvalue,
- :scenariopid as featureid,
- :ratings as varid,
- 'dh_properties' AS entity_type
+INSERT INTO dh_timeseries ( tstime,tsendtime, tsvalue, featureid, varid, entity_type ) \n
+SELECT a.tstime, a.tsendtime, a.tsvalue, \n
+ :scenariopid as featureid, \n
+ :ratings as varid, \n
+ 'dh_properties' AS entity_type \n
 FROM bestRating AS a
 "
 

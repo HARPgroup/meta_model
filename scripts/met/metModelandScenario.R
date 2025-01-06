@@ -9,7 +9,7 @@
 # rankingPropName <- 'simple_lm_PRISM'
 # amalgamatePropName <- 'amalgamate_simple_lm'
 # ratingsFile <- "http://deq1.bse.vt.edu:81/met/stormVol_prism/out/usgs_ws_02021500-PRISM-storm_volume-rating-ts.csv"
-# 
+
 
 #Load in hydrotools and connect to REST
 library(hydrotools)
