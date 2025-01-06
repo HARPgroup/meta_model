@@ -6,16 +6,17 @@ if [ "$wdm_config" = "" ]; then
 fi
 . $wdm_config
 
-if [ "$MET_PROCESS_METHOD" == "cbp6" ]; then
+if [[ "$MET_PROCESS_METHOD" != *"raster"* ]]; then
   exit
 fi
+
 echo "02_db_raw called for $scenario, $coverage"
 # Get data for an entire time period if this is just a raw export
 if [ "$RESAMPLE_VARKEY" != "" ]; then
   exit
 fi
 echo "No Resampling requested"
-if [ "$DISAGGGREGATE_VARKEY" != "" ]; then
+if [ "$DISAGGREGATE_VARKEY" != "" ]; then
   exit
 fi
 echo "No disagregation requested"

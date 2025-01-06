@@ -18,7 +18,7 @@ SELECT tstime,tsendtime,tsvalue,featureid,entity_type
 FROM dh_timeseries
 LIMIT 0;
 
-COPY tmp_ratings FROM '/tmp/${baseFileName}' with csv header;
+COPY tmp_ratings FROM '/tmp/${baseFileName}' with csv header NULL AS 'NA';
 
 \\set ratingsVarkey '$RATINGS_VARKEY' \n
 \\set scenarioPropName '$SCENARIO_PROP_NAME' \n

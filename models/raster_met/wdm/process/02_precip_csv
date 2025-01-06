@@ -1,0 +1,18 @@
+#!/bin/bash
+# loads the args, the raster specific config and change to tempdir
+wdm_config=`find_config wdm.config`
+if [ "$wdm_config" = "" ]; then
+  wdm_config="$META_MODEL_ROOT/models/raster_met/wdm/wdm.config"
+fi
+. $wdm_config
+
+# call Rscript to format data as WDM importable
+COVERAGE_WDM_CSV=$COVERAGE_WDM_DIR/${coverage}.PRC
+outfile=`basename $COVERAGE_WDM_CSV`
+if [ -e $COVERAGE_PRECIP_FILE ]; then
+  echo "Call: Rscript $META_MODEL_ROOT/scripts/wdm/csv_export_wdm_format.R $COVERAGE_PRECIP_FILE $outfile precip_in hour"
+  Rscript $META_MODEL_ROOT/scripts/wdm/csv_export_wdm_format.R $COVERAGE_PRECIP_FILE $outfile precip_in hour
+  install -D $outfile $COVERAGE_WDM_CSV
+else
+  echo "Warning: $COVERAGE_PRECIP_FILE does not exist. Default will be used."
+fi

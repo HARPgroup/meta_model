@@ -1,6 +1,7 @@
 #!/bin/bash
 dirnum=`echo "echo $((RANDOM+1))" | ksh`
 # handle both old and new scratch paths
+echo "MODEL_ROOT = $MODEL_ROOT" 1>&2
 if [ -z ${user+x} ]; then
   tempdir="$MODEL_ROOT/tmp/scratch/"`printf "%04d" $dirnum`
 else 

@@ -1,0 +1,24 @@
+#!/bin/csh
+# Run post-process extract routine
+# note: this was moved from the hspf model tree, since the expected files were not correct.
+#       in fact, this script was also incomplete, and did not set output_file_path, so it crashed the run
+set scenario=$1
+set segment=$2
+set seg=$segment # this is for backwards compatibility with scripts source
+set tempdir=$3
+# Load configuration
+source $META_MODEL_ROOT/models/$MODEL/model_config
+cd $tempdir
+
+set scenario_alias = `cbp get_config $scenario script land_scenario_alias`
+echo "Found scenario_alias = $scenario_alias"
+if ( "$scenario_alias" != "" ) then
+
+  if ( $EXPORT_RUNOFF_OM == 1 ) then
+    set scr = "create_landseg_table.sh $segment $scenario_alias p532 1"
+    echo "Running: $scr"
+    $scr
+  else
+    echo "Land export is off EXPORT_RUNOFF_OM = $EXPORT_RUNOFF_OM, no runoff component file imported."
+  endif
+endif

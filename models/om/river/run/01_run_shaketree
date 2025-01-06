@@ -1,0 +1,23 @@
+#!/bin/bash
+# loads the args, the raster specific config and change to tempdir
+om_config=`find_config om.config`
+if [ "$om_config" = "" ]; then
+  om_config="$META_MODEL_ROOT/models/om/om.config"
+fi
+. $om_config
+
+# Note:
+# - RUN_METHOD is passed to shakeTree.php but appears to be unused, always defaulted to 'normal'
+#   and is redundant to RUN_TYPE, thus we will repurpose and use as the switch for determining 
+#   whether to use shake tree, or some other exec 
+if [ "$RUN_METHOD" != "shake_tree" ]; then
+  echo "RUN_METHOD = $RUN_METHOD exiting"
+  exit
+fi
+# Example command:
+cd /var/www/html/om/ 
+scr="/usr/bin/php -f /var/www/html/om/run_shakeTree.php"
+args="$SHAKE_TREE_MODE $elid $scenario $START_DATE $END_DATE $CACHE_DATE $RERUN_MODE $DOMAIN_ID $QA_MODE $RUN_MODE $RUN_METHOD flow_mode=$FLOW_MODE $DEBUG_MODE $DT $pid $segment cached_meta_model"
+
+echo "Running: $scr $args"
+$scr $args
