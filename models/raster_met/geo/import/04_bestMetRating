@@ -13,22 +13,22 @@ ratings_sql="
 \\set hydrocode  '$coverage' \n
 \\set metModel '$MET_MODEL_VERSION' \n
 SELECT hydroid AS ratings FROM dh_variabledefinition WHERE varkey = :'ratingsVarkey' \\gset \n
-SELECT scen.pid as scenariopid
-FROM dh_properties as scen
-LEFT JOIN dh_properties as model
-ON model.pid =  scen.featureid
-LEFT JOIN dh_feature as feat
-on feat.hydroid = model.featureid
-WHERE feat.hydrocode = :'hydrocode' 
-AND feat.bundle = '$COVERAGE_BUNDLE' 
-and feat.ftype = '$COVERAGE_FTYPE'
+SELECT scen.pid as scenariopid \n
+FROM dh_properties as scen \n
+LEFT JOIN dh_properties as model \n
+ON model.pid =  scen.featureid \n
+LEFT JOIN dh_feature as feat \n
+on feat.hydroid = model.featureid \n
+WHERE feat.hydrocode = :'hydrocode'  \n
+AND feat.bundle = '$COVERAGE_BUNDLE'  \n
+and feat.ftype = '$COVERAGE_FTYPE' \n
 and scen.propname = :'scenarioPropName' \\gset \n
-
+ \n
 DELETE FROM dh_timeseries \n
 WHERE varid = :ratings  \n
 AND entity_type = 'dh_properties' \n
 AND featureid = :scenariopid; \n
-
+ \n
 WITH maxRating AS ( \n
 	SELECT modelProp.featureid as featureid, \n
 		ts.tstime as tstime, \n
@@ -67,7 +67,7 @@ bestRating AS ( \n
 		AND ts.featureid = :scenariopid \n
   ORDER BY modelProp.featureid,ts.tstime \n
 ) \n
-
+ \n
 INSERT INTO dh_timeseries ( tstime,tsendtime, tsvalue, featureid, varid, entity_type ) \n
 SELECT a.tstime, a.tsendtime, a.tsvalue, \n
  :scenariopid as featureid, \n
