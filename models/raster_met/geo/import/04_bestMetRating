@@ -6,6 +6,12 @@ if [ "$geo_config" = "" ]; then
 fi
 . $geo_config
 
+#Put the base model timseries onto dbase2. This will be used to convert the ratings to daily
+baseFileName=`basename $COVERAGE_PRECIP_FILE`
+echo "sftp $db_host:/tmp/ <<< put ${DAILY_PRECIP_FILE}"
+sftp $db_host:"/tmp/" <<< "put ${DAILY_PRECIP_FILE}"
+echo "File put on ${db_host}, now inserting files..."
+
 #Establish and insert best-fit ratings. Delete existing ratings as needed.
 ratings_sql="
 \\set ratingsVarkey '$RATINGS_VARKEY' \n
@@ -24,6 +30,13 @@ AND feat.bundle = '$COVERAGE_BUNDLE'  \n
 and feat.ftype = '$COVERAGE_FTYPE' \n
 and scen.propname = :'scenarioPropName' \\gset \n
  \n
+CREATE TEMPORARY TABLE tmp_baseTS (
+  obs_date DATE
+);
+
+COPY tmp_ratings(obs_date) FROM '/tmp/${tmp_baseTS}' with csv header NULL AS 'NA';
+ 
+\n 
 DELETE FROM dh_timeseries \n
 WHERE varid = :ratings  \n
 AND entity_type = 'dh_properties' \n
