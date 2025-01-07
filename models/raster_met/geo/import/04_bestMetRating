@@ -40,53 +40,54 @@ AND entity_type = 'dh_properties' \n
 AND featureid = :scenariopid; \n
 \n
 WITH dailyRating as (
-	SELECT modelProp.featureid as featureid, \n
-		scenProp.pid, \n
-		tsrast.tstime as tstime, \n
-		tsrast.tsendtime as tsendtime, \n
-		ts.tsvalue as tsvalue \n
-	FROM dh_properties as modelProp \n
-	LEFT JOIN dh_properties as scenProp \n
-	ON scenProp.featureid = modelProp.pid \n
-	LEFT JOIN dh_timeseries as ts \n
-	ON ts.featureid = scenProp.pid \n
-	RIGHT JOIN ( \n
-		SELECT tsrast.tstime,tsrast.tsendtime \n
-		FROM dh_timeseries_weather as tsrast \n
-		LEFT JOIN dh_variabledefinition as v \n
-		ON v.hydroid = tsrast.varid \n
-		WHERE v.varkey = 'prism_mod_daily' \n
-		AND to_timestamp(tstime) >= ${START_DATE} \n
-		AND to_timestamp(tsendtime) <= ${END_DATE} \n
-	) as tsrast \n
-	ON tsrast.tstime >= ts.tstime \n
-	AND tsrast.tsendtime < ts.tsendtime \n
-	WHERE modelProp.propcode = :'metModel' \n
-		AND scenProp.propname IN (${SCENARIOS_TO_RANK}) \n
-		AND modelProp.featureid = :coveragefeatureid \n
+	SELECT modelProp.featureid as featureid,
+	CASE
+		WHEN ts.tsvalue IS NOT NULL THEN scenProp.pid 
+		ELSE NULL 
+	END as pid,
+	basets.START_DATE,
+	basets.END_DATE,
+	ts.tsvalue as tsvalue
+	FROM dh_properties as modelProp
+	LEFT JOIN dh_properties as scenProp
+	ON scenProp.featureid = modelProp.pid
+	LEFT JOIN dh_timeseries as ts
+	ON ts.featureid = scenProp.pid
+	RIGHT JOIN (
+		SELECT generate_series(date ${START_DATE}, date ${END_DATE}, '1 day')::date as START_DATE,
+			generate_series(date ${START_DATE}+1, date ${END_DATE}+1, '1 day')::date as END_DATE
+	) as basets
+	ON (basets.START_DATE = to_timestamp(ts.tsendtime)::date OR
+		(basets.START_DATE >= to_timestamp(ts.tstime)::date AND 
+		basets.END_DATE <= to_timestamp(ts.tsendtime)::date)
+		)
+	WHERE modelProp.propcode = :'metModel'
+	AND scenProp.propname IN (${SCENARIOS_TO_RANK})
+	AND modelProp.featureid = :coveragefeatureid
+	ORDER BY basets.START_DATE
 ), \n
 maxRating AS ( \n
-	SELECT modelProp.featureid as featureid, \n
-		tstime as tstime, \n
-		tsendtime as tsendtime, \n
-		max(ts.tsvalue) as maxtsvalue \n
-	FROM dailyRating
-	GROUP BY tstime, \n
-		tsendtime \n
+	SELECT featureid as featureid,
+	START_DATE as START_DATE,
+	END_DATE as END_DATE,
+	max(tsvalue) as maxtsvalue
+	FROM dailyRating 
+	GROUP BY featureid, START_DATE, END_DATE
 ), \n
 bestRating AS ( \n
-	SELECT dailyRating.featureid AS featureid, \n
-		dailyRating.tstime as tstime, \n
-		dailyRating.tsendtime as tsendtime, \n
-		dailyRating.pid as tsvalue \n
-	FROM dailyRating \n
-	INNER JOIN maxRating \n
-		ON dailyRating.tstime = maxRating.tstime \n
-		AND dailyRating.tsendtime = maxRating.tsendtime \n
-		AND dailyRating.tsvalue = maxRating.maxtsvalue \n
-		AND dailyRating.featureid = maxRating.featureid \n
-	WHERE maxRating IS NOT NULL
-  ORDER BY modelProp.featureid,dailyRating.tstime \n
+	SELECT dailyRating.featureid AS featureid,
+	extract(epoch FROM dailyRating.START_DATE) as tstime,
+	extract(epoch FROM dailyRating.END_DATE) as tsendtime,
+	dailyRating.pid as tsvalue
+	FROM dailyRating
+	INNER JOIN maxRating
+	ON dailyRating.START_DATE = maxRating.START_DATE
+	AND dailyRating.END_DATE = maxRating.END_DATE
+	AND (dailyRating.tsvalue = maxRating.maxtsvalue OR 
+		maxRating.maxtsvalue IS NULL)
+	AND dailyRating.featureid = maxRating.featureid
+	GROUP BY dailyRating.featureid, dailyRating.START_DATE, dailyRating.END_DATE, dailyRating.pid
+	ORDER BY dailyRating.featureid,dailyRating.START_DATE
 ) \n
  \n
 INSERT INTO dh_timeseries ( tstime,tsendtime, tsvalue, featureid, varid, entity_type ) \n
