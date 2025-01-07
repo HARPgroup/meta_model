@@ -73,17 +73,17 @@ SELECT a.tstime, a.tsendtime, a.tsvalue, \n
  :scenariopid as featureid, \n
  :ratings as varid, \n
  'dh_properties' AS entity_type \n
-FROM bestRating AS a
-RIGHT JOIN (
-	SELECT tsrast.tstime,tsrast.tsendtime 
-	FROM dh_timeseries_weather as tsrast
-	LEFT JOIN dh_variable_definition as v
-	ON v.hydroid = tsrast.varid
-	WHERE v.varkey = '${BASE_TS_VARKEY}'
-	AND tstime >= ${START_DATE}
-	AND tsendtime <= ${END_DATE}
-) as tsrast
-ON a.tstime >= tsrast.tstime
+FROM bestRating AS a \n
+RIGHT JOIN ( \n
+	SELECT tsrast.tstime,tsrast.tsendtime \n
+	FROM dh_timeseries_weather as tsrast \n
+	LEFT JOIN dh_variabledefinition as v \n
+	ON v.hydroid = tsrast.varid \n
+	WHERE v.varkey = '${BASE_TS_VARKEY}' \n
+	AND to_timestamp(tstime) >= ${START_DATE} \n
+	AND to_timestamp(tsendtime) <= ${END_DATE} \n
+) as tsrast \n
+ON a.tstime >= tsrast.tstime \n
 AND a.tsendtime < tsrast.tsendtime
 
 "
