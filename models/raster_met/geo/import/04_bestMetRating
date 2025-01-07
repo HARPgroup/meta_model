@@ -23,6 +23,16 @@ WHERE feat.hydrocode = :'hydrocode'  \n
 AND feat.bundle = '$COVERAGE_BUNDLE'  \n
 and feat.ftype = '$COVERAGE_FTYPE' \n
 and scen.propname = :'scenarioPropName' \\gset \n
+SELECT feat.hydroid as coveragefeatureid \n
+FROM dh_properties as scen \n
+LEFT JOIN dh_properties as model \n
+ON model.pid =  scen.featureid \n
+LEFT JOIN dh_feature as feat \n
+on feat.hydroid = model.featureid \n
+WHERE feat.hydrocode = :'hydrocode'  \n
+AND feat.bundle = '$COVERAGE_BUNDLE'  \n
+and feat.ftype = '$COVERAGE_FTYPE' \n
+and scen.propname = :'scenarioPropName' \\gset \n
 \n
 DELETE FROM dh_timeseries \n
 WHERE varid = :ratings  \n
@@ -41,7 +51,7 @@ WITH maxRating AS ( \n
 		ON ts.featureid = scenProp.pid \n
 	WHERE modelProp.propcode = :'metModel' \n
 		AND scenProp.propname IN (${SCENARIOS_TO_RANK}) \n
-		AND ts.featureid = :scenariopid \n
+		AND modelProp.featureid = :coveragefeatureid \n
 	GROUP BY modelProp.featureid, \n
 		ts.tstime, \n
 		ts.tsendtime \n
@@ -64,7 +74,7 @@ bestRating AS ( \n
 	AND modelProp.featureid = maxRating.featureid \n
 	WHERE modelProp.propcode = :'metModel' \n
 		AND scenProp.propname IN (${SCENARIOS_TO_RANK}) \n
-		AND ts.featureid = :scenariopid \n
+		AND modelProp.featureid = :coveragefeatureid \n
   ORDER BY modelProp.featureid,ts.tstime \n
 ) \n
  \n
