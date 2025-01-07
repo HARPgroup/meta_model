@@ -1,7 +1,6 @@
 #Creates the appropriate model and scenario properties for a given geo run and
 #stores ratings:
-
-#Example Inputs:
+# Example Inputs:
 # coverage_hydrocode <- "cbp6_met_coverage"
 # coverage_ftype <- 'cbp_met_grid'
 # coverage_bundle <- 'landunit'
@@ -15,8 +14,6 @@
 library(hydrotools)
 basepath='/var/www/R'
 source('/var/www/R/config.R')
-ds <- RomDataSource$new(site = site, rest_uname)
-ds$get_token(rest_pw)
 
 
 argst <- commandArgs(trailingOnly = T)

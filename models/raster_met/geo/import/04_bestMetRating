@@ -31,10 +31,18 @@ and feat.ftype = '$COVERAGE_FTYPE' \n
 and scen.propname = :'scenarioPropName' \\gset \n
  \n
 CREATE TEMPORARY TABLE tmp_baseTS (
-  obs_date DATE
+  obs_date DATE,
+  precip_in float8,
+  yr int,
+  mo int,
+  da int,
+  wk int,
+  obs_flow float8,
+  area_sqmi float8,
+  precip_cfs float8
 );
 
-COPY tmp_ratings(obs_date) FROM '/tmp/${tmp_baseTS}' with csv header NULL AS 'NA';
+COPY tmp_ratings FROM '/tmp/${tmp_baseTS}' with csv header NULL AS 'NA';
  
 \n 
 DELETE FROM dh_timeseries \n
