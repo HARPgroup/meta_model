@@ -6,12 +6,6 @@ if [ "$geo_config" = "" ]; then
 fi
 . $geo_config
 
-#Put the base model timseries onto dbase2. This will be used to convert the ratings to daily
-baseFileName=`basename $COVERAGE_PRECIP_FILE`
-echo "sftp $db_host:/tmp/ <<< put ${DAILY_PRECIP_FILE}"
-sftp $db_host:"/tmp/" <<< "put ${DAILY_PRECIP_FILE}"
-echo "File put on ${db_host}, now inserting files..."
-
 #Establish and insert best-fit ratings. Delete existing ratings as needed.
 ratings_sql="
 \\set ratingsVarkey '$RATINGS_VARKEY' \n
@@ -29,27 +23,12 @@ WHERE feat.hydrocode = :'hydrocode'  \n
 AND feat.bundle = '$COVERAGE_BUNDLE'  \n
 and feat.ftype = '$COVERAGE_FTYPE' \n
 and scen.propname = :'scenarioPropName' \\gset \n
- \n
-CREATE TEMPORARY TABLE tmp_baseTS (
-  obs_date DATE,
-  precip_in float8,
-  yr int,
-  mo int,
-  da int,
-  wk int,
-  obs_flow float8,
-  area_sqmi float8,
-  precip_cfs float8
-);
-
-COPY tmp_ratings FROM '/tmp/${tmp_baseTS}' with csv header NULL AS 'NA';
- 
-\n 
+\n
 DELETE FROM dh_timeseries \n
 WHERE varid = :ratings  \n
 AND entity_type = 'dh_properties' \n
 AND featureid = :scenariopid; \n
- \n
+\n
 WITH maxRating AS ( \n
 	SELECT modelProp.featureid as featureid, \n
 		ts.tstime as tstime, \n
@@ -95,6 +74,18 @@ SELECT a.tstime, a.tsendtime, a.tsvalue, \n
  :ratings as varid, \n
  'dh_properties' AS entity_type \n
 FROM bestRating AS a
+RIGHT JOIN (
+	SELECT tsrast.tstime,tsrast.tsendtime 
+	FROM dh_timeseries_weather as tsrast
+	LEFT JOIN dh_variable_definition as v
+	ON v.hydroid = tsrast.varid
+	WHERE v.varkey = '${BASE_TS_VARKEY}'
+	AND tstime >= ${START_DATE}
+	AND tsendtime <= ${END_DATE}
+) as tsrast
+ON a.tstime >= tsrast.tstime
+AND a.tsendtime < tsrast.tsendtime
+
 "
 
 # turn off the expansion of the asterisk
