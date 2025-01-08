@@ -2,15 +2,14 @@
 
 . $META_MODEL_ROOT/models/om/om.config
 runid=$scenario
+pid=`Rscript $META_MODEL_ROOT/scripts/rest/get_feature_model.R $segment $scenario $model_version $R`
+
+
+
 object_class=`Rscript $META_MODEL_ROOT/scripts/rest/get_property.R dh_properties $pid object_class propcode`
 custom1=`Rscript $META_MODEL_ROOT/scripts/rest/get_property.R dh_properties $pid custom1 propcode`
 custom2=`Rscript $META_MODEL_ROOT/scripts/rest/get_property.R dh_properties $pid custom2 propcode`
 
-# Summarize all children
-manifest="$OM_DATA_DIR/manifest.${runid}.${elid}.log"
-# Children first, so we filter out the river seg elid
-for i in `cat $manifest | grep -v $elid`; do
-  echo "Running: $META_MODEL_ROOT/scripts/om/summarize_element $i $runid $model_version"
-  $META_MODEL_ROOT/scripts/om/summarize_element $i $runid $model_version
-done 
+echo "Sumarizing container: $META_MODEL_ROOT/scripts/om/summarize_element $elid $runid $DRUPAL_ROOT"
+$META_MODEL_ROOT/scripts/om/summarize_element $elid $runid $DRUPAL_ROOT
 
