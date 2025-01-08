@@ -39,55 +39,55 @@ WHERE varid = :ratings  \n
 AND entity_type = 'dh_properties' \n
 AND featureid = :scenariopid; \n
 \n
-WITH dailyRating as (
-	SELECT modelProp.featureid as featureid,
-	CASE
-		WHEN ts.tsvalue IS NOT NULL THEN scenProp.pid 
-		ELSE NULL 
-	END as pid,
-	basets.START_DATE,
-	basets.END_DATE,
-	ts.tsvalue as tsvalue
-	FROM dh_properties as modelProp
-	LEFT JOIN dh_properties as scenProp
-	ON scenProp.featureid = modelProp.pid
-	LEFT JOIN dh_timeseries as ts
-	ON ts.featureid = scenProp.pid
-	RIGHT JOIN (
-		SELECT generate_series(date ${START_DATE}, date ${END_DATE}, '1 day')::date as START_DATE,
-			generate_series(date ${START_DATE}+1, date ${END_DATE}+1, '1 day')::date as END_DATE
-	) as basets
-	ON (basets.START_DATE = to_timestamp(ts.tsendtime)::date OR
-		(basets.START_DATE >= to_timestamp(ts.tstime)::date AND 
-		basets.END_DATE <= to_timestamp(ts.tsendtime)::date)
-		)
-	WHERE modelProp.propcode = :'metModel'
-	AND scenProp.propname IN (${SCENARIOS_TO_RANK})
-	AND modelProp.featureid = :coveragefeatureid
-	ORDER BY basets.START_DATE
+WITH dailyRating as ( \n
+	SELECT modelProp.featureid as featureid, \n
+	CASE \n
+		WHEN ts.tsvalue IS NOT NULL THEN scenProp.pid  \n
+		ELSE NULL  \n
+	END as pid, \n
+	basets.START_DATE, \n
+	basets.END_DATE, \n
+	ts.tsvalue as tsvalue \n
+	FROM dh_properties as modelProp \n
+	LEFT JOIN dh_properties as scenProp \n
+	ON scenProp.featureid = modelProp.pid \n
+	LEFT JOIN dh_timeseries as ts \n
+	ON ts.featureid = scenProp.pid \n
+	RIGHT JOIN ( \n
+		SELECT generate_series(date ${START_DATE}, date ${END_DATE}, '1 day')::date as START_DATE, \n
+			generate_series(date ${START_DATE}+1, date ${END_DATE}+1, '1 day')::date as END_DATE \n
+	) as basets \n
+	ON (basets.START_DATE = to_timestamp(ts.tsendtime)::date OR \n
+		(basets.START_DATE >= to_timestamp(ts.tstime)::date AND  \n
+		basets.END_DATE <= to_timestamp(ts.tsendtime)::date) \n
+		) \n
+	WHERE modelProp.propcode = :'metModel' \n
+	AND scenProp.propname IN (${SCENARIOS_TO_RANK}) \n
+	AND modelProp.featureid = :coveragefeatureid \n
+	ORDER BY basets.START_DATE \n
 ), \n
 maxRating AS ( \n
-	SELECT featureid as featureid,
-	START_DATE as START_DATE,
-	END_DATE as END_DATE,
-	max(tsvalue) as maxtsvalue
-	FROM dailyRating 
-	GROUP BY featureid, START_DATE, END_DATE
+	SELECT featureid as featureid, \n
+	START_DATE as START_DATE, \n
+	END_DATE as END_DATE, \n
+	max(tsvalue) as maxtsvalue \n
+	FROM dailyRating  \n
+	GROUP BY featureid, START_DATE, END_DATE \n
 ), \n
 bestRating AS ( \n
-	SELECT dailyRating.featureid AS featureid,
-	extract(epoch FROM dailyRating.START_DATE) as tstime,
-	extract(epoch FROM dailyRating.END_DATE) as tsendtime,
-	dailyRating.pid as tsvalue
-	FROM dailyRating
-	INNER JOIN maxRating
-	ON dailyRating.START_DATE = maxRating.START_DATE
-	AND dailyRating.END_DATE = maxRating.END_DATE
-	AND (dailyRating.tsvalue = maxRating.maxtsvalue OR 
-		maxRating.maxtsvalue IS NULL)
-	AND dailyRating.featureid = maxRating.featureid
-	GROUP BY dailyRating.featureid, dailyRating.START_DATE, dailyRating.END_DATE, dailyRating.pid
-	ORDER BY dailyRating.featureid,dailyRating.START_DATE
+	SELECT dailyRating.featureid AS featureid, \n
+	extract(epoch FROM dailyRating.START_DATE) as tstime, \n
+	extract(epoch FROM dailyRating.END_DATE) as tsendtime, \n
+	dailyRating.pid as tsvalue \n
+	FROM dailyRating \n
+	INNER JOIN maxRating \n
+	ON dailyRating.START_DATE = maxRating.START_DATE \n
+	AND dailyRating.END_DATE = maxRating.END_DATE \n
+	AND (dailyRating.tsvalue = maxRating.maxtsvalue OR  \n
+		maxRating.maxtsvalue IS NULL) \n
+	AND dailyRating.featureid = maxRating.featureid \n
+	GROUP BY dailyRating.featureid, dailyRating.START_DATE, dailyRating.END_DATE, dailyRating.pid \n
+	ORDER BY dailyRating.featureid,dailyRating.START_DATE \n
 ) \n
  \n
 INSERT INTO dh_timeseries ( tstime,tsendtime, tsvalue, featureid, varid, entity_type ) \n
