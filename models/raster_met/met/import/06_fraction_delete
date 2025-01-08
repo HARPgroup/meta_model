@@ -18,7 +18,7 @@ if [ $scenario == 'nldas2' ]; then
 	cmd="$MET_SCRIPT_PATH/sh/daily_delete_ts $FRACTIONVARKEY $RASTER_SQL_FILE $db_host $db_name $ddate $END_DATE"
   echo "Calling Fraction Delete"
   echo $cmd
-  #eval $cmd
+  eval $cmd
   exit
 else
   echo "Skipping Delete Fraction Disaggregation"
