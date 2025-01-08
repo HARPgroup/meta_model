@@ -14,8 +14,8 @@ prop_name <- argst[3]
 return_name <- argst[4]
 
 # Set up our data source
-ds <- RomDataSource$new(site, rest_uname = rest_uname)
-ds$get_token(rest_pw)
+#ds <- RomDataSource$new(site, rest_uname = rest_uname)
+#ds$get_token(rest_pw)
 message(paste("Searching for prop", prop_name,"on ",entity_id))
 model <- RomProperty$new(
   ds,

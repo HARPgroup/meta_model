@@ -1,5 +1,5 @@
 #!/bin/bash
-
+# !!!!!!!!!!!!!!!! NOT YET WORKING!!!!!!!!!!!!!!!!!!!!
 . $META_MODEL_ROOT/models/om/om.config
 runid=$scenario
 object_class=`Rscript $META_MODEL_ROOT/scripts/rest/get_property.R dh_properties $pid object_class propcode`

@@ -1,0 +1,40 @@
+#!/bin/bash
+# given elementid and model_version
+# Returnspid elid object_class custom1 custom2
+dbhost="dbase2"
+dbname="drupal.dh03"
+
+sql="
+\\o \n
+
+
+  select m.pid, e.propvalue as elid, o.propcode as object_class, 
+    c1.propcode as custom1, c2.propcode as custom2
+  from dh_properties as e
+  left outer join dh_properties as m
+  on (
+    m.pid = e.featureid
+  )
+  left outer join dh_properties as o
+  on (
+    m.pid = o.featureid
+    and o.propname = 'object_class'
+  )
+  left outer join dh_properties as c1
+  on (
+    m.pid = c1.featureid
+    and c1.propname = 'custom1'
+  )
+  left outer join dh_properties as c2
+  on (
+    m.pid = c2.featureid
+    and c2.propname = 'custom2'
+  )
+  where e.propvalue = $1
+  and m.propcode = '$2'
+"
+
+
+set -f
+#echo -e "$sql | psql --csv -A --field-separator=',' -t -h $dbhost $dbname"
+echo -e $sql | psql --csv -A --field-separator="," -t -h $dbhost $dbname
