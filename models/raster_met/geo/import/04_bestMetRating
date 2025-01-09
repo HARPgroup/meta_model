@@ -58,8 +58,8 @@ WITH dailyRating as ( \n
 	LEFT JOIN dh_timeseries as ts \n
 	ON ts.featureid = scenProp.pid \n
 	RIGHT JOIN ( \n
-		SELECT generate_series(date '${START_DATE}', date ${END_DATE}, '1 day')::date as START_DATE, \n
-			generate_series(date '${START_DATE}'+1, date ${END_DATE}+1, '1 day')::date as END_DATE \n
+		SELECT generate_series(date '${START_DATE}', date '${END_DATE}', '1 day')::date as START_DATE, \n
+			generate_series(date '${START_DATE}'+1, date '${END_DATE}'+1, '1 day')::date as END_DATE \n
 	) as basets \n
 	ON (basets.START_DATE = to_timestamp(ts.tsendtime)::date OR \n
 		(basets.START_DATE >= to_timestamp(ts.tstime)::date AND  \n
