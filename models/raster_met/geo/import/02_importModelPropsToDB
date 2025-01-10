@@ -8,7 +8,7 @@ fi
 
 
 #Add a model property and the appropriate scenario property onto the coverage
-cmd="Rscript $META_MODEL_ROOT/scripts/met/metModelandScenario.R $coverage $COVERAGE_BUNDLE $COVERAGE_FTYPE $MET_MODEL_VERSION $SCENARIO_PROP_NAME $RATING_TS_FILE $RATINGS_TODBASE_FILE"
+cmd="Rscript $META_MODEL_ROOT/scripts/met/metModelandScenario.R $coverage $COVERAGE_BUNDLE $COVERAGE_FTYPE $MET_MODEL_VERSION $scenario $RANKING_SCENARIO $RATING_TS_FILE $RATINGS_TODBASE_FILE"
 echo "Running: $cmd"
 eval $cmd
 

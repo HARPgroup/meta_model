@@ -1,0 +1,14 @@
+#!/bin/bash
+# loads the args, the raster specific config and change to temp dir
+amalgamate_config=`find_config amalgamate.config`
+if [ "$amalgamate_config" = "" ]; then
+  amalgamate_config="$META_MODEL_ROOT/models/raster_met/amalgamate/amalgamate.config"
+fi
+. $amalgamate_config
+
+
+#Add a model property and the appropriate scenario property onto the coverage
+cmd="Rscript $META_MODEL_ROOT/scripts/met/metModelandScenario.R $EXTENT_HYDROCODE $EXTENT_BUNDLE $EXTENT_FTYPE $MET_MODEL_VERSION $SCENARIO_PROP_NAME"
+echo "Running: $cmd"
+eval $cmd
+

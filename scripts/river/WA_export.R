@@ -7,9 +7,9 @@ source(paste(basepath,'config.R',sep='/'))
 suppressPackageStartupMessages(library(hydrotools))
 suppressPackageStartupMessages(library(lubridate))
 
-# authenticate
-ds <- RomDataSource$new(site, rest_uname)
-ds$get_token(rest_pw)
+# authenticate -- done in config.R now
+# ds <- RomDataSource$new(site, rest_uname)
+#ds$get_token(rest_pw)
 
 ## Abbreviated Form of WA Eqn:
 ## WA_cpl = Qdemand_cpl - MIF*Qbase_cpl + Smin_cpl/CPL

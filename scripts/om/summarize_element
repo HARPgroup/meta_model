@@ -1,25 +1,23 @@
 #!/bin/bash
 
 if [ $# -lt 2 ]; then
-  echo 1>&2 "Usage: summarize_element.sh elid runid DRUPAL_ROOT"
+  echo 1>&2 "Usage: summarize_element.sh elid runid model_version"
   exit 2
 fi 
 elid=$1
 runid=$2
-DRUPAL_ROOT=$3
+model_version=$3
 
 # @todo: Put in batch post-process and summarize into vahydro 
 # Also, replace the normal dH/VAHydro call to php 
 # with a call to a shell script that runs the model, then runs a R summary script 
 
 # Get info about this element, including its object_class
-echo "Changing to Drupal: cd $DRUPAL_ROOT"
-cd $DRUPAL_ROOT
-info=`drush scr modules/om/src/om_get_element_info.php $elid`
+info=`$META_MODEL_ROOT/scripts/om/om_get_element_info $elid $model_version`
 cd /var/www/R
 # summarize if a script exists for this object_class
 # Rscript vahydro/R/post.runoff.R $pid $elid $runid
-IFS="$IFS|" read pid elid object_class custom1 custom2 <<< "$info"
+IFS="," read pid elid object_class custom1 custom2 <<< "$info"
 sum_script="/opt/model/om/R/summarize/${object_class}.R"
 echo "Looking for $sum_script "
 if test -f "$sum_script"; then

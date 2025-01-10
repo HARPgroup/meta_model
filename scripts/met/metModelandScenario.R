@@ -1,21 +1,19 @@
 #Creates the appropriate model and scenario properties for a given geo run and
 #stores ratings:
-
-#Example Inputs:
-# coverage_hydrocode <- "usgs_ws_02021500"
-# coverage_ftype <- 'usgs_full_drainage'
-# coverage_bundle <- 'watershed'
-# model_version <- 'met1.0'
-# scenarioPropName <- 'storm_volume'
+# Example Inputs:
+# coverage_hydrocode <- "cbp6_met_coverage"
+# coverage_ftype <- 'cbp_met_grid'
+# coverage_bundle <- 'landunit'
+# model_version <- 'met-1.0'
+# rankingPropName <- 'simple_lm_PRISM'
+# amalgamatePropName <- 'amalgamate_simple_lm'
 # ratingsFile <- "http://deq1.bse.vt.edu:81/met/stormVol_prism/out/usgs_ws_02021500-PRISM-storm_volume-rating-ts.csv"
-# 
+
 
 #Load in hydrotools and connect to REST
 library(hydrotools)
 basepath='/var/www/R'
 source('/var/www/R/config.R')
-ds <- RomDataSource$new(site = site, rest_uname)
-ds$get_token(rest_pw)
 
 
 argst <- commandArgs(trailingOnly = T)
@@ -29,21 +27,14 @@ coverage_ftype <- argst[3]
 model_version <- argst[4] 
 #The model scenario property name specific to the workflow and defined in config
 #file
-scenarioPropName <- argst[5]
+rankingPropName <- argst[5]
+#The model scenario property name specific to the workflow and defined in config
+#file
+amalgamatePropName <- argst[6]
 #Input ratings file path to insert
-ratingsFile <- argst[6]
+ratingsFile <- argst[7]
 #Area to write updated csv file to:
-pathToWrite <- argst[7]
-
-#Read in the ratings file
-ratings <- read.csv(ratingsFile)
-
-#Convert the ratings start and end dates to seconds after epoch to insert into
-#DB
-ratings$start_date_sec <- as.numeric(as.POSIXct(ratings$start_date,tz = "EST"))
-ratings$end_date_sec <- as.numeric(as.POSIXct(ratings$end_date,tz = "EST"))
-
-
+pathToWrite <- argst[8]
 
 # load the base feature for the coverage using romFeature and ds:
 message(paste("Searching for feature hydrocode=", coverage_hydrocode,"with ftype",coverage_ftype))
@@ -67,22 +58,59 @@ message(paste("Creating/finding model property on", feature$hydroid, "with propn
 model <- om_model_object(ds, feature, model_version, 
                          model_name = model_name)
 message(paste("Model property with propname =",model$propname," created/found with pid =",model$pid))
+#If there are multiple model properties, om_model_object returns the first
+#without checking propname. This will instead create a new property if the model
+#name doesn't match the returned propname
+if(model$propname != model_name){
+  #Search for a property with the correct propname and other fields
+  model <- RomProperty$new(ds, list(featureid = feature$hydroid, 
+                                    entity_type = "dh_feature",
+                                    propname = model_name,
+                                    propcode = model_version), 
+                           TRUE)
+  model_varkey <- "om_model_element"
+  #If nothing is found, create the new property
+  if (is.na(model$pid)) {
+    #Get the correct varid for the varkey used for the model
+    model$varid = ds$get_vardef(model_varkey)$varid
+    message(paste("Creating new feature model", model$propname, 
+                  model$varid, model$featureid, model$propcode))
+    #Save property
+    model$save(TRUE)
+  }
+}
 
 # this will create or retrieve a model scenario to house this summary data using
 # romProperty
-message(paste("Creating/finding model scenario on", model$pid, "with propname =",scenarioPropName))
-scenario <- om_get_model_scenario(ds, model, scenarioPropName)
-message(paste("Scenario property with propname =",scenario$propname," created/found with pid =",scenario$pid))
+message(paste("Creating/finding model scenario on", model$pid, "with propname =",rankingPropName))
+rankingScenario <- om_get_model_scenario(ds, model, rankingPropName)
+message(paste("Ranking Scenario property with propname =",rankingScenario$propname," created/found with pid =",rankingScenario$pid))
 
-#Add featureid and entity_type to ratings for proper export to dh_timeseries
-ratings$featureid <- scenario$pid
-ratings$entity_type <- "dh_properties"
-#Create a nicely formatted timeseries that will be easy to export to dh_timeseries
-out <- data.frame(tstime = as.integer(ratings$start_date_sec),
-                  tsendtime = as.integer(ratings$end_date_sec),
-                  tsvalue = ratings$rating,
-                  featureid = ratings$featureid,
-                  entity_type = ratings$entity_type)
-#Write out the formatted timeseries
-message(paste("Writing out formatted timeseries to",pathToWrite))
-write.csv(out,pathToWrite,row.names = FALSE)
+# this will create or retrieve a model scenario to house the data selected by amalgamate
+message(paste("Creating/finding model scenario on", model$pid, "with propname =",amalgamatePropName))
+amalgamateScenario <- om_get_model_scenario(ds, model, amalgamatePropName)
+message(paste("Amalgamate Scenario property with propname =",amalgamateScenario$propname," created/found with pid =",amalgamateScenario$pid))
+
+
+if(!is.na(pathToWrite) & !is.na(ratingsFile)){
+  #Read in the ratings file
+  ratings <- read.csv(ratingsFile)
+  
+  #Convert the ratings start and end dates to seconds after epoch to insert into
+  #DB
+  ratings$start_date_sec <- as.numeric(as.POSIXct(ratings$start_date,tz = "EST"))
+  ratings$end_date_sec <- as.numeric(as.POSIXct(ratings$end_date,tz = "EST"))
+  
+  #Add featureid and entity_type to ratings for proper export to dh_timeseries
+  ratings$featureid <- rankingScenario$pid
+  ratings$entity_type <- "dh_properties"
+  #Create a nicely formatted timeseries that will be easy to export to dh_timeseries
+  out <- data.frame(tstime = as.integer(ratings$start_date_sec),
+                    tsendtime = as.integer(ratings$end_date_sec),
+                    tsvalue = ratings$rating,
+                    featureid = ratings$featureid,
+                    entity_type = ratings$entity_type)
+  #Write out the formatted timeseries
+  message(paste("Writing out formatted timeseries to",pathToWrite))
+  write.csv(out,pathToWrite,row.names = FALSE)
+}

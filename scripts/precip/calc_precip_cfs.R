@@ -34,4 +34,4 @@ if (!('area_sqmi' %in% names(precip_daily))) {
 precip_daily$precip_cfs <- 1.572 * (precip_daily$area_sqmi * 640.0 * precip_daily$precip_in / 12.0) / 3.07 
 # Write csv in new file path
 print(paste0("Write csv in new file path: ",write_location))
-write.csv(precip_daily,write_location)
+write.csv(precip_daily,write_location,row.names = FALSE)

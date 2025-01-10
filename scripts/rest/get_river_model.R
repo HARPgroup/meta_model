@@ -14,8 +14,8 @@ model_version <- argst[3]
 rseg_ftype <- argst[4]
 
 # Set up our data source
-ds <- RomDataSource$new(site, rest_uname = rest_uname)
-ds$get_token(rest_pw)
+#ds <- RomDataSource$new(site, rest_uname = rest_uname)
+#ds$get_token(rest_pw)
 if (rseg_ftype == 'vahydro') {
   # we have a hinky prefix, so add it
   rseg_code=paste0('vahydrosw_wshed_',river_seg)
@@ -48,4 +48,5 @@ if (is.na(model$pid)) {
   model$varid = ds$get_vardef('om_water_model_node')$varid
   model$save(TRUE)
 }
+message(paste("pid=",model$pid))
 cat(model$pid)
