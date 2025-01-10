@@ -1,0 +1,26 @@
+#!/bin/bash
+# loads the met specific config
+met_config=`find_config met.config`
+if [ "$met_config" = "" ]; then
+  met_config="$META_MODEL_ROOT/models/raster_met/met/met.config"
+fi
+echo "Loading met_config from $met_config"
+. $met_config
+
+echo "Importing data from ${datasource}"
+echo "DB_FORCE_OVERWRITE = $DB_FORCE_OVERWRITE"
+if [ -z ${DB_FORCE_OVERWRITE+x} ]; then 
+  DB_FORCE_OVERWRITE=0
+fi
+
+#source Deleting Fraction Rasters
+if [ $scenario == 'nldas2' ]; then
+	cmd="$MET_SCRIPT_PATH/sh/daily_delete_ts $FRACTIONVARKEY $RASTER_SQL_FILE $db_host $db_name $ddate $END_DATE"
+  echo "Calling Fraction Delete"
+  echo $cmd
+  eval $cmd
+  exit
+else
+  echo "Skipping Delete Fraction Disaggregation"
+  exit
+fi
