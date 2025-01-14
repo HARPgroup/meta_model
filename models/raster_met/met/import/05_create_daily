@@ -13,9 +13,11 @@ if [ -z ${DB_FORCE_OVERWRITE+x} ]; then
   DB_FORCE_OVERWRITE=0
 fi
 
+END_DATETIME="${ddate} ${tz_hr}:00:00"
+
 #source Creating daily rasters
 if [ $scenario == 'nldas2' ]; then
-	cmd="$MET_SCRIPT_PATH/sh/calc_daily_ts $HOURLYVARKEY $DAILYVARKEY $RASTER_SQL_FILE $db_host $db_name $ddate $END_DATE"
+	cmd="$MET_SCRIPT_PATH/sh/calc_daily_ts $HOURLYVARKEY $DAILYVARKEY $RASTER_SQL_FILE $db_host $db_name $END_DATETIME"
   echo "Calling Calc Daily"
   echo $cmd
   eval $cmd
