@@ -15,7 +15,7 @@ fi
 
 #source Calculating Daily Fraction Rasters
 if [ $scenario == 'nldas2' ]; then
-	cmd="$MET_SCRIPT_PATH/sh/calc_fraction_ts $HOURLYVARKEY $DAILYVARKEY $FRACTIONVARKEY $RASTER_SQL_FILE $db_host $db_name $ddate $END_DATE"
+	cmd="$MET_SCRIPT_PATH/sh/calc_fraction_ts $HOURLYVARKEY $DAILYVARKEY $FRACTIONVARKEY $RASTER_SQL_FILE $db_host $db_name $END_DATETIME"
   echo "Calling Calc Fraction Raster"
   echo $cmd
   eval $cmd
