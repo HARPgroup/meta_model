@@ -15,7 +15,7 @@ fi
 
 #source Delete Daily Aggregations with a given varkey
 if [ $scenario == 'nldas2' ]; then
-	cmd="$MET_SCRIPT_PATH/sh/daily_delete_ts $DAILYVARKEY $RASTER_SQL_FILE $db_host $db_name $ddate $END_DATE"
+	cmd="$MET_SCRIPT_PATH/sh/daily_delete_ts $DAILYVARKEY $RASTER_SQL_FILE $db_host $db_name $END_DATETIME"
   echo "Calling Daily Delete"
   echo $cmd
   eval $cmd
