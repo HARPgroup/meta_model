@@ -15,7 +15,7 @@ fi
 
 #source Deleting Fraction Rasters
 if [ $scenario == 'nldas2' ]; then
-	cmd="$MET_SCRIPT_PATH/sh/daily_delete_ts $FRACTIONVARKEY $RASTER_SQL_FILE $db_host $db_name $ddate $END_DATE"
+	cmd="$MET_SCRIPT_PATH/sh/daily_delete_ts $FRACTIONVARKEY $RASTER_SQL_FILE $db_host $db_name $END_DATETIME"
   echo "Calling Fraction Delete"
   echo $cmd
   eval $cmd
