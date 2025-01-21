@@ -25,7 +25,7 @@ fi
 #This step will take daily rasters, multiply them by an hourly fractional 
 #raster (controlled by DISAGGREGATE_VARKEY) and then summarize for the given coverage
 # BEGIN - actually loading local data
-echo "Aggregating precip for $coverage from $datasource dissaggregating by $DISAGGREGATE_VARKEY"
+echo "Aggregating precip for $coverage from $varkey dissaggregating by $DISAGGREGATE_VARKEY"
 outfile=`basename $COVERAGE_PRECIP_FILE`
 echo "calculated tstime $tstime=TZ=\"$TZ\" date -d \"$START_DATE\" +'%s'"
 echo "calculated tsendtime $tsendtime=TZ=\"$TZ\" date -d \"$END_DATE\" +'%s'"
