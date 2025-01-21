@@ -12,12 +12,12 @@ if [[ $MET_PROCESS_METHOD != *"raster"* ]]; then
 fi
 
 #If the disaggregation varkey is not set, we skip this step since we are not given a varkey to multiply our daily rasters by
-if [ "$DISAGGREGATE_VARKEY" != "" ]; then
+if [ "$DISAGGREGATE_VARKEY" = "" ]; then
   echo "DISAGGREGATE_VARKEY not set. Skipping."
   exit
 fi
 #If the daily varkey is not set, we skip this step since we are not given a base daily timeseries to use as defaults
-if [ "$DAILY_VARKEY" != "" ]; then
+if [ "$DAILY_VARKEY" = "" ]; then
   echo "DAILY_VARKEY not set. Skipping."
   exit
 fi
