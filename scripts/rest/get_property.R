@@ -9,7 +9,7 @@ suppressPackageStartupMessages(library(jsonlite)) #for exporting values as json
 # Accepting command arguments:
 argst <- commandArgs(trailingOnly = T)
 entity_type <- argst[1]
-entity_id <- argst[2]
+entity_id <- as.integer(argst[2])
 prop_name <- argst[3]
 return_name <- argst[4]
 
