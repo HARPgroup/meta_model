@@ -6,7 +6,7 @@ if [ "$wdm_config" = "" ]; then
 fi
 . $wdm_config
 
-
+echo "checking ${MET_PROCESS_METHOD}"
 if [[ $MET_PROCESS_METHOD != *"raster"* ]]; then
   exit
 fi
