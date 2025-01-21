@@ -30,8 +30,8 @@ outfile=`basename $COVERAGE_PRECIP_FILE`
 echo "calculated tstime $tstime=TZ=\"$TZ\" date -d \"$START_DATE\" +'%s'"
 echo "calculated tsendtime $tsendtime=TZ=\"$TZ\" date -d \"$END_DATE\" +'%s'"
 # do the actual export
-echo "$MET_SCRIPT_PATH/sh/disaggregate_raster_ts $coverage $varkey $DISAGGREGATE_VARKEY $DAILY_VARKEY $RASTER_SQL_FILE /tmp/$outfile $db_host $db_name $COVERAGE_FTYPE $COVERAGE_BUNDLE $tstime $tsendtime"
-$MET_SCRIPT_PATH/sh/disaggregate_raster_ts $coverage $varkey $DISAGGREGATE_VARKEY $DAILY_VARKEY $RASTER_SQL_FILE /tmp/$outfile $db_host $db_name $COVERAGE_FTYPE $COVERAGE_BUNDLE $tstime $tsendtime
+echo "$MET_SCRIPT_PATH/sh/disaggregate_raster_ts $coverage $varkey $DISAGGREGATE_VARKEY $DAILY_VARKEY $RASTER_SQL_FILE /tmp/$outfile $db_host $db_name $COVERAGE_BUNDLE $COVERAGE_FTYPE $tstime $tsendtime"
+$MET_SCRIPT_PATH/sh/disaggregate_raster_ts $coverage $varkey $DISAGGREGATE_VARKEY $DAILY_VARKEY $RASTER_SQL_FILE /tmp/$outfile $db_host $db_name $COVERAGE_BUNDLE $COVERAGE_FTYPE $tstime $tsendtime
 sftp ${db_host}:"/tmp/$outfile" "${tempdir}/${outfile}"
 echo "Installing: install -D "${tempdir}/${outfile}" $COVERAGE_PRECIP_FILE"
 install -D "${tempdir}/${outfile}" $COVERAGE_PRECIP_FILE
