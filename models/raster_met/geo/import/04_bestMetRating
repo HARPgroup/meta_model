@@ -7,10 +7,7 @@ fi
 . $geo_config
 
 #Establish and insert best-fit ratings. Delete existing ratings as needed.
-#Note that the ratings are expanded to a daily time series using generate_series and
-#date casts as appropriate in dailyRatings as defined in WITH
-#Dates are converted back to the appropriate timestamp using a timsestamptz cast in bestRating
-#Finally, to ensure proper integer format, timestamps are cast to bigint in the insert statement to dh_timeseries
+#Note that the ratings are expanded to a daily time series using generate_series 
 ratings_sql="
 \\set ratingsVarkey '$RATINGS_VARKEY' \n
 \\set scenarioPropName '$RANKING_SCENARIO' \n
@@ -43,7 +40,11 @@ WHERE varid = :ratings  \n
 AND entity_type = 'dh_properties' \n
 AND featureid = :scenariopid; \n
 \n
-WITH dailyRating as ( \n
+WITH basets as (\n
+	SELECT generate_series(extract(epoch from '${START_DATE}'), extract(epoch from '${END_DATE}'), 86400) as START_DATE, \n
+		generate_series(extract(epoch from '${START_DATE}' + 1), extract(epoch from '${END_DATE}' + 1), 86400)
+),
+dailyRating as ( \n
 	SELECT modelProp.featureid as featureid, \n
 	CASE \n
 		WHEN ts.tsvalue IS NOT NULL THEN scenProp.pid  \n
@@ -52,19 +53,16 @@ WITH dailyRating as ( \n
 	basets.START_DATE, \n
 	basets.END_DATE, \n
 	ts.tsvalue as tsvalue \n
-	FROM dh_properties as modelProp \n
-	LEFT JOIN dh_properties as scenProp \n
-	ON scenProp.featureid = modelProp.pid \n
+	FROM basets
 	LEFT JOIN dh_timeseries as ts \n
+	ON (basets.START_DATE = ts.tsendtime OR \n
+		(basets.START_DATE >= ts.tstime AND  \n
+		basets.END_DATE <= ts.tsendtime) \n
+	) \n
+	LEFT JOIN dh_properties as scenProp \n
 	ON ts.featureid = scenProp.pid \n
-	RIGHT JOIN ( \n
-		SELECT generate_series(date '${START_DATE}', date '${END_DATE}', '1 day')::date as START_DATE, \n
-			generate_series(date '${START_DATE}'+1, date '${END_DATE}'+1, '1 day')::date as END_DATE \n
-	) as basets \n
-	ON (basets.START_DATE = to_timestamp(ts.tsendtime)::date OR \n
-		(basets.START_DATE >= to_timestamp(ts.tstime)::date AND  \n
-		basets.END_DATE <= to_timestamp(ts.tsendtime)::date) \n
-		) \n
+	LEFT JOIN dh_properties as modelProp \n
+	ON scenProp.featureid = modelProp.pid \n
 	WHERE modelProp.propcode = :'metModel' \n
 	AND scenProp.propname IN (${SCENARIOS_TO_RANK}) \n
 	AND modelProp.featureid = :coveragefeatureid \n
@@ -80,8 +78,8 @@ maxRating AS ( \n
 ), \n
 bestRating AS ( \n
 	SELECT dailyRating.featureid AS featureid, \n
-    extract(epoch FROM dailyRating.START_DATE::timestamptz) as tstime, \n
-    extract(epoch FROM dailyRating.END_DATE::timestamptz) as tsendtime, \n
+    dailyRating.START_DATE as tstime, \n
+    dailyRating.END_DATE as tsendtime, \n
 	dailyRating.pid as tsvalue \n
 	FROM dailyRating \n
 	INNER JOIN maxRating \n
@@ -96,7 +94,7 @@ bestRating AS ( \n
 ) \n
  \n
 INSERT INTO dh_timeseries ( tstime,tsendtime, tsvalue, featureid, varid, entity_type ) \n
-SELECT a.tstime::bigint, a.tsendtime::bigint, a.tsvalue, \n
+SELECT a.tstime, a.tsendtime, a.tsvalue, \n
  :scenariopid as featureid, \n
  :ratings as varid, \n
  'dh_properties' AS entity_type \n
@@ -109,5 +107,5 @@ set -f
 echo "Writing sql insert to $RATINGS_SQL_FILE"
 echo $ratings_sql
 echo -e $ratings_sql > $RATINGS_SQL_FILE 
-cat $RATINGS_SQL_FILE | psql -h $db_host $db_name
+#cat $RATINGS_SQL_FILE | psql -h $db_host $db_name
 echo "Finshed running query."
