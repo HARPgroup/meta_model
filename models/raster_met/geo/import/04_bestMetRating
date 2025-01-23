@@ -41,8 +41,10 @@ AND entity_type = 'dh_properties' \n
 AND featureid = :scenariopid; \n
 \n
 WITH basets as (\n
-	SELECT generate_series(extract(epoch from '${START_DATE}'), extract(epoch from '${END_DATE}'), 86400) as START_DATE, \n
-		generate_series(extract(epoch from '${START_DATE}' + 1), extract(epoch from '${END_DATE}' + 1), 86400)
+	SELECT generate_series(extract(epoch from '${START_DATE}'::date),
+		  extract(epoch from '${END_DATE}'::date), 86400) as START_DATE, \n
+		generate_series(extract(epoch from ('${START_DATE}'::date + 1)),
+		  extract(epoch from ('${END_DATE}'::date + 1)), 86400)
 ),
 dailyRating as ( \n
 	SELECT modelProp.featureid as featureid, \n
