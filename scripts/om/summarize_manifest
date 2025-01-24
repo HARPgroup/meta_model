@@ -1,0 +1,9 @@
+#!/bin/bash
+
+runid=$1
+elid=$2
+manifest="$OM_OUT_DIR/manifest.${runid}.${elid}.log"
+
+for i in `cat $manifest`; do
+  
+done < $manifest

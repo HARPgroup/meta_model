@@ -1,0 +1,37 @@
+#!/bin/bash
+# loads the args, the raster specific config and change to tempdir
+wdm_config=`find_config wdm.config`
+if [ "$wdm_config" = "" ]; then
+  wdm_config="$META_MODEL_ROOT/models/raster_met/wdm/wdm.config"
+fi
+. $wdm_config
+
+if [[ "$MET_PROCESS_METHOD" != *"raster"* ]]; then
+  echo "MET_PROCESS_METHOD IS $MET_PROCESS_METHOD, Skipping basic resample."
+  exit
+fi
+
+# we bail unless RESAMPLE_VARKEY IS set and DISAGGREGATE_VARKEY is NOT set
+if [ "$RESAMPLE_VARKEY" == "" ]; then
+  echo "RESAMPLE_VARKEY not set. Skipping."
+  exit
+fi
+if [ "$DISAGGREGATE_VARKEY" != "" ]; then
+  echo "DISAGGREGATE_VARKEY IS set, Skipping basic resample."
+  exit
+fi
+
+# BEGIN - actually loading local data
+echo "Aggregating precip for $coverage from "$datasource
+outfile=`basename $COVERAGE_PRECIP_FILE`
+echo "calculated tstime $tstime=TZ=\"$TZ\" date -d \"$START_DATE\" +'%s'"
+echo "calculated tsendtime $tsendtime=TZ=\"$TZ\" date -d \"$END_DATE\" +'%s'"
+# do the actual export
+echo "$MET_SCRIPT_PATH/sh/resampled_raster_ts $coverage $COVERAGE_FTYPE $varkey $RESAMPLE_VARKEY $RASTER_SQL_FILE /tmp/$outfile $db_host $db_name $tstime $tsendtime"
+$MET_SCRIPT_PATH/sh/resampled_raster_ts $coverage $COVERAGE_FTYPE $varkey $RESAMPLE_VARKEY $RASTER_SQL_FILE /tmp/$outfile $db_host $db_name $tstime $tsendtime
+sftp ${db_host}:"/tmp/$outfile" "${tempdir}/${outfile}"
+echo "Installing: install -D "${tempdir}/${outfile}" $COVERAGE_PRECIP_FILE"
+install -D "${tempdir}/${outfile}" $COVERAGE_PRECIP_FILE
+sqlfile=`basename $RASTER_SQL_FILE`
+install -D $RASTER_SQL_FILE $SAVE_PRECIP_SQL
+

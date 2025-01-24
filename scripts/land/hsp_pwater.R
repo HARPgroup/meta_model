@@ -118,13 +118,14 @@ model <- RomProperty$new(
   ds,
   list(
     varkey="om_model_element", 
-    propname=landseg$name,
     featureid=landseg$hydroid, 
     entity_type="dh_feature", 
     propcode=model_version 
   ), 
   TRUE
 )
+model$propname <- paste(landseg$name,model_version)
+
 model$save(TRUE)
 
 model_scenario <- RomProperty$new( #Re-ordered scenario to be within the model element and the land use within the scenario

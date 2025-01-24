@@ -1,0 +1,26 @@
+#!/bin/bash
+# loads the met specific config
+met_config=`find_config met.config`
+if [ "$met_config" = "" ]; then
+  met_config="$META_MODEL_ROOT/models/raster_met/met/met.config"
+fi
+echo "Loading met_config from $met_config"
+. $met_config
+
+echo "Importing data from ${datasource}"
+echo "DB_FORCE_OVERWRITE = $DB_FORCE_OVERWRITE"
+if [ -z ${DB_FORCE_OVERWRITE+x} ]; then 
+  DB_FORCE_OVERWRITE=0
+fi
+
+#source Creating daily rasters
+if [ $scenario == 'nldas2' ]; then
+	cmd="$MET_SCRIPT_PATH/sh/calc_daily_ts $HOURLYVARKEY $DAILYVARKEY $RASTER_SQL_FILE $db_host $db_name $END_DATETIME"
+  echo "Calling Calc Daily"
+  echo $cmd
+  eval $cmd
+  exit
+else
+  echo "Skipping Create Daily"
+  exit
+fi

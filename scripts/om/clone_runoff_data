@@ -1,0 +1,85 @@
+#!/bin/bash
+riverseg=$1
+dbname="model"
+dbhost="dbase2"
+
+sql="
+
+\\set srcid $2 \n
+
+\\set destid $3 \n
+
+-- OR, for a given basin, just the runoff containers
+drop table tmp_elem_targets; \n
+
+create temp table tmp_elem_targets as (
+   select elementid, elemname, custom1, custom2 from scen_model_element 
+   where scenarioid = 37 
+      and custom1 in ( 'cova_runoff', 'cbp6_lrseg' ) 
+      and elementid in (
+         select src_id from map_model_linkages 
+         where linktype = 1 and dest_id in (
+            select elementid from scen_model_element 
+            where scenarioid = 37 
+               and custom1 in ('cova_ws_container', 'cova_ws_subnodal')
+               and custom2 like '${riverseg}%')
+      )
+); \n
+
+
+insert into tmp_elem_targets (elementid, elemname, custom1, custom2)
+select elementid, elemname, custom1, custom2 from scen_model_element
+where scenarioid = 37
+   and custom1 = 'cbp6_flows'
+   and elementid in (
+     select a.src_id from tmp_elem_targets as b
+     left outer join map_model_linkages as a 
+     on ( a.dest_id = b.elementid )
+     where a.linktype = 1
+       and a.dest_id is not null
+   )
+;
+ \n
+
+insert into tmp_elem_targets (elementid, elemname, custom1, custom2)
+   select elementid, elemname, custom1, custom2 from scen_model_element
+   where scenarioid = 37
+      and custom1 = 'cbp6_lrseg'
+      and elemname like '%${riverseg}%';
+ \n
+
+BEGIN; \n
+delete from scen_model_run_elements 
+where runid = :destid
+and elementid in (
+  select elementid 
+  from scen_model_run_elements 
+  where runid = :srcid
+  and elementid in (
+    select elementid 
+    from tmp_elem_targets
+  )
+) ; \n
+
+insert into scen_model_run_elements (runid, elementid, starttime, endtime, elem_xml, output_file,
+   run_date,  host, fullpath, run_summary, run_verified, 
+   remote_path, exec_time_mean, verified_date,  
+   remote_url,  elemoperators) 
+select :destid, elementid, starttime, endtime, elem_xml, output_file, 
+   run_date,  host, fullpath , run_summary, run_verified, 
+   remote_path, exec_time_mean, verified_date,  
+   remote_url,  elemoperators 
+from scen_model_run_elements 
+where runid = :srcid
+  and elementid in (
+    select elementid 
+    from tmp_elem_targets
+  )
+; \n
+
+COMMIT; \n
+"
+
+set -f
+echo -e $sql 
+echo -e $sql | psql -h $dbhost $dbname

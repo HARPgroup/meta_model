@@ -1,0 +1,113 @@
+#!/bin/bash
+# loads the args, the raster specific config and change to temp dir
+geo_config=`find_config geo.config`
+if [ "$geo_config" = "" ]; then
+  geo_config="$META_MODEL_ROOT/models/raster_met/geo/geo.config"
+fi
+. $geo_config
+
+#Establish and insert best-fit ratings. Delete existing ratings as needed.
+#Note that the ratings are expanded to a daily time series using generate_series and
+#date casts as appropriate in dailyRatings as defined in WITH
+#Dates are converted back to the appropriate timestamp using a timsestamptz cast in bestRating
+#Finally, to ensure proper integer format, timestamps are cast to bigint in the insert statement to dh_timeseries
+ratings_sql="
+\\set ratingsVarkey '$RATINGS_VARKEY' \n
+\\set scenarioPropName '$RANKING_SCENARIO' \n
+\\set hydrocode  '$coverage' \n
+\\set metModel '$MET_MODEL_VERSION' \n
+SELECT hydroid AS ratings FROM dh_variabledefinition WHERE varkey = :'ratingsVarkey' \\gset \n
+SELECT scen.pid as scenariopid \n
+FROM dh_properties as scen \n
+LEFT JOIN dh_properties as model \n
+ON model.pid =  scen.featureid \n
+LEFT JOIN dh_feature as feat \n
+on feat.hydroid = model.featureid \n
+WHERE feat.hydrocode = :'hydrocode'  \n
+AND feat.bundle = '$COVERAGE_BUNDLE'  \n
+and feat.ftype = '$COVERAGE_FTYPE' \n
+and scen.propname = :'scenarioPropName' \\gset \n
+SELECT feat.hydroid as coveragefeatureid \n
+FROM dh_properties as scen \n
+LEFT JOIN dh_properties as model \n
+ON model.pid =  scen.featureid \n
+LEFT JOIN dh_feature as feat \n
+on feat.hydroid = model.featureid \n
+WHERE feat.hydrocode = :'hydrocode'  \n
+AND feat.bundle = '$COVERAGE_BUNDLE'  \n
+and feat.ftype = '$COVERAGE_FTYPE' \n
+and scen.propname = :'scenarioPropName' \\gset \n
+\n
+DELETE FROM dh_timeseries \n
+WHERE varid = :ratings  \n
+AND entity_type = 'dh_properties' \n
+AND featureid = :scenariopid; \n
+\n
+WITH dailyRating as ( \n
+	SELECT modelProp.featureid as featureid, \n
+	CASE \n
+		WHEN ts.tsvalue IS NOT NULL THEN scenProp.pid  \n
+		ELSE NULL  \n
+	END as pid, \n
+	basets.START_DATE, \n
+	basets.END_DATE, \n
+	ts.tsvalue as tsvalue \n
+	FROM dh_properties as modelProp \n
+	LEFT JOIN dh_properties as scenProp \n
+	ON scenProp.featureid = modelProp.pid \n
+	LEFT JOIN dh_timeseries as ts \n
+	ON ts.featureid = scenProp.pid \n
+	RIGHT JOIN ( \n
+		SELECT generate_series(date '${START_DATE}', date '${END_DATE}', '1 day')::date as START_DATE, \n
+			generate_series(date '${START_DATE}'+1, date '${END_DATE}'+1, '1 day')::date as END_DATE \n
+	) as basets \n
+	ON (basets.START_DATE = to_timestamp(ts.tsendtime)::date OR \n
+		(basets.START_DATE >= to_timestamp(ts.tstime)::date AND  \n
+		basets.END_DATE <= to_timestamp(ts.tsendtime)::date) \n
+		) \n
+	WHERE modelProp.propcode = :'metModel' \n
+	AND scenProp.propname IN (${SCENARIOS_TO_RANK}) \n
+	AND modelProp.featureid = :coveragefeatureid \n
+	ORDER BY basets.START_DATE \n
+), \n
+maxRating AS ( \n
+	SELECT featureid as featureid, \n
+	START_DATE as START_DATE, \n
+	END_DATE as END_DATE, \n
+	max(tsvalue) as maxtsvalue \n
+	FROM dailyRating  \n
+	GROUP BY featureid, START_DATE, END_DATE \n
+), \n
+bestRating AS ( \n
+	SELECT dailyRating.featureid AS featureid, \n
+    extract(epoch FROM dailyRating.START_DATE::timestamptz) as tstime, \n
+    extract(epoch FROM dailyRating.END_DATE::timestamptz) as tsendtime, \n
+	dailyRating.pid as tsvalue \n
+	FROM dailyRating \n
+	INNER JOIN maxRating \n
+	ON dailyRating.START_DATE = maxRating.START_DATE \n
+	AND dailyRating.END_DATE = maxRating.END_DATE \n
+	AND (dailyRating.tsvalue = maxRating.maxtsvalue OR  \n
+		maxRating.maxtsvalue IS NULL) \n
+	AND dailyRating.featureid = maxRating.featureid \n
+	GROUP BY dailyRating.featureid, dailyRating.START_DATE, \n
+		dailyRating.END_DATE, dailyRating.pid \n
+	ORDER BY dailyRating.featureid,dailyRating.START_DATE \n
+) \n
+ \n
+INSERT INTO dh_timeseries ( tstime,tsendtime, tsvalue, featureid, varid, entity_type ) \n
+SELECT a.tstime::bigint, a.tsendtime::bigint, a.tsvalue, \n
+ :scenariopid as featureid, \n
+ :ratings as varid, \n
+ 'dh_properties' AS entity_type \n
+FROM bestRating AS a \n
+"
+
+# turn off the expansion of the asterisk
+set -f
+#Delete previous dh_timeseries entries
+echo "Writing sql insert to $RATINGS_SQL_FILE"
+echo $ratings_sql
+echo -e $ratings_sql > $RATINGS_SQL_FILE 
+cat $RATINGS_SQL_FILE | psql -h $db_host $db_name
+echo "Finshed running query."

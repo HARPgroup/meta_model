@@ -5,7 +5,6 @@ set tempdir=$3
 
 source $MODEL_ROOT/config/control/script/${scenario}.con
 echo "Changing to $tempdir"
-#cd $MODEL_ROOT/$MY_HOME/$SCRIPT_DIR
 cd $tempdir
 
 source $tree/run/fragments/set_landuse

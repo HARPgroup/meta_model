@@ -8,31 +8,26 @@ suppressPackageStartupMessages(library(jsonlite)) #for exporting values as json
 
 # Accepting command arguments:
 argst <- commandArgs(trailingOnly = T)
-river_seg <- argst[1]
-rseg_ftype <- argst[5]
+fcode <- argst[1]
+bundle <- argst[2]
+ftype <- argst[3]
 
 # Set up our data source
 ds <- RomDataSource$new(site, rest_uname = rest_uname)
 ds$get_token(rest_pw)
-if (rseg_ftype == 'vahydro') {
-  # we have a hinky prefix, so add it
-  rseg_code=paste0('vahydrosw_wshed_',river_seg)
-} else {
-  rseg_code=river_seg
-}
 
-message(paste("Searching for feature hydrocode=", rseg_code,"with ftype",rseg_ftype))
-riverseg<- RomFeature$new(
+message(paste("Searching for feature hydrocode=", fcode,"with ftype",ftype))
+feature<- RomFeature$new(
   ds,
   list(
-    hydrocode=rseg_code,
-    ftype=rseg_ftype,
-    bundle='watershed'
+    hydrocode=fcode,
+    ftype=ftype,
+    bundle=bundle
   ),
   TRUE
 )
-if (!is.na(riverseg$hydroid)) {
-  cat(riverseg$hydroid)
+if (!is.na(feature$hydroid)) {
+  cat(feature$hydroid)
 } else {
-  message(paste("Error: Could not locate feature with hydrocode="rseg_code,"and ftype=",rseg_ftype))
+  message(paste("Error: Could not locate feature with hydrocode="fcode,"and ftype=",ftype))
 }

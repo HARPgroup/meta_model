@@ -7,6 +7,10 @@ echo "get args $argv"
 set segment = $3
 set cleanup = 1
 # get a default path
+if (! $?MODEL_ROOT) then
+  set mr = `pwd`
+  setenv MODEL_ROOT $mr
+endif
 set default_path = `$META_MODEL_ROOT/models/$model/get_work_path $model $scenario $segment`
 set work_path = $default_path
 if (${#argv} >= 4) then

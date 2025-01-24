@@ -49,5 +49,5 @@ print("Converting to weekly data")
 
   
 print(paste0("Write csv in new file path: ",write_path))
-write.csv(week_data,write_path)
+write.csv(week_data,write_path,row.names = FALSE)
   

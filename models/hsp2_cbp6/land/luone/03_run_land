@@ -1,0 +1,29 @@
+#!/bin/csh
+set scenario=$1
+set luseg=$2
+set tempdir=$3
+# parse
+set split=($luseg:as/_/ /)
+set lu=$split[1]
+set seg=$split[2]
+set tree=$MODEL_ROOT
+source $META_MODEL_ROOT/models/$MODEL/model_config
+echo "Changing to $tempdir"
+cd $tempdir
+
+source $tree/run_bhatt/fragments/set_landuse
+echo "The real hsp2 is being used"
+echo "Getting VENV_MODEL='cbp get_config ${scenario} script VENV_MODEL'"
+set VENV_MODEL=`cbp get_config ${scenario} script VENV_MODEL`
+set VENV_CMD="$VENV_MODEL/bin/activate.csh"
+echo "Loading VENV: source $VENV_CMD"
+source $VENV_MODEL/bin/activate.csh
+
+echo running $lu for segment $seg land scenario $scenario
+set inp = $lu$seg'.h5'
+echo "Calling $HSP_EXEC run $inp "
+$HSP_EXEC run $inp
+cp $lu$seg'.out' $tree/output/hspf/land/out/$lu/$scenario/ 
+if (-e $lu$seg'.ech') mv $lu$seg'.ech' $tree/output/hspf/land/ech/$lu/$scenario/
+cp $lu$seg'.wdm' $tree/tmp/wdm/land/$lu/$scenario/
+

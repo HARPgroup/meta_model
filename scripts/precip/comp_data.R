@@ -47,4 +47,4 @@ print("computing drainage area")
 daily_data$precip_cfs <- 1.572 * (daily_data$area_sqmi * 640.0 * daily_data$precip_in / 12.0) / 3.07
 #argument 3 is the save location for the comp_data csv
 print(paste0("Write csv in new file path: ",write_path))
-write.csv(daily_data,write_path)
+write.csv(daily_data,write_path,row.names = FALSE)

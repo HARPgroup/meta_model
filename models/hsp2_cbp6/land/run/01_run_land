@@ -7,7 +7,6 @@ set seg=$segment
 set tree=$MODEL_ROOT
 source $META_MODEL_ROOT/models/$MODEL/model_config
 echo "Changing to $tempdir"
-#cd $MODEL_ROOT/$MY_HOME/$SCRIPT_DIR
 cd $tempdir
 
 source $tree/run_bhatt/fragments/set_landuse
@@ -22,8 +21,20 @@ foreach lu ($perlnds $implnds)
   echo running $lu for segment $seg land scenario $scenario
   set inp = $lu$seg'.h5'
   echo "Calling $HSP_EXEC run $inp "
-  $HSP_EXEC run $inp
+  if ( $SLURM_ENABLED == 1) then
+    sbatch $HSP_EXEC run $inp
+  else 
+    $HSP_EXEC run $inp
+  endif
+end
+wait
+
+# now copy files
+foreach lu ($perlnds $implnds)
   cp $lu$seg'.out' $tree/output/hspf/land/out/$lu/$scenario/ 
   if (-e $lu$seg'.ech') mv $lu$seg'.ech' $tree/output/hspf/land/ech/$lu/$scenario/
   cp $lu$seg'.wdm' $tree/tmp/wdm/land/$lu/$scenario/
 end
+
+exit
+

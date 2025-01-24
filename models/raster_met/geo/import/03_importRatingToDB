@@ -1,0 +1,57 @@
+#!/bin/bash
+# loads the args, the raster specific config and change to temp dir
+geo_config=`find_config geo.config`
+if [ "$geo_config" = "" ]; then
+  geo_config="$META_MODEL_ROOT/models/raster_met/geo/geo.config"
+fi
+. $geo_config
+
+#Put the new ratings files with variables for dh_timeseries onto dbase2
+baseFileName=`basename $RATINGS_TODBASE_FILE`
+echo "sftp $db_host:/tmp/ <<< put ${RATINGS_TODBASE_FILE}"
+sftp $db_host:"/tmp/" <<< "put ${RATINGS_TODBASE_FILE}"
+echo "File put on ${db_host}, now inserting files..."
+#Create a temporary table to read in the ratings files into dbase2. Then join and insert into dh_timeseries
+ratings_sql="
+CREATE TEMPORARY TABLE tmp_ratings as
+SELECT tstime,tsendtime,tsvalue,featureid,entity_type
+FROM dh_timeseries
+LIMIT 0;
+
+COPY tmp_ratings FROM '/tmp/${baseFileName}' with csv header NULL AS 'NA';
+
+\\set ratingsVarkey '$RATINGS_VARKEY' \n
+\\set scenarioPropName '$scenario' \n
+\\set hydrocode  '$coverage' \n
+SELECT hydroid AS ratings FROM dh_variabledefinition WHERE varkey = :'ratingsVarkey' \\gset \n
+SELECT scen.pid as scenariopid  \n
+FROM dh_properties as scen  \n
+LEFT JOIN dh_properties as model  \n
+ON model.pid =  scen.featureid  \n
+LEFT JOIN dh_feature as feat  \n
+on feat.hydroid = model.featureid  \n
+WHERE feat.hydrocode = :'hydrocode'  \n
+AND feat.bundle = '$COVERAGE_BUNDLE'  \n
+and feat.ftype = '$COVERAGE_FTYPE'  \n
+and scen.propname = :'scenarioPropName' \\gset \n
+
+DELETE FROM dh_timeseries  \n
+WHERE varid = :ratings   \n
+AND entity_type = 'dh_properties'  \n
+AND featureid = :scenariopid;  \n
+
+INSERT INTO dh_timeseries ( tstime,tsendtime, tsvalue, featureid, varid, entity_type)  \n
+SELECT a.tstime, a.tsendtime, a.tsvalue, a.featureid, v.hydroid, a.entity_type  \n
+FROM tmp_ratings AS a  \n
+LEFT JOIN dh_variabledefinition as v  \n
+ON v.hydroid = :ratings;
+"
+
+# turn off the expansion of the asterisk
+set -f
+#Delete previous dh_timeseries entries
+echo "Writing sql insert to $RATINGS_SQL_FILE"
+echo $ratings_sql
+echo -e $ratings_sql > $RATINGS_SQL_FILE 
+cat $RATINGS_SQL_FILE | psql -h $db_host $db_name
+echo "Finshed running query."
