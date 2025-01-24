@@ -29,6 +29,6 @@ rm message.wdm
 set csv_file="${segment}_0111.csv"
 set hydr_file="${segment}_hydr.csv"
 # TODO: convert this file into a _hydr compatible file
-Rscript $MODEL_ROOT/run/export/create_hspf_hydr.R $csv_file $hydr_file
+Rscript $META_MODEL_ROOT/scripts/h5/create_hspf_hydr.R $csv_file $hydr_file
 echo "cp $hydr_file $CBP_EXPORT_DIR/river/$scenario/"
 cp $hydr_file $CBP_EXPORT_DIR/river/$scenario/hydr/

@@ -1,0 +1,15 @@
+#!/bin/bash
+# loads the met specific config
+geo_config=`find_config geo.config`
+if [ "$met_config" = "" ]; then
+  geo_config="$META_MODEL_ROOT/models/raster_met/met/geo.config"
+fi
+echo "Loading geo_config from $geo_config"
+. $geo_config
+
+cd $tempdir
+
+cmd="Rscript $META_MODEL_ROOT/scripts/met/met_store_info.R $scenario $segment landunit $extent_ftype $GEO_MET_MODEL $met_file"    
+echo "Running: $cmd"
+eval $cmd
+
