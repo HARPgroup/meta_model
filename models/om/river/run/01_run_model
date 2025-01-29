@@ -19,7 +19,7 @@ fi
 cd /var/www/html/om/ 
 # For now we disable the old, no longer used, VWP cache mode which allowed a mixed run with only a single active permit
 CACHE_LIST=-1
-CACHE_LEVEL=-1
+CACHE_LEVEL=1
 CACHE_RUNID=-1
 
 scr="/usr/bin/php -f /var/www/html/om/run_model.php"
