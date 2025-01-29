@@ -10,9 +10,15 @@ if [ "$RUN_METHOD" != "run_model" ]; then
   exit
 fi
 
-cache_valid=`$META_MODEL_ROOT/scripts/misc/check_cache $output_file '$CACHE_DATE'
-if [ $cache_valid -eq 1 ];
-  echo "Valid cache found for file $runfile ... using cached."
+echo "Check cache: cache_valid=$META_MODEL_ROOT/scripts/misc/check_cache $output_file '$CACHE_DATE'"
+cache_valid=`$META_MODEL_ROOT/scripts/misc/check_cache $output_file "$CACHE_DATE"`
+if [ "$FORCE_RERUN" != "1" ]; then
+  if [ $cache_valid -eq 1 ]; then
+    echo "Valid cache found for file $runfile ... using cached."
+    exit
+  fi
+else 
+  echo "FORCE_RERUN requested. Cachking disabled for ${segment}."
 fi
 
 # Example command:
@@ -23,7 +29,7 @@ CACHE_LEVEL=-1
 CACHE_RUNID=-1
 
 scr="/usr/bin/php -f /var/www/html/om/run_model.php"
-args="$elid $runid $RUN_TYPE $START_DATE $END_DATE $CACHE_RUNID $CACHE_LIST $CACHE_LEVEL 0 $scenario"
+args="$elid $scenario $RUN_TYPE $START_DATE $END_DATE $CACHE_RUNID $CACHE_LIST $CACHE_LEVEL 0 $scenario"
 
 echo "Running: $scr $args"
-#$scr $args
+$scr $args
