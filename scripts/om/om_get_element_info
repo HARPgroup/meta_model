@@ -1,9 +1,7 @@
 #!/bin/bash
 # given elementid and model_version
 # Returnspid elid object_class custom1 custom2
-dbhost="dbase2"
-dbname="drupal.dh03"
-
+. om_config
 sql="
 \\o \n
 
@@ -36,5 +34,6 @@ sql="
 
 
 set -f
-#echo -e "$sql | psql --csv -A --field-separator=',' -t -h $dbhost $dbname"
-echo -e $sql | psql --csv -A --field-separator="," -t -h $dbhost $dbname
+# can't echo this to stdout or it clobbers script pipes
+#echo -e "$sql | psql --csv -A --field-separator=',' -t -h $DB_HOST $DB_NAME"
+echo -e $sql | psql --csv -A --field-separator="," -t -h $DB_HOST $DB_NAME
