@@ -7,10 +7,6 @@ library("lubridate")
 library("hydrotools")
 # Set up our data source
 source(paste0(HARParchive_location,"/HARP-2024-2025/basic_analytics_for_vahydro.R"))
-       
-ds <- RomDataSource$new(site, rest_uname = rest_uname)
-ds$get_token(rest_pw)
-
 # Accepting command arguments:
 argst <- commandArgs(trailingOnly = T)
 if (length(argst) < 6) {

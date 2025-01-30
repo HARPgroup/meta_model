@@ -7,5 +7,43 @@ source $MODEL_ROOT/config/control/script/${scenario}.con
 echo "Changing to $tempdir"
 cd $tempdir
 
+# todo: check cache date
+#output_file="$CBP_EXPORT_DIR/land/$scenario/eos/${segment}_0111-0211-0411.csv"
+#cache_valid=`$META_MODEL_ROOT/scripts/misc/check_cache $output_file "$CACHE_DATE"
+# todo: return if cache still valid
+
 echo "Running: $MODEL_ROOT/$MY_HOME/$SCRIPT_DIR/bhatt_run_land_oneseg.csh $scenario $segment $tempdir $MODEL_ROOT"
 $MODEL_ROOT/$MY_HOME/$SCRIPT_DIR/bhatt_run_land_oneseg.csh $scenario $segment $tempdir $MODEL_ROOT
+exit
+
+# TODO: below is the code, but modded and simplified bhatt_run_land_oneseg.csh to use meta model plumbing 
+source $tree/run/fragments/set_landuse
+source $tree/run/fragments/set_icprb_hspf
+
+foreach lu ($perlnds $implnds)
+  echo running $lu for segment $seg land scenario $scenario
+
+  cp -v $tree/config/blank_wdm/land.wdm $lu$seg'.wdm'
+  cp $tree/tmp/uci/land/$lu/$scenario/$lu$seg'.uci' ./
+  set inp = $lu$seg'.uci'
+  echo $seg, $lu
+  echo $inp | $hspf > xyz
+  set count = `grep "HSPF simulation completed." xyz | wc -l`
+  echo "count = $count"
+  if ( $count == 0 ) then
+    if (-e problem) then
+      rm problem
+    endif
+    echo 'land segment: ' $seg ' did not run for land use: ' $lu >problem
+    echo 'rerun lug in non-quite mode' >> problem
+    echo '  input file ' $inp >>problem
+    echo   check the file ../../tmp/${user}-scratch/$tempdir/$lu$seg.ech >>problem
+    cat problem
+    exit
+  endif
+
+  mv $lu$seg'.out' $CBP_ROOT/output/hspf/land/out/$lu/$scenario/
+  if (-e $lu$seg'.ech') mv $lu$seg'.ech' $CBP_ROOT/output/hspf/land/ech/$lu/$scenario/
+  mv $lu$seg'.wdm' $CBP_ROOT/tmp/wdm/land/$lu/$scenario/
+
+done

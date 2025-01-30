@@ -15,9 +15,6 @@ tscode <- argst[7]
 tstime <- as.numeric(as.POSIXct(tstime))
 tsendtime <- as.numeric(as.POSIXct(tsendtime))
 
-ds <- RomDataSource$new(site, rest_uname = rest_uname)
-ds$get_token(rest_pw)
-
 model_ts <- RomTS$new(
   ds,
   list(

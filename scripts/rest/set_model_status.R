@@ -15,9 +15,6 @@ rseg_ftype <- argst[4]
 model_status_flag <- argst[5]
 model_status_msg <- argst[6]
 
-# Set up our data source
-ds <- RomDataSource$new(site, rest_uname = rest_uname)
-ds$get_token(rest_pw)
 if (rseg_ftype == 'vahydro') {
   # we have a hinky prefix, so add it
   rseg_code=paste0('vahydrosw_wshed_',river_seg)

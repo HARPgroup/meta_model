@@ -28,8 +28,6 @@ if (length(argst) == 8) {
 # Set up our data source
 basepath='/var/www/R';
 source("/var/www/R/config.R") # will need file in same folder/directory
-ds <- RomDataSource$new(site, rest_uname = rest_uname)
-ds$get_token(rest_pw)
 
 # TBD: get inputs from the comand line
 #  For now we just load some samples

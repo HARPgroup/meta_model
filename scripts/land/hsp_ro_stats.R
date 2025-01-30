@@ -60,10 +60,6 @@ maxyr <- max(pwater_daily$year)
 
 # Exporting to VAHydro
 
-# Set up our data source
-ds <- RomDataSource$new(site, rest_uname = rest_uname)
-ds$get_token(rest_pw)
-
 # TBD: get inputs from the comand line
 #  For now we just load some samples
 lseg_name=land_segment_name

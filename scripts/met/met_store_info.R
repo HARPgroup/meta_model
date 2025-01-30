@@ -24,7 +24,7 @@ met_file <- argst[6]
 # attach an image property to the record
 # return 
 
-message(paste("Searching for feature hydrocode=", coverage_hydrocode,"with ftype",coverage_ftype))
+message(paste("Searching for feature hydrocode =", coverage_hydrocode,"with ftype",coverage_ftype))
 feature <- RomFeature$new(
   ds,
   list(

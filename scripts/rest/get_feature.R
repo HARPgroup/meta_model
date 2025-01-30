@@ -12,10 +12,6 @@ fcode <- argst[1]
 bundle <- argst[2]
 ftype <- argst[3]
 
-# Set up our data source
-ds <- RomDataSource$new(site, rest_uname = rest_uname)
-ds$get_token(rest_pw)
-
 message(paste("Searching for feature hydrocode=", fcode,"with ftype",ftype))
 feature<- RomFeature$new(
   ds,
