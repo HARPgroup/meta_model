@@ -10,12 +10,26 @@ if [ "$RUN_METHOD" != "run_model" ]; then
   exit
 fi
 
+echo "Check cache: cache_valid=$META_MODEL_ROOT/scripts/misc/check_cache $output_file '$CACHE_DATE'"
+cache_valid=`$META_MODEL_ROOT/scripts/misc/check_cache $output_file "$CACHE_DATE"`
+if [ "$FORCE_RERUN" != "1" ]; then
+  if [ $cache_valid -eq 1 ]; then
+    echo "Valid cache found for file $runfile ... using cached."
+    exit
+  fi
+else 
+  echo "FORCE_RERUN requested. Cachking disabled for ${segment}."
+fi
 
 # Example command:
 cd /var/www/html/om/ 
-# NOT YET WORKING - THE ARGUMENTS BELOW ARE ALL FOR SHAKE TREE
+# For now we disable the old, no longer used, VWP cache mode which allowed a mixed run with only a single active permit
+CACHE_LIST=-1
+CACHE_LEVEL=1
+CACHE_RUNID=-1
+
 scr="/usr/bin/php -f /var/www/html/om/run_model.php"
-args="$SHAKE_TREE_MODE $elid $scenario $START_DATE $END_DATE $CACHE_DATE $RERUN_MODE $DOMAIN_ID $QA_MODE $RUN_MODE $RUN_METHOD flow_mode=$FLOW_MODE $DEBUG_MODE $DT"
+args="$elid $scenario $RUN_TYPE $START_DATE $END_DATE $CACHE_RUNID $CACHE_LIST $CACHE_LEVEL 0 $scenario"
 
 echo "Running: $scr $args"
-#$scr $args
+$scr $args

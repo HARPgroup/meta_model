@@ -38,20 +38,3 @@ end
 
 exit
 
-# old
-
-foreach lu ($perlnds $implnds)
-  echo running $lu for segment $seg land scenario $scenario
-  set inp = $lu$seg'.h5'
-  echo "Calling $HSP_EXEC run $inp "
-  $HSP_EXEC run $inp
-  cp $lu$seg'.out' $tree/output/hspf/land/out/$lu/$scenario/ 
-  if (-e $lu$seg'.ech') mv $lu$seg'.ech' $tree/output/hspf/land/ech/$lu/$scenario/
-  cp $lu$seg'.wdm' $tree/tmp/wdm/land/$lu/$scenario/
-end
-wait
-
-# now copy files
-foreach lu ($perlnds $implnds)
-end
-

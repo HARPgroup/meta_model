@@ -8,12 +8,11 @@ source("/var/www/R/config.R")
 # Accepting command arguments:
 argst <- commandArgs(trailingOnly = T)
 if (length(argst) < 6) {
-  
   message("Use: Rscript met_store_info.R scenario coverage_hydrocode coverage_bundle coverage_ftype model_version met_file")
-  message("Ex: Rscript met_store_info.R scenario N5113 landunit cbp6_landseg met_file")
+  message("Ex: Rscript met_store_info.R nldas2 N5113 landunit cbp6_landseg met_file")
   q('n')
 }
-datasource <- argst[1]
+scenario_name <- argst[1]
 coverage_hydrocode <- argst[2]
 coverage_bundle <- argst[3]
 coverage_ftype <- argst[4]
@@ -37,7 +36,7 @@ feature <- RomFeature$new(
 # this will create or retrieve a model scenario to house this summary data.
 model <- om_model_object(ds, feature, model_version)
 # if a matching model does not exist, this will go ahead and create one
-scenario <- om_get_model_scenario(ds, model, data_source)
+scenario <- om_get_model_scenario(model, scenario_name)
 
 met_data <- read.table(met_file, header = TRUE, sep=",")
 numrecs <- nrow(met_data)
