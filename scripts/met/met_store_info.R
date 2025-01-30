@@ -2,15 +2,12 @@
 # attach a property showing the path to the original raster file
 # attach a property with a web URL to the origina raster file
 basepath='/var/www/R';
-source("/var/www/R/config.R")
 library("lubridate")
-# Set up our data source
-ds <- RomDataSource$new(site, rest_uname = rest_uname)
-ds$get_token(rest_pw)
+source("/var/www/R/config.R")
 
 # Accepting command arguments:
 argst <- commandArgs(trailingOnly = T)
-if (length(argst) < 7) {
+if (length(argst) < 6) {
   
   message("Use: Rscript met_store_info.R scenario coverage_hydrocode coverage_bundle coverage_ftype model_version met_file")
   message("Ex: Rscript met_store_info.R scenario N5113 landunit cbp6_landseg met_file")
@@ -21,7 +18,7 @@ coverage_hydrocode <- argst[2]
 coverage_bundle <- argst[3]
 coverage_ftype <- argst[4]
 model_version <- argst[5] 
-met_file <- argst[67] 
+met_file <- argst[6] 
 # load the feature -- get feature hydroid
 # find the dh_timeseries_weather record for this event
 # attach an image property to the record
