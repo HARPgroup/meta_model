@@ -33,5 +33,8 @@ else
     img_varkey='dh_image_file'
     echo "$tstime\t$datasource,$extent_hydrocode,$extent_ftype,$img_varkey,$met_file" >> raster_list.txt
   done
+  cmd="Rscript $META_MODEL_ROOT/scripts/met/met_store_info.R $datasource $extent_hydrocode $extent_bundle $extent_ftype $img_varkey $met_file"    
+  echo "Running: $cmd"
+  eval $cmd
 
 fi

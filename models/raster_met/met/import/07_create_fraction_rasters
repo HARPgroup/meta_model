@@ -15,11 +15,19 @@ fi
 
 #source Calculating Daily Fraction Rasters
 if [ $scenario == 'nldas2' ]; then
+  if $DAILY_DEFAULT; then
+    cmd="$MET_SCRIPT_PATH/sh/calc_fraction_ts_wDefault $HOURLYVARKEY $DAILYVARKEY $FRACTIONVARKEY $RASTER_SQL_FILE $db_host $db_name $END_DATETIME"
+    echo "Calling Calc Fraction Raster With Design Storm"
+    echo $cmd
+    eval $cmd
+    exit
+  else
 	cmd="$MET_SCRIPT_PATH/sh/calc_fraction_ts $HOURLYVARKEY $DAILYVARKEY $FRACTIONVARKEY $RASTER_SQL_FILE $db_host $db_name $END_DATETIME"
-  echo "Calling Calc Fraction Raster"
-  echo $cmd
-  eval $cmd
-  exit
+    echo "Calling Calc Fraction Raster"
+    echo $cmd
+    eval $cmd
+    exit
+  fi
 else
   echo "Skipping Create Fraction Rasters"
   exit

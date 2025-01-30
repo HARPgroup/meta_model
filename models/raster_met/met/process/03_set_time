@@ -12,6 +12,7 @@ echo "Looking for geotiff files in $base_dir/$yr/$jday"
 
 if [ "$datasource" == "PRISM" ]; then
     # single day files only,
+    echo "datasource is $datasource, checking $src_dir for $import_files"
     for fname in $import_files; do
         if [ -e $fname ]; then
             eval `gdalinfo $fname |grep TIFFTAG_DATETIME`

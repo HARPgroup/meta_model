@@ -84,8 +84,6 @@ input_file_path <- gsub(split[[1]][[9]],'',file_path_text)
 ### Exporting to VAHydro
 
 # Set up our data source
-ds <- RomDataSource$new(site, rest_uname = rest_uname)
-ds$get_token(rest_pw)
 if (rseg_ftype == 'vahydro') {
   # we have a hinky prefix, so add it
   rseg_code=paste0('vahydrosw_wshed_',river_seg)
