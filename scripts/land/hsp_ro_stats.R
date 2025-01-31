@@ -86,7 +86,7 @@ model <- RomProperty$new(
 message(paste("Saving landseg model", model$propcode, model$entity_type, model$featureid, model$propcode))
 if (is.na(model$pid)) {
   model$propname = paste(landseg$name,model_version)
-  model$varid = ds$get_vardef('om_model_element')$varid
+  model$varid = ds$get_vardef('om_model_element')$hydroid
 #  message(paste("Saving landseg model", model$propname, model$varid, model$featureid, $model$propcode))
   model$save(TRUE)
 }
