@@ -28,6 +28,16 @@ image_directory_path <- argst[4]
 #image_directory_path <- '/media/model/p532/out/land/hsp2_2022/images' # needs to be commented when running on the server 
 model_version <- argst[5]
 lseg_ftype <- argst[6]
+message(
+  paste0(
+    "Running analysis. To test use: argst=c(",
+    "'",land_segment_name,
+    "', '", scenario_name,
+    "', '", pwater_file_path,
+    "', '", image_directory_path,
+    "')"
+  )
+)
 # todo: fix these
 save_url <- omsite
 landuse <- 'for' #allow to have a zoom in on a particular lu
