@@ -23,9 +23,8 @@ land_segment_name <- argst[1]
 scenario_name <- argst[2]
 pwater_file_path <- argst[3] #test: pwater_file_path <- "http://deq1.bse.vt.edu:81/p6/out/land/subsheds/eos/N51113_0111-0211-0411.csv"
 image_directory_path <- argst[4] 
-#cbp_export_dir=Sys.getenv(c('CBP_EXPORT_DIR'))[1]
-#image_directory_path <- paste0(cbp_export_dir,'/land/', scenario, '/images')
-#image_directory_path <- '/media/model/p532/out/land/hsp2_2022/images' # needs to be commented when running on the server 
+cbp_export_dir=Sys.getenv(c('CBP_EXPORT_DIR'))[1]
+image_url_path <- stringr::str_replace(image_directory_path, '/media/model', '')
 model_version <- argst[5]
 lseg_ftype <- argst[6]
 message(
@@ -182,7 +181,7 @@ fpath <-  paste(
   sep='/'
 )
 furl <- paste(
-  save_url,
+  save_url, image_url_path,
   fname,
   sep='/'
 )
