@@ -186,7 +186,11 @@ furl <- paste(
   sep='/'
 )
 png(fpath)
-boxplot(as.numeric(dat$Runit) ~ dat$year, ylim=c(0,3))
+boxplot(
+  as.numeric(dat$Runit) ~ dat$year, 
+  ylim=c(0,3),
+  main=paste("Runit",model$propname,"Run:",model_scenario$propname)
+)
 dev.off()
 message(paste("Saved file: ", fname, "with URL", furl))
 vahydro_post_metric_to_scenprop(model_scenario$pid, 'dh_image_file', furl, 'Runit_boxplot_year', 0.0, ds)
