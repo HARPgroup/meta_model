@@ -22,6 +22,12 @@ if [ "$DAILY_VARKEY" = "" ]; then
   exit
 fi
 
+#Skip if the RESAMPLE_VARKEY has been set
+if [ "$RESAMPLE_VARKEY" != "" ]; then
+  echo "RESAMPLE_VARKEY set. Skipping."
+  exit
+fi
+
 #This step will take daily rasters, multiply them by an hourly fractional 
 #raster (controlled by DISAGGREGATE_VARKEY) and then summarize for the given coverage
 # BEGIN - actually loading local data
