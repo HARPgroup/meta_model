@@ -120,7 +120,13 @@ if (is.logical(hydr_df)) {
   message(paste("Resolution", time_fields,"is not available"))
   q("n")
 }
-#Robustify by adding usage for hourly and daily data 
+# Eliminate NA and warn
+vcol <- ncol(hydr_df)
+nacount <- nrow(hydr_df[is.na(hydr_df[,vcol]),])
+if (!is.null(nacount) || (nacount > 0)) {
+  message(paste("Warning:",nrow(hydr_df[is.na(hydr_df[,vcol]),]),"NA rows found. Fixing."))
+  hydr_df[is.na(hydr_df[,vcol]),vcol] <- 0
+}
 
 # exporting the tables
 write.table(hydr_df, file = output_path, sep = ',', row.names = FALSE, col.names = FALSE, quote = FALSE)

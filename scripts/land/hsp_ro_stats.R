@@ -23,11 +23,20 @@ land_segment_name <- argst[1]
 scenario_name <- argst[2]
 pwater_file_path <- argst[3] #test: pwater_file_path <- "http://deq1.bse.vt.edu:81/p6/out/land/subsheds/eos/N51113_0111-0211-0411.csv"
 image_directory_path <- argst[4] 
-#cbp_export_dir=Sys.getenv(c('CBP_EXPORT_DIR'))[1]
-#image_directory_path <- paste0(cbp_export_dir,'/land/', scenario, '/images')
-#image_directory_path <- '/media/model/p532/out/land/hsp2_2022/images' # needs to be commented when running on the server 
+cbp_export_dir=Sys.getenv(c('CBP_EXPORT_DIR'))[1]
+image_url_path <- stringr::str_replace(image_directory_path, '/media/model', '')
 model_version <- argst[5]
 lseg_ftype <- argst[6]
+message(
+  paste0(
+    "Running analysis. To test use: argst=c(",
+    "'",land_segment_name,
+    "', '", scenario_name,
+    "', '", pwater_file_path,
+    "', '", image_directory_path,
+    "')"
+  )
+)
 # todo: fix these
 save_url <- omsite
 landuse <- 'for' #allow to have a zoom in on a particular lu
@@ -86,7 +95,7 @@ model <- RomProperty$new(
 message(paste("Saving landseg model", model$propcode, model$entity_type, model$featureid, model$propcode))
 if (is.na(model$pid)) {
   model$propname = paste(landseg$name,model_version)
-  model$varid = ds$get_vardef('om_model_element')$varid
+  model$varid = ds$get_vardef('om_model_element')$hydroid
 #  message(paste("Saving landseg model", model$propname, model$varid, model$featureid, $model$propcode))
   model$save(TRUE)
 }
@@ -172,12 +181,16 @@ fpath <-  paste(
   sep='/'
 )
 furl <- paste(
-  save_url,
+  save_url, image_url_path,
   fname,
   sep='/'
 )
 png(fpath)
-boxplot(as.numeric(dat$Runit) ~ dat$year, ylim=c(0,3))
+boxplot(
+  as.numeric(dat$Runit) ~ dat$year, 
+  ylim=c(0,3),
+  main=paste("Runit",model$propname,"Run:",model_scenario$propname)
+)
 dev.off()
 message(paste("Saved file: ", fname, "with URL", furl))
 vahydro_post_metric_to_scenprop(model_scenario$pid, 'dh_image_file', furl, 'Runit_boxplot_year', 0.0, ds)

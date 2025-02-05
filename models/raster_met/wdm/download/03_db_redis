@@ -9,3 +9,40 @@ fi
 if [[ "$MET_PROCESS_METHOD" != *"raster"* ]]; then
   exit
 fi
+
+#If the disaggregation varkey is not set, we skip this step since we are not given a varkey to multiply our daily rasters by
+if [ "$DISAGGREGATE_VARKEY" = "" ]; then
+  echo "DISAGGREGATE_VARKEY not set. Skipping."
+  exit
+fi
+
+#If the daily varkey is not set, we skip this step since we are not given a base daily timeseries to use as defaults
+if [ "$DAILY_VARKEY" = "" ]; then
+  echo "DAILY_VARKEY not set. Skipping."
+  exit
+fi
+echo "Temporal DISAGGREGATION requested"
+
+# we bail unless RESAMPLE_VARKEY IS set
+if [ "$RESAMPLE_VARKEY" = "" ]; then
+  echo "RESAMPLE_VARKEY not set. Skipping."
+  exit
+fi
+echo "RESMAPLING requested to ${RESAMPLE_VARKEY}"
+
+#This step will take daily rasters, multiply them by an hourly fractional 
+#raster (controlled by DISAGGREGATE_VARKEY) and then summarize for the given coverage
+#after resampling to the resolution of the template raster with varkey = $RESAMPLE_VARKEY
+# BEGIN - actually loading local data
+echo "Aggregating precip for $coverage from $varkey dissaggregating by $DISAGGREGATE_VARKEY"
+outfile=`basename $COVERAGE_PRECIP_FILE`
+echo "calculated tstime $tstime=TZ=\"$TZ\" date -d \"$START_DATE\" +'%s'"
+echo "calculated tsendtime $tsendtime=TZ=\"$TZ\" date -d \"$END_DATE\" +'%s'"
+# do the actual export
+echo "$MET_SCRIPT_PATH/sh/disaggregate_raster_ts $coverage $varkey $DISAGGREGATE_VARKEY $DAILY_VARKEY $RESAMPLE_VARKEY $RASTER_SQL_FILE /tmp/$outfile $db_host $db_name $COVERAGE_BUNDLE $COVERAGE_FTYPE $tsendwdm $tstime $tsendtime"
+$MET_SCRIPT_PATH/sh/disaggregate_resample_raster_ts $coverage $varkey $DISAGGREGATE_VARKEY $DAILY_VARKEY $RESAMPLE_VARKEY $RASTER_SQL_FILE /tmp/$outfile $db_host $db_name $COVERAGE_BUNDLE $COVERAGE_FTYPE $tsendwdm $tstime $tsendtime
+sftp ${db_host}:"/tmp/$outfile" "${tempdir}/${outfile}"
+echo "Installing: install -D "${tempdir}/${outfile}" $COVERAGE_PRECIP_FILE"
+install -D "${tempdir}/${outfile}" $COVERAGE_PRECIP_FILE
+sqlfile=`basename $RASTER_SQL_FILE`
+install -D $RASTER_SQL_FILE $SAVE_PRECIP_SQL

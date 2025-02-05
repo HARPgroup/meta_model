@@ -116,6 +116,29 @@ if (is.na(model$pid)) {
   model$varid = ds$get_vardef('om_water_model_node')$varid
   model$save(TRUE)
 }
+# set the river seg property if it is not there or empty
+message(paste("Checking if model has riverseg set = ", river_seg))
+rseg <- RomProperty$new(
+  ds,
+  list(
+    featureid=model$pid, 
+    entity_type="dh_properties", 
+    propname='riverseg'
+  ), 
+  TRUE
+)
+overwrite_riverseg = FALSE
+if (is.na(rseg$propcode) || is.null(rseg$propcode) || (rseg$propcode == '')) {
+#  message(paste("*** riverseg appears empty, setting to ", river_seg))
+  rseg$propcode = river_seg
+  overwrite_riverseg = TRUE
+}
+if (is.na(rseg$pid) || (overwrite_riverseg == TRUE)) {
+  message(paste("*** setting riverseg = ", rseg$propcode))
+  rseg$varid = ds$get_vardef('om_class_textField')$varid
+  rseg$save(TRUE)
+}
+
 
 model_scenario <- RomProperty$new(
   ds,
