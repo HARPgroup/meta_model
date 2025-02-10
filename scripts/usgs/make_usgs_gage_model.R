@@ -15,7 +15,7 @@ library(dataRetrieval)
 # runid = 2
 # gage_number = '01646000'
 # model_scenario = 'vahydro-1.0'
-# argst("PM7_4580_4820", 'PM7_4580_4820_difficult_run', "vahydro", '01646000', 'usgs-2.0', 'vahydro-1.0')
+# argst <- c("PM7_4581_4580", 'vahydrosw_wshed_PM7_4581_4580', "vahydro", '01646000', 'usgs-2.0', 'vahydro-1.0')
 argst <- commandArgs(trailingOnly=T)
 riverseg <- as.character(argst[1])
 hydrocode <- as.character(argst[2])
@@ -45,7 +45,7 @@ gm <- RomProperty$new(
     entity_type = 'dh_feature',
     propname = paste(riverseg, gage_number, sep="_"),
     propcode = model_version
-  ), TRUE)W
+  ), TRUE)
 if (is.na(gm$pid)) {
   # create new model
   gm$varid <- as.integer(ds$get_vardef('om_model_element')$varid)
@@ -71,10 +71,12 @@ base_model <- RomProperty$new(
   ds,
   list(
     featureid=feature$hydroid,
-    propcode=base_model_version
-  )
+    propcode=base_model_version,
+    entity_type='dh_feature'
+  ),
+  TRUE
 )
-if (is.null(base_model$pid)) {
+if (is.na(base_model$pid)) {
   message(
     paste(
       "Warning: Base model not found for version",base_model_version,"... Exiting.")
@@ -85,32 +87,36 @@ channel_prop <- RomProperty$new(
   ds,
   list(
     propname='0. River Channel',
-    featureid=base_model$pid
-  )
+    featureid=base_model$pid,
+    entity_type='dh_properties'
+  ),
+  TRUE
 )
-if (is.na(base_model$pid)) {
+if (is.na(channel_prop$pid)) {
   channel_prop <- RomProperty$new(
     ds,
     list(
       propname='local_channel',
-      featureid=base_model$pid
-    )
+      featureid=base_model$pid,
+      entity_type='dh_properties'
+    ),
+    TRUE
   )
 }
-if (is.na(base_model$pid)) {
+if (is.na(channel_prop$pid)) {
   message("Error: source model does not have channel object. Exiting.")
   q("no")
 }
 daprop <-  RomProperty$new(ds, list (
   propname = 'drainage_area',
-  featureid = base_model$pid,
+  featureid = channel_prop$pid,
   entity_type = 'dh_properties'
 ), TRUE)
 da <- as.numeric(daprop$propvalue)
 
 wscale = 1.0
 # now, if da is not NULL we scale, otherwise assume gage area and watershed area are the same
-if (is.null(da)) {
+if (is.na(da)) {
   message("Error: source model does not have drainage area object. Exiting.")
   q("no")
 }
