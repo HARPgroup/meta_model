@@ -139,4 +139,4 @@ scaleprop <- RomProperty$new(
 )
 scaleprop$save(TRUE)
 
-print(1) # to act as positive returning function
+cat(gm$pid) # to act as positive returning function
