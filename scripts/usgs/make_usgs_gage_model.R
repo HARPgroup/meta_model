@@ -63,7 +63,7 @@ site_no <- RomProperty$new(
 )
 site_no$save(TRUE)
 
-if (base_model_version == FALSE) {
+if (is.logical(base_model_version) ) {
   message("Warning: No base model given. Exiting.")
 }
 # load the model data
