@@ -12,6 +12,7 @@ outfile=`basename $COVERAGE_WDM_CSV`
 if [ -e $COVERAGE_PRECIP_FILE ]; then
   echo "Call: Rscript $META_MODEL_ROOT/scripts/wdm/csv_export_wdm_format.R $COVERAGE_PRECIP_FILE $outfile precip_in hour"
   Rscript $META_MODEL_ROOT/scripts/wdm/csv_export_wdm_format.R $COVERAGE_PRECIP_FILE $outfile precip_in hour
+  echo "install -D $outfile $COVERAGE_WDM_CSV"
   install -D $outfile $COVERAGE_WDM_CSV
 else
   echo "Warning: $COVERAGE_PRECIP_FILE does not exist. Default will be used."
