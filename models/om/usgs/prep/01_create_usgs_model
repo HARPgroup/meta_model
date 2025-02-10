@@ -1,12 +1,14 @@
-#!/bin/csh
-set scenario=$1
-set segment=$2
-set tempdir=$3
+#!/bin/bash
 
-IFS='_' read usgs_gage riverseg <<< "$segment"
+scenario=$1
+segment=$2
+tempdir=$3
+
+IFS='_' read sta_id riverseg <<< "$segment"
+echo "Making model $segment for gage $sta_id and segment $riverseg"
 ftype=`cbp get_config $scenario script RIVER_FTYPE`
 hydrocode_prefix=`cbp get_config $scenario script RIVER_PREFIX`
-hydrocode="${hydrocode_prefix}_${segment}"
+hydrocode="${hydrocode_prefix}${riverseg}"
 USGS_MODEL_CODE=`cbp get_config $scenario script USGS_MODEL_CODE`
-echo "Running: Rscript make_usgs_gage_model.R $segment $hydrocode, $ftype, \"$USGS_MODEL_CODE\", $MODEL_VERSION_CODE"
-#Rscript make_usgs_gage_model.R $segment $hydrocode, $ftype, "$USGS_MODEL_CODE", "$MODEL_VERSION_CODE"
+echo "Running: Rscript make_usgs_gage_model.R $segment $riverseg $hydrocode $ftype $sta_id $USGS_MODEL_CODE $MODEL_VERSION_CODE"
+#Rscript make_usgs_gage_model.R $segment $riverseg $hydrocode $ftype $sta_id $USGS_MODEL_CODE $MODEL_VERSION_CODE"
