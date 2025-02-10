@@ -15,7 +15,8 @@ echo "Creating simple linear model (TBD)"
 # even though we might have need fo the stats, but they are included in the json file
 json_file=`basename $MODEL_JSON`
 rate_file=`basename $RATING_FILE`
-echo "Rscript $META_MODEL_ROOT/scripts/precip/mon_lm_analysis.R \"$WEEKLY_PRECIP_FILE\" precip_cfs obs_flow mo \"$json_file\" \"$rate_file\""
-Rscript $META_MODEL_ROOT/scripts/precip/mon_lm_analysis.R "$WEEKLY_PRECIP_FILE" precip_cfs obs_flow mo "$json_file" "$rate_file"
+echo "Rscript $META_MODEL_ROOT/scripts/precip/mon_lm_analysis.R \"$WEEKLY_PRECIP_FILE\" obs_flow precip_cfs mo \"$json_file\" \"$rate_file\""
+# This script requires the input order to be y var x var
+Rscript $META_MODEL_ROOT/scripts/precip/mon_lm_analysis.R "$WEEKLY_PRECIP_FILE" obs_flow precip_cfs mo "$json_file" "$rate_file"
 install -D $json_file "$MODEL_JSON" 
 install -D $rate_file "$RATING_FILE"
