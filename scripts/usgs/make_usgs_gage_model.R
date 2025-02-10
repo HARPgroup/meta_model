@@ -15,15 +15,16 @@ library(dataRetrieval)
 # runid = 2
 # gage_number = '01646000'
 # model_scenario = 'vahydro-1.0'
-# argst <- c("PM7_4581_4580", 'vahydrosw_wshed_PM7_4581_4580', "vahydro", '01646000', 'usgs-2.0', 'vahydro-1.0')
+# argst <- c("01646000_PM7_4581_4580", PM7_4581_4580", 'vahydrosw_wshed_PM7_4581_4580', "vahydro", '01646000', 'usgs-2.0', 'vahydro-1.0')
 argst <- commandArgs(trailingOnly=T)
-riverseg <- as.character(argst[1])
-hydrocode <- as.character(argst[2])
-ftype <- as.character(argst[3])
-gage_number <- as.character(argst[4])
-model_version <- as.character(argst[5])
+gmodel_name <- as.character(argst[1])
+riverseg <- as.character(argst[2])
+hydrocode <- as.character(argst[3])
+ftype <- as.character(argst[4])
+gage_number <- as.character(argst[5])
+model_version <- as.character(argst[6])
 # what model to compare drainage area to
-base_model_version <- as.character(argst[6])
+base_model_version <- as.character(argst[7])
 # Inputs if using CBP Model -- otherwise, can ignore
 model_root <- Sys.getenv(c('CBP_MODEL_ROOT'))[1]
 
@@ -43,7 +44,7 @@ gm <- RomProperty$new(
   ds,list(
     featureid = hydroid,
     entity_type = 'dh_feature',
-    propname = paste(riverseg, gage_number, sep="_"),
+    propname = gmodel_name,
     propcode = model_version
   ), TRUE)
 if (is.na(gm$pid)) {
