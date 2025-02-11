@@ -13,15 +13,15 @@ if (length(argst) < 2) {
 
 basepath='/var/www/R'
 source('/var/www/R/config.R')
-sta_id <- as.character(args[1])
+sta_id <- as.character(argst[1])
 outfile <- argst[2]
 if (count(argst) > 2) {
-  mstart <- as.character(args[2])
+  mstart <- as.character(argst[2])
 } else {
   mstart = FALSE
 }
 if (count(argst) > 3) {
-  mend <- as.character(args[3])
+  mend <- as.character(argst[3])
 } else {
   mend = FALSE
 }
