@@ -16,12 +16,12 @@ source('/var/www/R/config.R')
 sta_id <- as.character(argst[1])
 outfile <- argst[2]
 if (length(argst) > 2) {
-  mstart <- as.character(argst[2])
+  mstart <- as.character(argst[3])
 } else {
   mstart = FALSE
 }
 if (length(argst) > 3) {
-  mend <- as.character(argst[3])
+  mend <- as.character(argst[4])
 } else {
   mend = FALSE
 }
@@ -45,9 +45,12 @@ area_factor = 1.0
 if (area_reach > 0) {
   area_factor <- as.numeric(area_reach) / gage_info$drain_area_va
 }
+historic$timestamp <- as.POSIXct(historic$Date, origin = "1970-01-01")
+dat_formatted <- zoo(historic, order.by = historic$timestamp)
+dat_formatted <- window(
+  dat_formatted, 
+  start = as.POSIXct(mstart, tz = "EST"), end = as.POSIXct(mend, tz = "EST"))
 
-dat_formatted <- zoo(historic, order.by = historic$Date)
-dat_formatted <- window(dat_formatted, start = mstart, end = mend)
 historic <- as.data.frame(dat_formatted)
 # add dates
 historic[,c('yr', 'mo', 'da')] <- cbind(year(as.Date(historic$Date)),
