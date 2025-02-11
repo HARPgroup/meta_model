@@ -6,8 +6,8 @@ suppressPackageStartupMessages(library(lubridate))
 suppressPackageStartupMessages(library(sqldf))
 suppressPackageStartupMessages(library(dplyr))
 argst <- commandArgs(trailingOnly = TRUE)
-if (length(args) != 2) {
-  message("Usage: Rscript usgs_to_om_flows sta_id outfile mstart mend area_reach drop_cache")
+if (length(argst) < 2) {
+  message("Usage: Rscript usgs_to_om_flows.R sta_id outfile mstart mend area_reach drop_cache")
   q()
 }
 
