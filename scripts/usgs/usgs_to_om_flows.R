@@ -43,10 +43,6 @@ gage_info <- memo_readNWISsite(sta_id)
 gage_name <- gage_info$station_nm
 area_factor <- as.numeric(area_reach) / gage_info$drain_area_va
 
-if (!is.logical(intake_da)) {
-  # we need to scale both model output and gage output
-  area_factor <- as.numeric(intake_da) / gage_info$drain_area_va
-}
 historic$X_00060_00003 <- historic$X_00060_00003 * area_factor
 #gage_flows <- zoo(as.numeric(as.character( historic$X_00060_00003 )), order.by = as.POSIXct(historic$Date));
 # add dates
