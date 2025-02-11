@@ -8,5 +8,6 @@ echo "Loading usgs_config from $usgs_config"
 
 mscr="$META_MODEL_ROOT/scripts/usgs/usgs_to_om_flows.R"
 echo "Rscript $mscr $sta_id $usgs_out_file \"$START_DATE\" \"$END_DATE\" $da"
-Rscript $mscr $sta_id out_file.temp "$START_DATE" "$END_DATE" $da
-install -D "${tempdir}/${outfile}" $usgs_out_file
+out_base=`basename $usgs_out_file`
+Rscript $mscr $sta_id $out_base "$START_DATE" "$END_DATE" $da
+install -D $out_base $usgs_out_file
