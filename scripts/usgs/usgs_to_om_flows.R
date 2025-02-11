@@ -7,13 +7,13 @@ suppressPackageStartupMessages(library(sqldf))
 suppressPackageStartupMessages(library(dplyr))
 argst <- commandArgs(trailingOnly = TRUE)
 if (length(args) != 2) {
-  message("Usage: Rscript scale_usgs_flows.R sta_id output_path")
+  message("Usage: Rscript usgs_to_om_flows sta_id outfile mstart mend area_reach drop_cache")
   q()
 }
 
 basepath='/var/www/R'
 source('/var/www/R/config.R')
-gageid <- as.character(args[1])
+sta_id <- as.character(args[1])
 outfile <- argst[2]
 if (count(argst) > 2) {
   mstart <- as.character(args[2])
@@ -33,13 +33,13 @@ drop_cache = 0
 if (count(argst) > 5) {
   drop_cache = as.integer(argst[6])
 }
-#historic <- dataRetrieval::readNWISdv(gageid,'00060')
+#historic <- dataRetrieval::readNWISdv(sta_id,'00060')
 if (drop_cache == 1) {
-  drop_cache(memo_readNWISsite)(gageid)
-  drop_cache(memo_readNWISdv)(gageid,'00060')
+  drop_cache(memo_readNWISsite)(sta_id)
+  drop_cache(memo_readNWISdv)(sta_id,'00060')
 }
-historic <- memo_readNWISdv(gageid,'00060')
-gage_info <- memo_readNWISsite(gageid)
+historic <- memo_readNWISdv(sta_id,'00060')
+gage_info <- memo_readNWISsite(sta_id)
 gage_name <- gage_info$station_nm
 area_factor <- as.numeric(area_reach) / gage_info$drain_area_va
 
