@@ -50,10 +50,10 @@ site_no <- RomProperty$new(
     featureid = gm$pid,
     entity_type = 'dh_properties',
     varkey = 'om_class_AlphanumericConstant',
-    propname = 'site_no',
-    propcode = gage_number
+    propname = 'site_no'
   ), TRUE
 )
+site_no$propcode = gage_number
 site_no$save(TRUE)
 object_class
 oc <- RomProperty$new(
@@ -61,10 +61,10 @@ oc <- RomProperty$new(
     featureid = gm$pid,
     entity_type = 'dh_properties',
     varkey = 'om_class_AlphanumericConstant',
-    propname = 'object_class',
-    propcode = object_class
+    propname = 'object_class'
   ), TRUE
 )
+oc$propcode = object_class
 oc$save(TRUE)
 # load the model data
 
@@ -84,10 +84,10 @@ gda <- RomProperty$new(
     featureid = gm$pid,
     entity_type = 'dh_properties',
     varkey = 'om_class_Constant',
-    propname = 'drain_area_va',
-    propvalue = as.numeric(gage$drain_area_va)
+    propname = 'drain_area_va'
   ), TRUE
 )
+gda$propvalue = as.numeric(gage$drain_area_va)
 gda$save(TRUE)
 # set the actual area of this moel segment
 drainage_area <- RomProperty$new(
@@ -95,20 +95,20 @@ drainage_area <- RomProperty$new(
     featureid = gm$pid,
     entity_type = 'dh_properties',
     varkey = 'om_class_Constant',
-    propname = 'drainage_area',
-    propvalue = as.numeric(da)
+    propname = 'drainage_area'
   ), TRUE
 )
+drainage_area$propvalue = as.numeric(da)
 drainage_area$save(TRUE)
 scaleprop <- RomProperty$new(
   ds,list(
     featureid = gm$pid,
     entity_type = 'dh_properties',
     varkey = 'om_class_Constant',
-    propname = 'scale_factor',
-    propvalue = as.numeric(wscale)
+    propname = 'scale_factor'
   ), TRUE
 )
+scaleprop$propvalue = as.numeric(wscale)
 scaleprop$save(TRUE)
 
 cat(1) # to act as positive returning function

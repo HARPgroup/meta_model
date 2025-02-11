@@ -15,3 +15,5 @@ gage_model <- RomProperty$new(
 gage_nested <- ds$get_json_prop(gage_model$pid)
 
 
+# for testing R om summary 
+argst <- c(7700740, "01646000_PM7_4581_4580", 400, "http://deq1.bse.vt.edu:81/usgs/400/01646000_PM7_4581_4580.out")

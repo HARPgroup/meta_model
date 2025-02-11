@@ -41,7 +41,10 @@ if (drop_cache == 1) {
 historic <- memo_readNWISdv(sta_id,'00060')
 gage_info <- memo_readNWISsite(sta_id)
 gage_name <- gage_info$station_nm
-area_factor <- as.numeric(area_reach) / gage_info$drain_area_va
+area_factor = 1.0
+if (area_reach > 0) {
+  area_factor <- as.numeric(area_reach) / gage_info$drain_area_va
+}
 
 # add dates
 historic[,c('yr', 'mo', 'da')] <- cbind(year(as.Date(historic$Date)),
