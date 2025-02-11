@@ -17,9 +17,13 @@ library(dataRetrieval)
 # model_scenario = 'vahydro-1.0'
 # argst <- c("01646000_PM7_4581_4580", PM7_4581_4580", 'vahydrosw_wshed_PM7_4581_4580', "vahydro", '01646000', 'usgs-2.0', 'vahydro-1.0')
 argst <- commandArgs(trailingOnly=T)
+if (length(args) != 3) {
+  message("Usage: Rscript make_usgs_gage_model.R model_pid da sta_id")
+  q("no")
+}
 gm_pid <- as.integer(argst[1]) # pid of the model that has been created
 da <- as.character(argst[2]) # this is the area for this gage moe ltobe weighted to
-gage_number <- as.character(argst[5])
+gage_number <- as.character(argst[3])
 
 # ESSENTIAL INPUTS
 # If a gage is used -- all data is trimmed to gage timeframe.  Otherwise, start/end date defaults
