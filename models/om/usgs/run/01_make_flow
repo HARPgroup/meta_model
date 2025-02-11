@@ -7,6 +7,7 @@ echo "Loading usgs_config from $usgs_config"
 . $usgs_config
 
 # get the drainage area for weighting
+echo "Running: Rscript $META_MODEL_ROOT/scripts/rest/get_property.R dh_properties $usgs_pid drainage_area propvalue"
 da=`Rscript $META_MODEL_ROOT/scripts/rest/get_property.R dh_properties $usgs_pid drainage_area propvalue`
 
 mscr="$META_MODEL_ROOT/scripts/usgs/usgs_to_om_flows.R"
