@@ -81,7 +81,7 @@ drainage_area <- RomProperty$new(
     entity_type = 'dh_properties',
     varkey = 'om_class_Constant',
     propname = 'drainage_area',
-    propvalue = as.numeric(drainage_area)
+    propvalue = as.numeric(da)
   ), TRUE
 )
 drainage_area$save(TRUE)
