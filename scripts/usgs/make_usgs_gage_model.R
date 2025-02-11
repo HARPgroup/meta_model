@@ -24,7 +24,7 @@ gage_number <- as.character(argst[5])
 # ESSENTIAL INPUTS
 # If a gage is used -- all data is trimmed to gage timeframe.  Otherwise, start/end date defaults
 # can be found in the gage.timespan.trimmed loop.
-message(paste0("Calling readNWISsite(",gage_number.")"))
+message(paste0("Calling readNWISsite(",gage_number,")"))
 gage <- try(readNWISsite(gage_number))
 # any allow om_water_model_node, om_model_element as varkeys
 gm <- RomProperty$new(
