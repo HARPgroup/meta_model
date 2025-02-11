@@ -17,7 +17,7 @@ library(dataRetrieval)
 # model_scenario = 'vahydro-1.0'
 # argst <- c("01646000_PM7_4581_4580", PM7_4581_4580", 'vahydrosw_wshed_PM7_4581_4580', "vahydro", '01646000', 'usgs-2.0', 'vahydro-1.0')
 argst <- commandArgs(trailingOnly=T)
-if (length(args) != 3) {
+if (length(argst) != 3) {
   message("Usage: Rscript make_usgs_gage_model.R model_pid da sta_id")
   q("no")
 }
