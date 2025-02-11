@@ -17,15 +17,16 @@ library(dataRetrieval)
 # model_scenario = 'vahydro-1.0'
 # argst <- c("01646000_PM7_4581_4580", PM7_4581_4580", 'vahydrosw_wshed_PM7_4581_4580', "vahydro", '01646000', 'usgs-2.0', 'vahydro-1.0')
 argst <- commandArgs(trailingOnly=T)
-if (length(argst) != 3) {
-  message("Usage: Rscript make_usgs_gage_model.R model_pid da sta_id")
+if (length(argst) != 4) {
+  message("Usage: Rscript make_usgs_gage_model.R model_pid da sta_id riverseg")
   q("no")
 }
 gm_pid <- as.integer(argst[1]) # pid of the model that has been created
 da <- as.character(argst[2]) # this is the area for this gage moe ltobe weighted to
 gage_number <- as.character(argst[3])
-if (length(argst) > 3) {
-  object_class = argst[4]
+riverseg <- as.character(argst[4])
+if (length(argst) > 4) {
+  object_class = argst[5]
 } else {
   object_class = 'usgs_weighted'
 }
@@ -66,7 +67,16 @@ oc <- RomProperty$new(
 )
 oc$propcode = object_class
 oc$save(TRUE)
-# load the model data
+rs <- RomProperty$new(
+  ds,list(
+    featureid = gm$pid,
+    entity_type = 'dh_properties',
+    varkey = 'om_class_AlphanumericConstant',
+    propname = 'riverseg'
+  ), TRUE
+)
+rs$propcode = riverseg
+rs$save(TRUE)
 
 wscale = 1.0
 # now, if da is not NULL we scale, otherwise assume gage area and watershed area are the same
