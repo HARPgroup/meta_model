@@ -14,4 +14,4 @@ mscr="$META_MODEL_ROOT/scripts/usgs/usgs_to_om_flows.R"
 out_base=`basename $usgs_out_file`
 echo "Rscript $mscr $sta_id $out_base \"$START_DATE\" \"$END_DATE\" $da"
 Rscript $mscr $sta_id $out_base "$START_DATE" "$END_DATE" $da
-install -D $usgs_out_file $out_base
+install -D $out_base $usgs_out_file
