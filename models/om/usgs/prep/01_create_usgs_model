@@ -12,5 +12,5 @@ echo "Running da,local_area,channel_length = Rscript $chscr $river_pid"
 IFS=',' read da local_area channel_length <<< `Rscript $chscr $river_pid `
 # send this info to the channel model
 gfm_scr="${META_MODEL_ROOT}/scripts/usgs/make_usgs_gage_model.R"
-echo "Running: Rscript $gfm_scr $usgs_pid $da $sta_id"
-Rscript $gfm_scr $usgs_pid $da $sta_id
+echo "Running: Rscript $gfm_scr $usgs_pid $da $sta_id $riverseg"
+Rscript $gfm_scr $usgs_pid $da $sta_id $riverseg
