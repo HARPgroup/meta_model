@@ -9,10 +9,9 @@ suppressPackageStartupMessages(library(jsonlite)) #for exporting values as json
 # Accepting command arguments:
 argst <- commandArgs(trailingOnly = T)
 fcode <- argst[1]
-scenario_name <- argst[2]
-model_version <- argst[3]
-bundlee <- argst[4]
-ftype <- argst[5]
+model_version <- argst[2]
+bundle <- argst[3]
+ftype <- argst[4]
 
 message(paste("Searching for feature hydrocode=", fcode,"with ftype",ftype))
 feature<- RomFeature$new(

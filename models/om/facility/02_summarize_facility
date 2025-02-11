@@ -2,7 +2,7 @@
 
 . $META_MODEL_ROOT/models/om/om.config
 runid=$scenario
-pid=`Rscript $META_MODEL_ROOT/scripts/rest/get_feature_model.R $segment $scenario $model_version $R`
+pid=`Rscript $META_MODEL_ROOT/scripts/rest/get_feature_model.R $segment $model_version $R`
 
 
 

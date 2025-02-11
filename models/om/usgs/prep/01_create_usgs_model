@@ -1,0 +1,16 @@
+#!/bin/bash
+usgs_config=`find_config met.config`
+if [ "$usgs_config" = "" ]; then
+  usgs_config="$META_MODEL_ROOT/models/om/usgs/usgs.config"
+fi
+echo "Loading usgs_config from $usgs_config"
+. $usgs_config
+
+# get data from base model
+chscr="${META_MODEL_ROOT}/scripts/usgs/get_channel_model_data.R"
+echo "Running da,local_area,channel_length = Rscript $chscr $river_pid"
+IFS=',' read da local_area channel_length <<< `Rscript $chscr $river_pid `
+# send this info to the channel model
+gfm_scr="${META_MODEL_ROOT}/scripts/usgs/make_usgs_gage_model.R"
+echo "Running: Rscript $gfm_scr $usgs_pid $da $sta_id"
+Rscript $gfm_scr $usgs_pid $da $sta_id
