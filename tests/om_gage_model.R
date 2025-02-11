@@ -17,3 +17,5 @@ gage_nested <- ds$get_json_prop(gage_model$pid)
 
 # for testing R om summary 
 argst <- c(7700740, "01646000_PM7_4581_4580", 400, "http://deq1.bse.vt.edu:81/usgs/400/01646000_PM7_4581_4580.out")
+# for testing the scaling method
+argst <- c("01646000", "http://deq1.bse.vt.edu:81/usgs/400/01646000_PM7_4581_4580.out", "1984-01-01", "2020-12-31", 58.24)

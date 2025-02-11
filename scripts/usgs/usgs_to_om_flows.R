@@ -53,9 +53,13 @@ dat_formatted <- window(
 
 historic <- as.data.frame(dat_formatted)
 # add dates
-historic[,c('yr', 'mo', 'da')] <- cbind(year(as.Date(historic$Date)),
-                                         month(as.Date(historic$Date)),
-                                         day(as.Date(historic$Date)))
+historic[,c('year', 'yr', 'month', 'mo', 'da')] <- cbind(
+  year(as.Date(historic$Date)),
+  year(as.Date(historic$Date)),
+  month(as.Date(historic$Date)),
+  month(as.Date(historic$Date)),
+  day(as.Date(historic$Date))
+)
 # zoo clobbers the number type this restores it
 historic$X_00060_00003 <- as.numeric(historic$X_00060_00003)
 historic$Qout <- historic$X_00060_00003 * area_factor
