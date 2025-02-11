@@ -24,6 +24,11 @@ if (length(argst) != 3) {
 gm_pid <- as.integer(argst[1]) # pid of the model that has been created
 da <- as.character(argst[2]) # this is the area for this gage moe ltobe weighted to
 gage_number <- as.character(argst[3])
+if (length(argst) > 3) {
+  object_class = argst[4]
+} else {
+  object_class = 'usgs_weighted'
+}
 
 # ESSENTIAL INPUTS
 # If a gage is used -- all data is trimmed to gage timeframe.  Otherwise, start/end date defaults
@@ -50,7 +55,17 @@ site_no <- RomProperty$new(
   ), TRUE
 )
 site_no$save(TRUE)
-
+object_class
+oc <- RomProperty$new(
+  ds,list(
+    featureid = gm$pid,
+    entity_type = 'dh_properties',
+    varkey = 'om_class_AlphanumericConstant',
+    propname = 'object_class',
+    propcode = object_class
+  ), TRUE
+)
+oc$save(TRUE)
 # load the model data
 
 wscale = 1.0
