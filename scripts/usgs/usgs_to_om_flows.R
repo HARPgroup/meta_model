@@ -15,22 +15,22 @@ basepath='/var/www/R'
 source('/var/www/R/config.R')
 sta_id <- as.character(argst[1])
 outfile <- argst[2]
-if (count(argst) > 2) {
+if (length(argst) > 2) {
   mstart <- as.character(argst[2])
 } else {
   mstart = FALSE
 }
-if (count(argst) > 3) {
+if (length(argst) > 3) {
   mend <- as.character(argst[3])
 } else {
   mend = FALSE
 }
 area_reach = 0 # we will not scale if not requested
-if (count(argst) > 4) {
+if (length(argst) > 4) {
   area_reach <- as.numeric(argst[5]) 
 }
 drop_cache = 0
-if (count(argst) > 5) {
+if (length(argst) > 5) {
   drop_cache = as.integer(argst[6])
 }
 #historic <- dataRetrieval::readNWISdv(sta_id,'00060')
