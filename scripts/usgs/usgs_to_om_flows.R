@@ -46,10 +46,15 @@ if (area_reach > 0) {
   area_factor <- as.numeric(area_reach) / gage_info$drain_area_va
 }
 
+dat_formatted <- zoo(historic, order.by = historic$Date)
+dat_formatted <- window(dat_formatted, start = mstart, end = mend)
+historic <- as.data.frame(dat_formatted)
 # add dates
 historic[,c('yr', 'mo', 'da')] <- cbind(year(as.Date(historic$Date)),
                                          month(as.Date(historic$Date)),
                                          day(as.Date(historic$Date)))
+# zoo clobbers the number type this restores it
+historic$X_00060_00003 <- as.numeric(historic$X_00060_00003)
 historic$Qout <- historic$X_00060_00003 * area_factor
 historic$area_sqmi <- gage_info$drain_area_va
 historic$thisdate <- historic$Date
@@ -59,5 +64,10 @@ historic$wd_cumulative_mgd <- 0.0
 historic$Runit <- historic$Qout / gage_info$drain_area_va
 # this needs to create an epoch...
 # historic$timestamp <- as.POSIXct(historic$Date)
-
+if ( is.logical(mstart) ) {
+  mstart <- min(historic$thisdate)
+}
+if ( is.logical(mend) ) {
+  mend <- max(historic$thisdate)
+}
 write.csv(historic, outfile, row.names=FALSE)
