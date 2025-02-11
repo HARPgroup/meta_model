@@ -1,0 +1,11 @@
+#!/bin/bash
+
+. $META_MODEL_ROOT/models/om/om.config
+runid=$scenario
+echo "Getting object_class: Rscript $META_MODEL_ROOT/scripts/rest/get_property.R dh_properties $pid object_class propcode"
+object_class=`Rscript $META_MODEL_ROOT/scripts/rest/get_property.R dh_properties $pid object_class propcode`
+
+# We use "scenario_name" below since it has the prefix "runid_" for dh storage
+echo "Sumarizing container: $META_MODEL_ROOT/scripts/om/summarize_element $elid $scenario $model_version"
+$META_MODEL_ROOT/scripts/om/summarize_element $elid $scenario $model_version
+
