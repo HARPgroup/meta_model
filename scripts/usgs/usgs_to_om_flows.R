@@ -46,9 +46,9 @@ area_factor <- as.numeric(area_reach) / gage_info$drain_area_va
 historic$X_00060_00003 <- historic$X_00060_00003 * area_factor
 #gage_flows <- zoo(as.numeric(as.character( historic$X_00060_00003 )), order.by = as.POSIXct(historic$Date));
 # add dates
-historic[,c('yr', 'mo', 'da')] <- cbind(year(as.Date(flow_data$Date)),
-                                         month(as.Date(flow_data$Date)),
-                                         day(as.Date(flow_data$Date)))
+historic[,c('yr', 'mo', 'da')] <- cbind(year(as.Date(historic$Date)),
+                                         month(as.Date(historic$Date)),
+                                         day(as.Date(historic$Date)))
 historic$Qout <- historic$X_00060_00003 * area_factor
 historic$area_sqmi <- gage_info$drain_area_va
 historic$thisdate <- historic$Date
