@@ -27,7 +27,7 @@ omsite = "http://deq1.bse.vt.edu:81"
 # river_seg <- 'OR1_7700_7980'
 # scenario_name <- 'hsp2_2022'
 # hydr_file_path <- '/media/model/p532/out/river/hsp2_2022/hydr/OR1_7700_7980_hydr.csv'
-
+# argst <- c("PM7_4581_4580","pubsheds", "http://deq1.bse.vt.edu:81/p6/out/river/pubsheds/hydr/PM7_4581_4580_hydrd_wy.csv","cbp-6.1","vahydro")
 # Accepting command arguments:
 argst <- commandArgs(trailingOnly = T)
 river_seg <- argst[1]
@@ -279,46 +279,49 @@ vahydro_post_metric_to_scenprop(model_scenario$pid, 'om_class_Constant', NULL, '
 
 # L90, l30, l07, l01
 #Qout_zoo <- zoo(as.numeric(hydr$Qout), order.by = hydr$index)
-Qout_g2 <- data.frame(group2(hydr$Qout)) #doesn't work when index of hydr is non-numeric 
-l90 <- Qout_g2["X90.Day.Min"];
-ndx = which.min(as.numeric(l90[,"X90.Day.Min"]));
-l90_Qout = round(Qout_g2[ndx,]$"X90.Day.Min",6);
-l90_year = Qout_g2[ndx,]$"year";
+iout <- fn_iha_flow_extreme(flows, "1 Day Max")
+h1_Qout <- iout[1]
+h1_year <- iout[2]
+vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'max1_Qout', h1_Qout, ds)
+vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'max1_year', h1_year, ds)
+# h3
+iout <- iha_flow_extreme(flows, "3 Day Max")
+h3_Qout <- iout[1]
+h3_year <- iout[2]
+vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'max3_Qout', h3_Qout, ds)
+vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'max3_year', h3_year, ds)
 
-if (is.na(l90_Qout)) {
-  l90_Qout = 0.0
-  l90_year = 0
-}
+# l90
+iout <- iha_flow_extreme(flows, "90 Day Min")
+l90_Qout <- iout[1]
+l90_year <- iout[2]
+vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'l90_Qout', l90_Qout, ds)
+vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'l90_year', l90_year, ds)
 
-l30 <- Qout_g2["X30.Day.Min"];
-ndx = which.min(as.numeric(l30[,"X30.Day.Min"]));
-l30_Qout = round(Qout_g2[ndx,]$"X30.Day.Min",6);
-l30_year = Qout_g2[ndx,]$"year";
+flows <- zoo(as.numeric(as.character( hydr$Qout )), order.by = index(hydr))
+iout <- iha_flow_extreme(flows, "30 Day Min")
+l30_Qout <- iout[1]
+l30_year <- iout[2]
+vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'l30_Qout', l30_Qout, ds)
+vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'l30_year', l30_year, ds)
+iout <- iha_flow_extreme(flows, "7 Day Min")
+l7_Qout <- iout[1]
+l7_year <- iout[2]
+vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'l07_Qout', l7_Qout, ds)
+vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'l07_year', l7_year, ds)
 
-if (is.na(l30_Qout)) {
-  l30_Qout = 0.0
-  l30_year = 0
-}
+iout <- iha_flow_extreme(flows, "3 Day Min")
+l3_Qout <- iout[1]
+l3_year <- iout[2]
+vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'l03_Qout', l3_Qout, ds)
+vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'l03_year', l3_year, ds)
 
-l07 <- Qout_g2["X7.Day.Min"];
-ndx = which.min(as.numeric(l07[,"X7.Day.Min"]));
-l07_Qout = round(Qout_g2[ndx,]$"X7.Day.Min",6);
-l07_year = Qout_g2[ndx,]$"year";
+iout <- iha_flow_extreme(flows, "1 Day Min")
+l1_Qout <- iout[1]
+l1_year <- iout[2]
+vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'l01_Qout', l1_Qout, ds)
+vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'l01_year', l1_year, ds)
 
-if (is.na(l07_Qout)) {
-  l07_Qout = 0.0
-  l07_year = 0
-}
-
-l01 <- Qout_g2["X1.Day.Min"];
-ndx = which.min(as.numeric(l01[,"X1.Day.Min"]));
-l01_Qout = round(Qout_g2[ndx,]$"X1.Day.Min",6);
-l01_year = Qout_g2[ndx,]$"year";
-
-if (is.na(l01_Qout)) {
-  l01_Qout = 0.0
-  l01_year = 0
-}
 
 # alf
 fn_iha_mlf <- function(zoots, targetmo) {
