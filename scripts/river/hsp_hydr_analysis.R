@@ -278,7 +278,8 @@ vahydro_post_metric_to_scenprop(model_scenario$pid, 'om_class_Constant', NULL, '
 vahydro_post_metric_to_scenprop(model_scenario$pid, 'om_class_Constant', NULL, 'unmet_demand_mgd', unmet_demand_mgd, ds)
 
 # L90, l30, l07, l01
-#Qout_zoo <- zoo(as.numeric(hydr$Qout), order.by = hydr$index)
+# h1
+flows <- zoo(as.numeric(as.character( hydr$Qout )), order.by = index(hydr))
 iout <- fn_iha_flow_extreme(flows, "1 Day Max")
 h1_Qout <- iout[1]
 h1_year <- iout[2]
@@ -298,7 +299,6 @@ l90_year <- iout[2]
 vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'l90_Qout', l90_Qout, ds)
 vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'l90_year', l90_year, ds)
 
-flows <- zoo(as.numeric(as.character( hydr$Qout )), order.by = index(hydr))
 iout <- iha_flow_extreme(flows, "30 Day Min")
 l30_Qout <- iout[1]
 l30_year <- iout[2]
