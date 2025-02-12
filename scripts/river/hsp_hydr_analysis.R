@@ -280,7 +280,7 @@ vahydro_post_metric_to_scenprop(model_scenario$pid, 'om_class_Constant', NULL, '
 # L90, l30, l07, l01
 # h1
 flows <- zoo(as.numeric(as.character( hydr$Qout )), order.by = index(hydr))
-iout <- fn_fn_iha_flow_extreme(flows, "1 Day Max")
+iout <- fn_iha_flow_extreme(flows, "1 Day Max")
 h1_Qout <- iout[1]
 h1_year <- iout[2]
 vahydro_post_metric_to_scenprop(model_scenario$pid, 'om_class_Constant', NULL, 'max1_Qout', h1_Qout, ds)
