@@ -1,9 +1,9 @@
 #Creates the appropriate model and scenario properties for a given geo run and
 #stores ratings:
 # Example Inputs:
-# coverage_hydrocode <- "cbp6_met_coverage"
-# coverage_ftype <- 'cbp_met_grid'
-# coverage_bundle <- 'landunit'
+# coverage_hydrocode <- "usgs_ws_02021500"
+# coverage_bundle <- 'watershed'
+# coverage_ftype <- 'usgs_full_drainage'
 # model_version <- 'met-1.0'
 # rankingPropName <- 'simple_lm_PRISM'
 # amalgamatePropName <- 'amalgamate_simple_lm'
@@ -72,7 +72,7 @@ if(model$propname != model_name){
   #If nothing is found, create the new property
   if (is.na(model$pid)) {
     #Get the correct varid for the varkey used for the model
-    model$varid = ds$get_vardef(model_varkey)$varid
+    model$varid = ds$get_vardef(model_varkey)$hydroid
     message(paste("Creating new feature model", model$propname, 
                   model$varid, model$featureid, model$propcode))
     #Save property
