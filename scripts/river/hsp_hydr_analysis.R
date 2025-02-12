@@ -358,15 +358,6 @@ fn_iha_7q10 <- function(zoots) {
 # Avg 7-day low flow over a year period -- Move this? 
 x7q10 <- fn_iha_7q10(hydr$Qout)  
 
-
-vahydro_post_metric_to_scenprop(model_scenario$pid, 'om_class_Constant', NULL, 'l90_Qout', l90_Qout, ds)
-vahydro_post_metric_to_scenprop(model_scenario$pid, 'om_class_Constant', NULL, 'l90_year', l90_year, ds)
-vahydro_post_metric_to_scenprop(model_scenario$pid, 'om_class_Constant', NULL, 'l30_Qout', l30_Qout, ds)
-vahydro_post_metric_to_scenprop(model_scenario$pid, 'om_class_Constant', NULL, 'l30_year', l30_year, ds)
-vahydro_post_metric_to_scenprop(model_scenario$pid, 'om_class_Constant', NULL, 'l07_Qout', l07_Qout, ds)
-vahydro_post_metric_to_scenprop(model_scenario$pid, 'om_class_Constant', NULL, 'l07_year', l07_year, ds)
-vahydro_post_metric_to_scenprop(model_scenario$pid, 'om_class_Constant', NULL, 'l01_Qout', l01_Qout, ds)
-vahydro_post_metric_to_scenprop(model_scenario$pid, 'om_class_Constant', NULL, 'l01_year', l01_year, ds)
 vahydro_post_metric_to_scenprop(model_scenario$pid, '7q10', NULL, '7q10', x7q10, ds)
 vahydro_post_metric_to_scenprop(model_scenario$pid, 'om_class_Constant', NULL, 'ml8', alf, ds)
 vahydro_post_metric_to_scenprop(model_scenario$pid, 'om_class_Constant', NULL, 'mne9_10', sept_10, ds)
