@@ -30,7 +30,7 @@ else
     echo "TIMESTAMP HANDLING: tstime='TZ=\"$TZ\" date -d \"$TIFFTAG_DATETIME\" +'%s''"
     tsendtime=`TZ="$TZ" date -d "$TIFFTAG_DATETIME" +'%s'`
     tstime=$((tsendtime - dt))
-    cmd="$MET_SCRIPT_PATH/sh/met_raster2db.sh "${datasource}" $met_file $tstime $tsendtime "${entity_type}" "${varkey}" "${extent_hydrocode}" $db_name $db_host $DB_FORCE_OVERWRITE"
+    cmd="$MET_SCRIPT_PATH/sh/met_raster2db.sh "${datasource}" $met_file $tstime $tsendtime "${entity_type}" "${varkey}" "${extent_hydrocode}" $TILE_SIZE $db_name $db_host $DB_FORCE_OVERWRITE"
     echo "Running: $cmd"
     eval $cmd
   done
