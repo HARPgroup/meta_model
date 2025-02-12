@@ -1,0 +1,12 @@
+#!/bin/bash
+usgs_config=`find_config met.config`
+if [ "$usgs_config" = "" ]; then
+  usgs_config="$META_MODEL_ROOT/models/om/usgs/usgs.config"
+fi
+echo "Loading usgs_config from $usgs_config"
+. $usgs_config
+
+c1_script="/opt/model/om/R/summarize/usgs_weighted.R"
+echo "Sumarizing: Rscript $c1_script $usgs_pid $segment $scenario $usgs_out_file"
+Rscript $c1_script $usgs_pid $segment $scenario $usgs_out_file
+

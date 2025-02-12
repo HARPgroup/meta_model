@@ -7,6 +7,7 @@ suppressPackageStartupMessages(library(hydrotools))
 suppressPackageStartupMessages(library(jsonlite)) #for exporting values as json
 
 # Accepting command arguments:
+# argst = c("dh_properties", 7700740, "drainage_area", "propvalue")
 argst <- commandArgs(trailingOnly = T)
 entity_type <- argst[1]
 entity_id <- as.integer(argst[2])

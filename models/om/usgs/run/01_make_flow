@@ -1,0 +1,17 @@
+#!/bin/bash
+usgs_config=`find_config met.config`
+if [ "$usgs_config" = "" ]; then
+  usgs_config="$META_MODEL_ROOT/models/om/usgs/usgs.config"
+fi
+echo "Loading usgs_config from $usgs_config"
+. $usgs_config
+
+# get the drainage area for weighting
+echo "Running: Rscript $META_MODEL_ROOT/scripts/rest/get_property.R dh_properties $usgs_pid drainage_area propvalue"
+da=`Rscript $META_MODEL_ROOT/scripts/rest/get_property.R dh_properties $usgs_pid drainage_area propvalue`
+
+mscr="$META_MODEL_ROOT/scripts/usgs/usgs_to_om_flows.R"
+out_base=`basename $usgs_out_file`
+echo "Rscript $mscr $sta_id $out_base \"$START_DATE\" \"$END_DATE\" $da"
+Rscript $mscr $sta_id $out_base "$START_DATE" "$END_DATE" $da
+install -D $out_base $usgs_out_file
