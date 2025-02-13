@@ -35,8 +35,13 @@ feature <- RomFeature$new(
   ),
   TRUE
 )
+
+#Create a name for the model property to be created on the feature:
+model_name <- paste(coverage_hydrocode,model_version)
+
 # this will create or retrieve a model scenario to house this summary data.
-model <- om_model_object(ds, feature, model_version)
+model <- om_model_object(ds, feature, model_version,
+                         model_name = model_name)
 # if a matching model does not exist, this will go ahead and create one
 scenario <- om_get_model_scenario(ds, model, scenario_name)
 
