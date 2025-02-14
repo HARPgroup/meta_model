@@ -27,7 +27,7 @@ omsite = "http://deq1.bse.vt.edu:81"
 # river_seg <- 'OR1_7700_7980'
 # scenario_name <- 'hsp2_2022'
 # hydr_file_path <- '/media/model/p532/out/river/hsp2_2022/hydr/OR1_7700_7980_hydr.csv'
-# argst <- c("PM7_4581_4580","pubsheds", "http://deq1.bse.vt.edu:81/p6/out/river/pubsheds/hydr/PM7_4581_4580_hydrd_wy.csv","cbp-6.1","vahydro")
+# argst <- c("PM7_4581_4580","pubsheds", "http://deq1.bse.vt.edu:81/p6/out/river/pubsheds/hydr/PM7_4820_0001_hydrd_wy.csv","cbp-6.1","vahydro")
 # Accepting command arguments:
 argst <- commandArgs(trailingOnly = T)
 river_seg <- argst[1]
@@ -40,15 +40,21 @@ json_dir <- argst[6] #including / @ end of path
 # The hydr file columns have been modifed with a conversion script, 
 # and ps and demand were added from the 'timeseries' in the h5
 hydr <- fread(hydr_file_path)
+# count before zoo'ing
+cec <- sqldf(paste("select count(*) from hydr where year=",max(hydr$year)))
 
 #Creating vectors for index and date to be passed in later before writing
 # index <- hydr$index
 # date <- hydr$date
-
+hydr$timestamp <- as.POSIXct(hydr$index,origin="1970-01-01")
 hydr <- zoo(hydr, order.by = hydr$index)
 #trimming to water year and adding the buffer
 syear = as.integer(min(hydr$year))
 eyear = as.integer(max(hydr$year))
+# make sure we didn't overlap into a single day January 1st as this will break IHA calendar analysis
+if (cec < 365) {
+  eyear = eyear - 1
+}
 model_run_start <- min(hydr$date)
 model_run_end <- max(hydr$date)
 years <- seq(syear,eyear)
@@ -280,13 +286,13 @@ vahydro_post_metric_to_scenprop(model_scenario$pid, 'om_class_Constant', NULL, '
 # L90, l30, l07, l01
 # h1
 flows <- zoo(as.numeric(as.character( hydr$Qout )), order.by = index(hydr))
-iout <- fn_iha_flow_extreme(flows, "1 Day Max")
+iout <- fn_iha_flow_extreme(flows, "1 Day Max", "max")
 h1_Qout <- iout[1]
 h1_year <- iout[2]
 vahydro_post_metric_to_scenprop(model_scenario$pid, 'om_class_Constant', NULL, 'max1_Qout', h1_Qout, ds)
 vahydro_post_metric_to_scenprop(model_scenario$pid, 'om_class_Constant', NULL, 'max1_year', h1_year, ds)
 # h3
-iout <- fn_iha_flow_extreme(flows, "3 Day Max")
+iout <- fn_iha_flow_extreme(flows, "3 Day Max", "max")
 h3_Qout <- iout[1]
 h3_year <- iout[2]
 vahydro_post_metric_to_scenprop(model_scenario$pid, 'om_class_Constant', NULL, 'max3_Qout', h3_Qout, ds)
