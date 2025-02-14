@@ -72,7 +72,7 @@ model_status <- RomProperty$new(
   ), 
   TRUE
 )
-model_status$varid = ds$get_vardef('om_model_status')$varid
+model_status$varid = ds$get_vardef('om_model_status')$hydroid
 model_status$propvalue = model_status_flag
 model_status$propcode = model_status_msg
 model_status$save(TRUE)
