@@ -36,7 +36,7 @@ feature <- RomFeature$new(
 # this will create or retrieve a model scenario to house this summary data.
 model <- om_model_object(ds, feature, model_version)
 # if a matching model does not exist, this will go ahead and create one
-scenario <- om_get_model_scenario(model, scenario_name)
+scenario <- om_get_model_scenario(ds, model, scenario_name)
 
 met_data <- read.table(met_file, header = TRUE, sep=",")
 numrecs <- nrow(met_data)
