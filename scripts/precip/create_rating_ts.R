@@ -21,6 +21,10 @@ rating_ts_file <- argst[3]
 #there are only 12 rows in the dataset
 rating_timescale <- argst[4]
 
+# base_ts_file <- "http://deq1.bse.vt.edu:81/met/simple_lm_nldas2_tiled/precip/usgs_ws_02021500_precip_daily.csv"
+# rating_file <- "http://deq1.bse.vt.edu:81/met/simple_lm_nldas2_tiled/out/usgs_ws_02021500-ratings.csv"
+# rating_timescale <- 'weekly'
+
 # Load the data
 ratings <- read.csv(rating_file)
 base_ts <- read.csv(base_ts_file)

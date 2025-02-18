@@ -46,15 +46,21 @@ if(met_data_source == "nldas2"){
                                                    month(as.Date(hydro_daily$PRISMDate)),
                                                    day(as.Date(hydro_daily$PRISMDate)),
                                                    week(as.Date(hydro_daily$PRISMDate)))
+  
+  
   print("Summing to daily data based on PRISM day (7AM to 7AM EST")
+  #Convert the date field to character for sqldf since sqldf expects either a
+  #character or a posixct string
+  hydro_daily$PRISMDate <- as.character(hydro_daily$PRISMDate)
   hydro_daily <- sqldf(
-    "select featureid, min(obs_date) as obs_date, yr, mo, da, wk, 
+    "select featureid, PRISMDate as obs_date, yr, mo, da, wk, 
      sum(precip_in) as precip_in
    from hydro_daily 
-   group by yr, mo, da, wk
-   order by yr, mo, da, wk
+   group by yr, mo, da, wk, PRISMDate
+   order by yr, mo, da, wk, PRISMDate
   "
   )
+  
 }else if(met_data_source %in% c("PRISM","daymet")){
   # Add in more date information
   print("Adding date information")

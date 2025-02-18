@@ -17,6 +17,6 @@ else
   RATING_TS_SCALE=weekly
 fi
 
-echo "Rscript $META_MODEL_ROOT/scripts/precip/create_rating_ts.R \"$COVERAGE_PRECIP_FILE\" \"$RATING_FILE\" \"$rating_file\" \"$RATING_TS_SCALE\""
-Rscript $META_MODEL_ROOT/scripts/precip/create_rating_ts.R "$COVERAGE_PRECIP_FILE" "$RATING_FILE" "$rating_file" $RATING_TS_SCALE
+echo "Rscript $META_MODEL_ROOT/scripts/precip/create_rating_ts.R \"$DAILY_PRECIP_FILE\" \"$RATING_FILE\" \"$rating_file\" \"$RATING_TS_SCALE\""
+Rscript $META_MODEL_ROOT/scripts/precip/create_rating_ts.R "$DAILY_PRECIP_FILE" "$RATING_FILE" "$rating_file" $RATING_TS_SCALE
 install -D $rating_file $RATING_TS_FILE

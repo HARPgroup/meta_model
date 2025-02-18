@@ -7,7 +7,7 @@
 # model_version <- 'met-1.0'
 # rankingPropName <- 'simple_lm_PRISM'
 # amalgamatePropName <- 'amalgamate_simple_lm'
-# ratingsFile <- "http://deq1.bse.vt.edu:81/met/stormVol_prism/out/usgs_ws_02021500-PRISM-storm_volume-rating-ts.csv"
+# ratingsFile <- "http://deq1.bse.vt.edu:81/met/simple_lm_nldas2_tiled/out/usgs_ws_02021500-ratings.csv"
 
 
 #Load in hydrotools and connect to REST
@@ -98,8 +98,8 @@ if(!is.na(pathToWrite) & !is.na(ratingsFile)){
   
   #Convert the ratings start and end dates to seconds after epoch to insert into
   #DB
-  ratings$start_date_sec <- as.numeric(as.POSIXct(ratings$start_date,tz = "EST"))
-  ratings$end_date_sec <- as.numeric(as.POSIXct(ratings$end_date,tz = "EST"))
+  ratings$start_date_sec <- as.numeric(as.POSIXct(paste0(ratings$start_date," 00:00:00"),tz = "EST"))
+  ratings$end_date_sec <- as.numeric(as.POSIXct(paste0(ratings$end_date," 23:59:59"),tz = "EST"))
   
   #Add featureid and entity_type to ratings for proper export to dh_timeseries
   ratings$featureid <- rankingScenario$pid
