@@ -40,6 +40,7 @@ if(met_data_source == "nldas2"){
   hydro_daily$PRISMDate <- as.Date(hydro_daily$obs_date)
   hydro_daily$PRISMDate[hydro_daily$PRISMDayhr <= 16] <- hydro_daily$PRISMDate[hydro_daily$PRISMDayhr <= 16] + 1
   
+  
   # Add in more date information
   print("Adding date information")
   hydro_daily[,c('yr', 'mo', 'da', 'wk')] <- cbind(year(as.Date(hydro_daily$PRISMDate)),

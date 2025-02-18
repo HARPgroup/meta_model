@@ -57,10 +57,10 @@ WITH dailyRating as ( \n
 			generate_series(date '${START_DATE}'+1, date '${END_DATE}'+1, '1 day')::date as END_DATE \n
 	) as basets
 	LEFT JOIN dh_timeseries as ts \n
-	ON (basets.START_DATE = to_timestamp(ts.tsendtime)::date OR \n
+	ON ( \n
 		(basets.START_DATE >= to_timestamp(ts.tstime)::date AND  \n
 		basets.END_DATE <= to_timestamp(ts.tsendtime)::date) \n
-		) \n
+	) \n
 	LEFT JOIN dh_properties as scenProp \n
 	ON ts.featureid = scenProp.pid \n
 	LEFT JOIN dh_properties as modelProp  \n
