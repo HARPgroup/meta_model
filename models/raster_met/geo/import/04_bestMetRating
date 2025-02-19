@@ -43,12 +43,13 @@ WHERE varid = :ratings  \n
 AND entity_type = 'dh_properties' \n
 AND featureid = :scenariopid; \n
 \n
+
 WITH dailyRating as ( \n
 	SELECT modelProp.featureid as featureid, \n
 	CASE \n
-		WHEN ts.tsvalue IS NOT NULL THEN scenProp.pid  \n
+		WHEN ts.tsvalue IS NOT NULL THEN scenPropVarDef.hydroid  \n
 		ELSE NULL  \n
-	END as pid, \n
+	END as propname, \n
 	basets.START_DATE, \n
 	basets.END_DATE, \n
 	ts.tsvalue as tsvalue \n
@@ -65,9 +66,17 @@ WITH dailyRating as ( \n
 	ON ts.featureid = scenProp.pid \n
 	LEFT JOIN dh_properties as modelProp  \n
 	ON scenProp.featureid = modelProp.pid
+	LEFT JOIN dh_properties as scenVarProp \n
+	ON scenVarProp.featureid = scenProp.pid \n
+	LEFT JOIN dh_variabledefinition as scenPropVarDef \n
+	ON scenPropVarDef.propcode = scenVarDef.varkey \n
+	LEFT JOIN dh_variabledefinition as scenVarDef \n
+	ON scenVarProp.vaird = scenVarDef.hydroid \n
 	WHERE modelProp.propcode = :'metModel' \n
 	AND scenProp.propname IN (${SCENARIOS_TO_RANK}) \n
 	AND modelProp.featureid = :coveragefeatureid \n
+	AND scenVarProp.propname = 'Met Data Varkey'
+	AND scenVarDef.varkey = 'spatial_data_source'
 	ORDER BY basets.START_DATE \n
 ), \n
 maxRating AS ( \n
@@ -82,7 +91,9 @@ bestRating AS ( \n
 	SELECT dailyRating.featureid AS featureid, \n
     extract(epoch FROM dailyRating.START_DATE::timestamptz) as tstime, \n
     extract(epoch FROM dailyRating.END_DATE::timestamptz) as tsendtime, \n
-	dailyRating.pid as tsvalue \n
+	CASE 
+		WHEN dailyRating.propname = 'simple_lm_PRISM' THEN 
+	END as tsvalue
 	FROM dailyRating \n
 	INNER JOIN maxRating \n
 	ON dailyRating.START_DATE = maxRating.START_DATE \n

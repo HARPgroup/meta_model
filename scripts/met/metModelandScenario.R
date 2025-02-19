@@ -8,7 +8,7 @@
 # rankingPropName <- 'simple_lm_PRISM'
 # amalgamatePropName <- 'amalgamate_simple_lm'
 # ratingsFile <- "http://deq1.bse.vt.edu:81/met/simple_lm_nldas2_tiled/out/usgs_ws_02021500-ratings.csv"
-
+# varkey <- "prism_mod_daily"
 
 #Load in hydrotools and connect to REST
 library(hydrotools)
@@ -35,6 +35,8 @@ amalgamatePropName <- argst[6]
 ratingsFile <- argst[7]
 #Area to write updated csv file to:
 pathToWrite <- argst[8]
+#A varkey that represents the "base" data associated with the model scenario
+varkey <- argst[9]
 
 # load the base feature for the coverage using romFeature and ds:
 message(paste("Searching for feature hydrocode=", coverage_hydrocode,"with ftype",coverage_ftype))
@@ -85,6 +87,20 @@ if(model$propname != model_name){
 message(paste("Creating/finding model scenario on", model$pid, "with propname =",rankingPropName))
 rankingScenario <- om_get_model_scenario(ds, model, rankingPropName)
 message(paste("Ranking Scenario property with propname =",rankingScenario$propname," created/found with pid =",rankingScenario$pid))
+
+# this will create or retrieve a scenario property to store the varkey that is
+# associated with this scenario propname
+varkeyScenProp <- RomProperty$new(ds,config = list(featureid = rankingScenario$pid,
+                                                   propname = "Met Data Varkey",
+                                                   propcode = varkey,
+                                                   varid = ds$get_vardef("spatial_data_source")$hydroid),
+                                  load_remote = TRUE
+)
+#If no property was found, then save and push to remote
+if(is.null(varkeyScenProp$pid) || is.na(varkeyScenProp$pid)){
+  varkeyScenProp$save(push_remote = TRUE)
+}
+
 
 # this will create or retrieve a model scenario to house the data selected by amalgamate
 message(paste("Creating/finding model scenario on", model$pid, "with propname =",amalgamatePropName))
