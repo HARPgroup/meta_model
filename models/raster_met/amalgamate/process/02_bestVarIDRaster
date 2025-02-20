@@ -81,10 +81,13 @@ WITH usgsCoverage as (  \n
 )  \n
 ,bestData as (  \n
 	SELECT cov.hydroid,cov.hydrocode,cov.tstime,cov.tsendtime,  \n
-	ST_SetValue(  \n
-		st_clip(rt.rast, cov.dh_geofield_geom),  \n
-		1, ST_Buffer(ST_ConvexHull(cov.dh_geofield_geom),0.125), cov.dataID  \n
-	) as rast  \n
+	st_clip( \n
+		ST_SetValue( \n
+			rt.rast,1,  \n
+			ST_Buffer(ST_ConvexHull(cov.dh_geofield_geom),0.125),  \n
+			cov.dataID \n
+		), cov.dh_geofield_geom \n
+	) as rast \n
 	FROM usgsCoverage as cov  \n
 	LEFT JOIN (select rast from raster_templates where varkey = :'resample_varkey') as rt  \n
 	ON 1 = 1  \n
