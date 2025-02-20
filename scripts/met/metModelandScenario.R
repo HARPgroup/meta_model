@@ -100,6 +100,9 @@ varkeyScenProp <- RomProperty$new(ds,config = list(featureid = rankingScenario$p
 if(is.null(varkeyScenProp$pid) || is.na(varkeyScenProp$pid)){
   varkeyScenProp$save(push_remote = TRUE)
 }
+message(paste("Scenario met source variable key saved with propname =",
+              varkeyScenProp$propname,"and propcode = ",varkeyScenProp$propcode,
+              "under pid =",varkeyScenProp$pid))
 
 
 # this will create or retrieve a model scenario to house the data selected by amalgamate
