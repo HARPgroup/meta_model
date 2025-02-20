@@ -36,7 +36,7 @@ on feat.hydroid = model.featureid \n
 WHERE feat.hydroid = :'covid'  \n
 and scen.propname = :'amalgamate_scenario' \\gset \n
 
-SELECT hydroid AS ratings FROM dh_variabledefinition WHERE varkey = :'ratingsVarkey' \\gset \n
+SELECT hydroid AS ratings FROM dh_variabledefinition WHERE varkey = :'ratings_varkey' \\gset \n
 
 DELETE FROM dh_timeseries_weather \n
 WHERE varid = :ratings  \n
