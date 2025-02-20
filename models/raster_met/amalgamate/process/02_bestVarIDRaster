@@ -44,64 +44,64 @@ AND entity_type = 'dh_properties' \n
 AND featureid = :scenariopid; \n
 \n
 
-WITH usgsCoverage as (
-	SELECT f.hydroid,f.hydrocode,
-		ts.tstime,
-		ts.tsendtime,
-		ts.tsvalue as dataID,
-		bestVarkey.varkey as dataVarkey,
-		ST_AREA(f.dh_geofield_geom) as covArea
-		,f.dh_geofield_geom as dh_geofield_geom
-	FROM dh_feature_fielded as f
-	LEFT JOIN dh_properties AS model
-	ON model.featureid = f.hydroid
-	LEFT JOIN dh_properties as scen
-	ON scen.featureid = model.pid
-	LEFT JOIN dh_timeseries as ts
-	ON ts.featureid = scen.pid
-	LEFT JOIN dh_variabledefinition as v
-	on v.hydroid = ts.varid
-	LEFT JOIN dh_variabledefinition as bestVarkey
-	on bestVarkey.hydroid = ts.tsvalue
-	WHERE f.bundle = :'coverage_bundle' AND f.ftype = :'coverage_ftype'
-		AND model.propname ilike '%${MET_MODEL_VERSION}'
-		AND v.varkey = :'ratings_varkey'
-		AND scen.propname = :'amalgamate_scenario'
-		AND ts.tsendtime = :'tsendin'
-	ORDER BY covArea DESC
-)
-,backgroundTemplate as (
-	SELECT ST_SetValue(rt.rast, 1, ST_ConvexHull(rt.rast), v.hydroid) as rast
-	FROM dh_variabledefinition as v
-	LEFT JOIN (select rast from raster_templates where varkey = :'resample_varkey') as rt
-	ON 1 = 1
-	WHERE v.varkey = :'background_varkey'
-)
-,bestData as (
-	SELECT cov.hydroid,cov.hydrocode,cov.tstime,cov.tsendtime,
-	ST_SetValue(
-		st_clip(rt.rast, cov.dh_geofield_geom),
-		1, ST_Buffer(ST_ConvexHull(cov.dh_geofield_geom),0.125), cov.dataID
-	) as rast
-	FROM usgsCoverage as cov
-	LEFT JOIN (select rast from raster_templates where varkey = :'resample_varkey') as rt
-	ON 1 = 1
-)
-,amalgamateUnion as (
-	SELECT ST_union(rast,'LAST') as rast
-	FROM bestData
-)
-,finalRast as (
-	SELECT ST_union(fullUnion.rast,'LAST') as rast
-	FROM (
-		SELECT rast FROM backgroundTemplate
-		UNION ALL
-		SELECT rast FROM amalgamateUnion 
-	) as fullUnion
-)
+WITH usgsCoverage as (  \n
+	SELECT f.hydroid,f.hydrocode,  \n
+		ts.tstime,  \n
+		ts.tsendtime,  \n
+		ts.tsvalue as dataID,  \n
+		bestVarkey.varkey as dataVarkey,  \n
+		ST_AREA(f.dh_geofield_geom) as covArea  \n
+		,f.dh_geofield_geom as dh_geofield_geom  \n
+	FROM dh_feature_fielded as f  \n
+	LEFT JOIN dh_properties AS model  \n
+	ON model.featureid = f.hydroid  \n
+	LEFT JOIN dh_properties as scen  \n
+	ON scen.featureid = model.pid  \n
+	LEFT JOIN dh_timeseries as ts  \n
+	ON ts.featureid = scen.pid  \n
+	LEFT JOIN dh_variabledefinition as v  \n
+	on v.hydroid = ts.varid  \n
+	LEFT JOIN dh_variabledefinition as bestVarkey  \n
+	on bestVarkey.hydroid = ts.tsvalue  \n
+	WHERE f.bundle = :'coverage_bundle' AND f.ftype = :'coverage_ftype'  \n
+		AND model.propname ilike '%${MET_MODEL_VERSION}'  \n
+		AND v.varkey = :'ratings_varkey'  \n
+		AND scen.propname = :'amalgamate_scenario'  \n
+		AND ts.tsendtime = :'tsendin'  \n
+	ORDER BY covArea DESC  \n
+)  \n
+,backgroundTemplate as (  \n
+	SELECT ST_SetValue(rt.rast, 1, ST_ConvexHull(rt.rast), v.hydroid) as rast  \n
+	FROM dh_variabledefinition as v  \n
+	LEFT JOIN (select rast from raster_templates where varkey = :'resample_varkey') as rt  \n
+	ON 1 = 1  \n
+	WHERE v.varkey = :'background_varkey'  \n
+)  \n
+,bestData as (  \n
+	SELECT cov.hydroid,cov.hydrocode,cov.tstime,cov.tsendtime,  \n
+	ST_SetValue(  \n
+		st_clip(rt.rast, cov.dh_geofield_geom),  \n
+		1, ST_Buffer(ST_ConvexHull(cov.dh_geofield_geom),0.125), cov.dataID  \n
+	) as rast  \n
+	FROM usgsCoverage as cov  \n
+	LEFT JOIN (select rast from raster_templates where varkey = :'resample_varkey') as rt  \n
+	ON 1 = 1  \n
+)  \n
+,amalgamateUnion as (  \n
+	SELECT ST_union(rast,'LAST') as rast  \n
+	FROM bestData  \n
+)  \n
+,finalRast as (  \n
+	SELECT ST_union(fullUnion.rast,'LAST') as rast  \n
+	FROM (  \n
+		SELECT rast FROM backgroundTemplate  \n
+		UNION ALL  \n
+		SELECT rast FROM amalgamateUnion   \n
+	) as fullUnion  \n
+)  \n
 insert into dh_timeseries_weather (tstime,tsendtime, featureid, entity_type, rast, bbox, varid) \n
-select :tsstartin,:tsendin,:scenariopid,'dh_properties',
-fr.rast, ST_ConvexHull(fr.rast), :ratings
+select :tsstartin,:tsendin,:scenariopid,'dh_properties',  \n
+fr.rast, ST_ConvexHull(fr.rast), :ratings  \n
 FROM finalRast as fr
 "
 
