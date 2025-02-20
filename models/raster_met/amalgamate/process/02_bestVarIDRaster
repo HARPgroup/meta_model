@@ -15,12 +15,35 @@ fi
 #Then, union the rasters to get a raster in which the "background" is the nldasFullDayResamp and everything else is 
 #the best fit raster
 bestraster_sql="
-\\set tsendin '1582002000' \n
-\\set resample_varkey 'daymet_mod_daily' \n
-\\set amalgamate_varkey 'amalgamate_simple_lm' \n
-\\set background_varkey 'nldas2_precip_hourly_tiled_16x16' \n
-\\set ratings_varkey 'met_rating' \n
-select hydroid as covid from dh_feature where hydrocode = 'cbp6_met_coverage' \\gset \n
+\\set tsstartin '$TS_START_IN' \n
+\\set tsendin '$TS_END_IN' \n
+\\set resample_varkey '$RESAMPLE_VARKEY' \n
+\\set amalgamate_scenario '$AMALGAMATE_SCENARIO' \n
+\\set background_varkey '$BACKGROUND_VARKEY' \n
+\\set ratings_varkey '$RATINGS_VARKEY' \n
+\\set coverage_bundle '$COVERAGE_BUNDLE' \n
+\\set coverage_ftype '$COVERAGE_FTYPE' \n
+select hydroid as covid from dh_feature
+where hydrocode = '$EXTENT_HYDROCODE' and bundle = '$EXTENT_BUNDLE'
+AND ftype = '$EXTENT_FTYPE' \\gset \n
+
+SELECT scen.pid as scenariopid \n
+FROM dh_properties as scen \n
+LEFT JOIN dh_properties as model \n
+ON model.pid =  scen.featureid \n
+LEFT JOIN dh_feature as feat \n
+on feat.hydroid = model.featureid \n
+WHERE feat.hydroid = :'covid'  \n
+and scen.propname = :'amalgamate_scenario' \\gset \n
+
+SELECT hydroid AS ratings FROM dh_variabledefinition WHERE varkey = :'ratingsVarkey' \\gset \n
+
+DELETE FROM dh_timeseries_weather \n
+WHERE varid = :ratings  \n
+AND entity_type = 'dh_properties' \n
+AND featureid = :scenariopid; \n
+\n
+
 WITH usgsCoverage as (
 	SELECT f.hydroid,f.hydrocode,
 		ts.tstime,
@@ -40,10 +63,10 @@ WITH usgsCoverage as (
 	on v.hydroid = ts.varid
 	LEFT JOIN dh_variabledefinition as bestVarkey
 	on bestVarkey.hydroid = ts.tsvalue
-	WHERE f.bundle = 'watershed' AND f.ftype = 'usgs_full_drainage'
-		AND model.propname ilike '%met-1.0'
+	WHERE f.bundle = :'coverage_bundle' AND f.ftype = :'coverage_ftype'
+		AND model.propname ilike '%${MET_MODEL_VERSION}'
 		AND v.varkey = :'ratings_varkey'
-		AND scen.propname = :'amalgamate_varkey'
+		AND scen.propname = :'amalgamate_scenario'
 		AND ts.tsendtime = :'tsendin'
 	ORDER BY covArea DESC
 )
@@ -68,10 +91,25 @@ WITH usgsCoverage as (
 	SELECT ST_union(rast,'LAST') as rast
 	FROM bestData
 )
-SELECT ST_union(fullUnion.rast,'LAST') as rast
-FROM (
-	SELECT rast FROM backgroundTemplate
-    UNION ALL
-    SELECT rast FROM amalgamateUnion 
-) as fullUnion;
+,finalRast as (
+	SELECT ST_union(fullUnion.rast,'LAST') as rast
+	FROM (
+		SELECT rast FROM backgroundTemplate
+		UNION ALL
+		SELECT rast FROM amalgamateUnion 
+	) as fullUnion
+)
+insert into dh_timeseries_weather (tstime,tsendtime, featureid, entity_type, rast, bbox, varid) \n
+select :tsstartin,:tsendin,:scenariopid,'dh_properties',
+fr.rast, ST_ConvexHull(fr.rast), :ratings
+FROM finalRast as fr
 "
+
+# turn off the expansion of the asterisk
+set -f
+#Delete previous dh_timeseries entries
+echo "Writing sql insert to $VARID_SQL_FILE"
+echo $bestraster_sql
+echo -e $bestraster_sql > $VARID_SQL_FILE 
+#cat $VARID_SQL_FILE | psql -h $db_host $db_name
+echo "Finshed running query."

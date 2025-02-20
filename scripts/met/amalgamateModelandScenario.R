@@ -47,7 +47,6 @@ message(paste("Creating/finding model property on", feature$hydroid, "with propn
 # romProperty
 model <- om_model_object(ds, feature, model_version, 
                          model_name = model_name)
-message(paste("Model property with propname =",model$propname," created/found with pid =",model$pid))
 #If there are multiple model properties, om_model_object returns the first
 #without checking propname. This will instead create a new property if the model
 #name doesn't match the returned propname
@@ -69,6 +68,7 @@ if(model$propname != model_name){
     model$save(TRUE)
   }
 }
+message(paste("Model property with propname =",model$propname," created/found with pid =",model$pid))
 
 # this will create or retrieve a model scenario to house the data selected by amalgamate
 message(paste("Creating/finding model scenario on", model$pid, "with propname =",amalgamatePropName))
