@@ -41,6 +41,8 @@ SELECT hydroid AS ratings FROM dh_variabledefinition WHERE varkey = :'ratings_va
 DELETE FROM dh_timeseries_weather \n
 WHERE varid = :ratings  \n
 AND entity_type = 'dh_properties' \n
+AND tstime = :tsstartin \n
+AND tsendtime = :tsendin \n
 AND featureid = :scenariopid; \n
 \n
 
