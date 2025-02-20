@@ -64,14 +64,14 @@ WITH dailyRating as ( \n
 	) \n
 	LEFT JOIN dh_properties as scenProp \n
 	ON ts.featureid = scenProp.pid \n
-	LEFT JOIN dh_properties as modelProp  \n
-	ON scenProp.featureid = modelProp.pid
+	LEFT JOIN dh_properties as modelProp \n
+	ON scenProp.featureid = modelProp.pid  \n
 	LEFT JOIN dh_properties as scenVarProp \n
 	ON scenVarProp.featureid = scenProp.pid \n
 	LEFT JOIN dh_variabledefinition as scenPropVarDef \n
-	ON scenPropVarDef.propcode = scenVarDef.varkey \n
+	ON scenVarProp.propcode = scenPropVarDef.varkey \n
 	LEFT JOIN dh_variabledefinition as scenVarDef \n
-	ON scenVarProp.vaird = scenVarDef.hydroid \n
+	ON scenVarProp.varid = scenVarDef.hydroid \n
 	WHERE modelProp.propcode = :'metModel' \n
 	AND scenProp.propname IN (${SCENARIOS_TO_RANK}) \n
 	AND modelProp.featureid = :coveragefeatureid \n
@@ -100,7 +100,7 @@ bestRating AS ( \n
 		maxRating.maxtsvalue IS NULL) \n
 	AND dailyRating.featureid = maxRating.featureid \n
 	GROUP BY dailyRating.featureid, dailyRating.START_DATE, \n
-		dailyRating.END_DATE, dailyRating.pid \n
+		dailyRating.END_DATE, dailyRating.scenPropVarID \n
 	ORDER BY dailyRating.featureid,dailyRating.START_DATE \n
 ) \n
  \n
