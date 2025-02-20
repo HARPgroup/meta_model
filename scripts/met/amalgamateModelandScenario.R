@@ -27,16 +27,7 @@ coverage_ftype <- argst[3]
 model_version <- argst[4] 
 #The model scenario property name specific to the workflow and defined in config
 #file
-rankingPropName <- argst[5]
-#The model scenario property name specific to the workflow and defined in config
-#file
-amalgamatePropName <- argst[6]
-#Input ratings file path to insert
-ratingsFile <- argst[7]
-#Area to write updated csv file to:
-pathToWrite <- argst[8]
-#A varkey that represents the "base" data associated with the model scenario
-varkey <- argst[9]
+amalgamatePropName <- argst[5]
 
 # load the base feature for the coverage using romFeature and ds:
 message(paste("Searching for feature hydrocode=", coverage_hydrocode,"with ftype",coverage_ftype))
@@ -82,54 +73,7 @@ if(model$propname != model_name){
   }
 }
 
-# this will create or retrieve a model scenario to house this summary data using
-# romProperty
-message(paste("Creating/finding model scenario on", model$pid, "with propname =",rankingPropName))
-rankingScenario <- om_get_model_scenario(ds, model, rankingPropName)
-message(paste("Ranking Scenario property with propname =",rankingScenario$propname," created/found with pid =",rankingScenario$pid))
-
 # this will create or retrieve a model scenario to house the data selected by amalgamate
 message(paste("Creating/finding model scenario on", model$pid, "with propname =",amalgamatePropName))
 amalgamateScenario <- om_get_model_scenario(ds, model, amalgamatePropName)
 message(paste("Amalgamate Scenario property with propname =",amalgamateScenario$propname," created/found with pid =",amalgamateScenario$pid))
-
-if(!is.na(varkey) & !is.na(varkey)){
-  # this will create or retrieve a scenario property to store the varkey that is
-  # associated with this scenario propname
-  varkeyScenProp <- RomProperty$new(ds,config = list(featureid = rankingScenario$pid,
-                                                     propname = "Met Data Varkey",
-                                                     propcode = varkey,
-                                                     varid = ds$get_vardef("spatial_data_source")$hydroid),
-                                    load_remote = TRUE
-  )
-  #If no property was found, then save and push to remote
-  if(is.null(varkeyScenProp$pid) || is.na(varkeyScenProp$pid)){
-    varkeyScenProp$save(push_remote = TRUE)
-  }
-  message(paste("Scenario met source variable key saved with propname =",
-                varkeyScenProp$propname,"and propcode = ",varkeyScenProp$propcode,
-                "under pid =",varkeyScenProp$pid))
-}
-
-if(!is.na(pathToWrite) & !is.na(ratingsFile)){
-  #Read in the ratings file
-  ratings <- read.csv(ratingsFile)
-  
-  #Convert the ratings start and end dates to seconds after epoch to insert into
-  #DB
-  ratings$start_date_sec <- as.numeric(as.POSIXct(paste0(ratings$start_date," 00:00:00"),tz = "EST"))
-  ratings$end_date_sec <- as.numeric(as.POSIXct(paste0(ratings$end_date," 23:59:59"),tz = "EST"))
-  
-  #Add featureid and entity_type to ratings for proper export to dh_timeseries
-  ratings$featureid <- rankingScenario$pid
-  ratings$entity_type <- "dh_properties"
-  #Create a nicely formatted timeseries that will be easy to export to dh_timeseries
-  out <- data.frame(tstime = as.integer(ratings$start_date_sec),
-                    tsendtime = as.integer(ratings$end_date_sec),
-                    tsvalue = ratings$rating,
-                    featureid = ratings$featureid,
-                    entity_type = ratings$entity_type)
-  #Write out the formatted timeseries
-  message(paste("Writing out formatted timeseries to",pathToWrite))
-  write.csv(out,pathToWrite,row.names = FALSE)
-}

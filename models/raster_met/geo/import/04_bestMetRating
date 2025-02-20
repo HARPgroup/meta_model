@@ -6,6 +6,9 @@ if [ "$geo_config" = "" ]; then
 fi
 . $geo_config
 
+ts_START_DATE=`date -d "${START_DATE}" +'%Y-%m-%d'`
+ts_END_DATE=`date -d "${END_DATE}" +'%Y-%m-%d'`
+
 #Establish and insert best-fit ratings. Delete existing ratings as needed.
 #Note that the ratings are expanded to a daily time series using generate_series and
 #date casts as appropriate in dailyRatings as defined in WITH
@@ -54,10 +57,10 @@ WITH dailyRating as ( \n
 	basets.END_DATE, \n
 	ts.tsvalue as tsvalue \n
 	FROM ( \n
-		SELECT generate_series(extract(epoch from '1984-01-01 00:00:00-05'::timestamptz), \n
-				extract(epoch from '2023-12-31 00:00:00-05'::timestamptz), 86400) as START_DATE, \n
-			generate_series(extract(epoch from '1984-01-01 23:59:59-05'::timestamptz),  \n
-				extract(epoch from '2023-12-31 23:59:59-05'::timestamptz), 86400) as END_DATE \n
+		SELECT generate_series(extract(epoch from '${ts_START_DATE} 00:00:00-05'::timestamptz), \n
+				extract(epoch from '${ts_END_DATE} 00:00:00-05'::timestamptz), 86400) as START_DATE, \n
+			generate_series(extract(epoch from '${ts_START_DATE} 23:59:59-05'::timestamptz),  \n
+				extract(epoch from '${ts_END_DATE} 23:59:59-05'::timestamptz), 86400) as END_DATE \n
 	) as basets \n
 	LEFT JOIN dh_timeseries as ts \n 
 	ON ( \n 
