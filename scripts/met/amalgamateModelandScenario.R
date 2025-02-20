@@ -1,14 +1,11 @@
 #Creates the appropriate model and scenario properties for a given geo run and
 #stores ratings:
 # Example Inputs:
-# coverage_hydrocode <- "usgs_ws_02021500"
-# coverage_bundle <- 'watershed'
-# coverage_ftype <- 'usgs_full_drainage'
+# coverage_hydrocode <- "cbp6_met_coverage"
+# coverage_bundle <- 'landunit'
+# coverage_ftype <- 'cbp_met_grid'
 # model_version <- 'met-1.0'
-# rankingPropName <- 'simple_lm_PRISM'
-# amalgamatePropName <- 'amalgamate_simple_lm'
-# ratingsFile <- "http://deq1.bse.vt.edu:81/met/simple_lm_nldas2_tiled/out/usgs_ws_02021500-ratings.csv"
-# varkey <- "prism_mod_daily"
+# amalgamatePropName <- "amalgamate_simple_lm"
 
 #Load in hydrotools and connect to REST
 library(hydrotools)
