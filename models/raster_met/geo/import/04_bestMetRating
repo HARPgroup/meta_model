@@ -49,7 +49,7 @@ WITH dailyRating as ( \n
 	CASE \n
 		WHEN ts.tsvalue IS NOT NULL THEN scenPropVarDef.hydroid  \n
 		ELSE NULL  \n
-	END as propname, \n
+	END as scenPropVarID, \n
 	basets.START_DATE, \n
 	basets.END_DATE, \n
 	ts.tsvalue as tsvalue \n
@@ -91,9 +91,7 @@ bestRating AS ( \n
 	SELECT dailyRating.featureid AS featureid, \n
     extract(epoch FROM dailyRating.START_DATE::timestamptz) as tstime, \n
     extract(epoch FROM dailyRating.END_DATE::timestamptz) as tsendtime, \n
-	CASE 
-		WHEN dailyRating.propname = 'simple_lm_PRISM' THEN 
-	END as tsvalue
+	dailyRating.scenPropVarID as tsvalue
 	FROM dailyRating \n
 	INNER JOIN maxRating \n
 	ON dailyRating.START_DATE = maxRating.START_DATE \n
