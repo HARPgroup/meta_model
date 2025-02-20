@@ -7,7 +7,7 @@ fi
 . $amalgamate_config
 
 #Add a model property and the appropriate scenario property onto the coverage
-cmd="Rscript $META_MODEL_ROOT/scripts/met/metModelandScenario.R $EXTENT_HYDROCODE $EXTENT_BUNDLE $EXTENT_FTYPE $MET_MODEL_VERSION $AMALGAMATE_SCENARIO"
+cmd="Rscript $META_MODEL_ROOT/scripts/met/amalgamateModelandScenario.R $EXTENT_HYDROCODE $EXTENT_BUNDLE $EXTENT_FTYPE $MET_MODEL_VERSION $AMALGAMATE_SCENARIO"
 echo "Running: $cmd"
 eval $cmd
 
