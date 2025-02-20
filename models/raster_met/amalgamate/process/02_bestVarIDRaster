@@ -102,7 +102,7 @@ WITH usgsCoverage as (  \n
 insert into dh_timeseries_weather (tstime,tsendtime, featureid, entity_type, rast, bbox, varid) \n
 select :tsstartin,:tsendin,:scenariopid,'dh_properties',  \n
 fr.rast, ST_ConvexHull(fr.rast), :ratings  \n
-FROM finalRast as fr
+FROM finalRast as fr;
 "
 
 # turn off the expansion of the asterisk
@@ -111,5 +111,5 @@ set -f
 echo "Writing sql insert to $VARID_SQL_FILE"
 echo $bestraster_sql
 echo -e $bestraster_sql > $VARID_SQL_FILE 
-#cat $VARID_SQL_FILE | psql -h $db_host $db_name
+cat $VARID_SQL_FILE | psql -h $db_host $db_name
 echo "Finshed running query."
