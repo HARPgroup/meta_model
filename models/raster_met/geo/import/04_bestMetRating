@@ -9,6 +9,10 @@ fi
 ts_START_DATE=`date -d "${START_DATE}" +'%Y-%m-%d'`
 ts_END_DATE=`date -d "${END_DATE}" +'%Y-%m-%d'`
 
+if [ "$MET_DATA_SOURCE" = "nldas2" ]; then
+  ts_END_DATE=`date --date "$ts_END_DATE - 1 day" +'%Y-%m-%d'`
+fi
+
 #Establish and insert best-fit ratings. Delete existing ratings as needed.
 #Note that the ratings are expanded to a daily time series using generate_series and
 #date casts as appropriate in dailyRatings as defined in WITH
