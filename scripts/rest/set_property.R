@@ -41,7 +41,7 @@ if (entity_type == "dh_feature") {
   parent = RomProperty$new(ds,list(featureid=entity_id))
 }
 
-if ( (parent == FALSE)) {
+if (is.logical(parent)) {
   message(paste("Cannot handle entity_type ",entity_type,". quitting."))
   q()
 }
