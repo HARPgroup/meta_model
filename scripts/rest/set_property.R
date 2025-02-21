@@ -15,7 +15,7 @@ if (length(argst) < 4) {
 }
 entity_type <- argst[1]
 entity_id <- as.integer(argst[2])
-prop_name <- argst[3]
+propname <- argst[3]
 propvalue <- argst[4]
 if (propvalue == "NA") {
   propvalue = NA
@@ -38,7 +38,7 @@ parent = FALSE
 if (entity_type == "dh_feature") {
   parent = RomFeature$new(ds,list(hydroid=entity_id))
 } else if (entity_type == "dh_properties") {
-  parent = RomProperty$new(ds,list(featureid=entity_id))
+  parent = RomProperty$new(ds,list(pid=entity_id))
 }
 
 if (is.logical(parent)) {
