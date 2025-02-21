@@ -18,7 +18,7 @@ gage_nested <- ds$get_json_prop(gage_model$pid)
 gage_nested <- ds$get_json_prop(7701223)
 
 # for testing R om summary 
-argst <- c(7700740, "01625000_PS3_6460_6230", 400, "/media/model/met/usgs/usgs/01625000_PS3_6460_6230.out")
+argst <- c(7700740, "01625000_PS3_6460_6230", 400, "/media/model/usgs/usgs/01625000_PS3_6460_6230.out")
 argst <- c(7701272, "01619500_PU2_3090_4050", "usgs", "http://deq1.bse.vt.edu:81/usgs/usgs/01619500_PU2_3090_4050.out")
 
 # for testing the scaling method
