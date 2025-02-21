@@ -28,6 +28,14 @@ CACHE_LIST=-1
 CACHE_LEVEL=1
 CACHE_RUNID=-1
 
+# prepare the run_mode and flow_mode of the container
+scr="/usr/bin/php setprop.php $elid run_mode=\"$RUN_MODE\"";
+echo "Running: $scr $args"
+$scr
+scr="/usr/bin/php setprop.php $elid flow_mode=\"$FLOW_MODE\"";
+echo "Running: $scr $args"
+$scr
+
 scr="/usr/bin/php -f /var/www/html/om/run_model.php"
 args="$elid $scenario $RUN_TYPE $START_DATE $END_DATE $CACHE_RUNID $CACHE_LIST $CACHE_LEVEL 0 $scenario"
 
