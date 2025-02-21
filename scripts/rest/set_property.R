@@ -9,6 +9,10 @@ suppressPackageStartupMessages(library(jsonlite)) #for exporting values as json
 # Accepting command arguments:
 # argst = c("dh_properties", 7700740, "drainage_area", "propvalue")
 argst <- commandArgs(trailingOnly = T)
+if (length(argst) < 4) {
+  message("Use: set_property.R entity_type entity_id propname propvalue [propcode] [data_matrix (json string)]")
+  q()
+}
 entity_type <- argst[1]
 entity_id <- as.integer(argst[2])
 prop_name <- argst[3]
@@ -16,13 +20,19 @@ propvalue <- argst[4]
 if (propvalue == "NA") {
   propvalue = NA
 }
-propcode <- argst[5]
-if (propcode == "NA") {
-  propcode = NA
+propcode = NA
+if (length(argst) > 4) {
+  propcode <- argst[5]
+  if (propcode == "NA") {
+    propcode = NA
+  }
 }
-data_matrix <- argst[6]
-if (data_matrix == "NA") {
-  data_matrix = NA
+data_matrix=NA
+if (length(argst) > 5) {
+  data_matrix <- argst[6]
+  if (data_matrix == "NA") {
+    data_matrix = NA
+  }
 }
 parent = FALSE
 if (entity_type = "dh_feature") {
