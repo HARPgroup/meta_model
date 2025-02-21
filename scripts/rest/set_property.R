@@ -40,16 +40,20 @@ if (length(argst) > 6) {
 }
 parent = FALSE
 if (entity_type == "dh_feature") {
-  parent = RomFeature$new(ds,list(hydroid=entity_id))
+  parent = RomFeature$new(ds,list(hydroid=entity_id),TRUE)
 } else if (entity_type == "dh_properties") {
-  parent = RomProperty$new(ds,list(pid=entity_id))
+  parent = RomProperty$new(ds,list(pid=entity_id),TRUE)
 }
 
 if (is.logical(parent)) {
   message(paste("Cannot handle entity_type ",entity_type,". quitting."))
   q()
 }
-if (is.na(parent$pid)) {
+if (!("RomEntity" %in% class(parent))) {
+  message(paste("Cannot find entity of entity_type ",entity_type, "id", entity_id,". quitting."))
+  q()
+}
+if (!(parent$get_id() > 0)) {
   message(paste("Cannot find entity of entity_type ",entity_type, "id", entity_id,". quitting."))
   q()
 }
