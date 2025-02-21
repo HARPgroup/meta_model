@@ -35,9 +35,9 @@ if (length(argst) > 5) {
   }
 }
 parent = FALSE
-if (entity_type = "dh_feature") {
+if (entity_type == "dh_feature") {
   parent = RomFeature$new(ds,list(hydroid=entity_id))
-} else if (entity_type = "dh_properties") {
+} else if (entity_type == "dh_properties") {
   parent = RomProperty$new(ds,list(featureid=entity_id))
 }
 
