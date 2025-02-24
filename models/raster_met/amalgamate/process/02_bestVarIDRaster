@@ -93,6 +93,7 @@ WITH usgsCoverage as (  \n
 	FROM usgsCoverage as cov  \n
 	LEFT JOIN (select rast from raster_templates where varkey = :'resample_varkey') as rt  \n
 	ON 1 = 1  \n
+	WHERE cov.dataID IS NOT NULL \n
 )  \n
 ,amalgamateUnion as (  \n
 	SELECT ST_union(rast,'LAST') as rast  \n
