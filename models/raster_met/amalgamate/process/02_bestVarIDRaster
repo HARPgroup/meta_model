@@ -99,8 +99,8 @@ WITH usgsCoverage as (  \n
 ,finalRast as (  \n
 	SELECT ST_union(fullUnion.rast,'LAST') as rast  \n
 	FROM (  \n
-		SELECT rast FROM backgroundTemplate  \n
-		UNION ALL  \n
+	--	SELECT rast FROM backgroundTemplate  \n
+	--	UNION ALL  \n
 		SELECT rast FROM amalgamateUnion   \n
 	) as fullUnion  \n
 )  \n
