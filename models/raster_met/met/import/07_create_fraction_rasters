@@ -12,9 +12,10 @@ echo "DB_FORCE_OVERWRITE = $DB_FORCE_OVERWRITE"
 if [ -z ${DB_FORCE_OVERWRITE+x} ]; then 
   DB_FORCE_OVERWRITE=0
 fi
+ 
 
 #source Calculating Daily Fraction Rasters
-if [ $scenario == 'nldas2' ]; then
+if [ "$FRACTIONVARKEY" != "" ]; then
   if $DAILY_DEFAULT; then
     cmd="$MET_SCRIPT_PATH/sh/calc_fraction_ts_wDefault $HOURLYVARKEY $DAILYVARKEY $FRACTIONVARKEY $RASTER_SQL_FILE $db_host $db_name $END_DATETIME"
     echo "Calling Calc Fraction Raster With Design Storm"
@@ -29,6 +30,6 @@ if [ $scenario == 'nldas2' ]; then
     exit
   fi
 else
-  echo "Skipping Create Fraction Rasters"
+  echo "FRACTIONVARKEY not defined. Skipping Create Fraction Rasters"
   exit
 fi

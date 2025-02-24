@@ -13,14 +13,14 @@ if [ -z ${DB_FORCE_OVERWRITE+x} ]; then
   DB_FORCE_OVERWRITE=0
 fi
 
-#source Creating daily rasters
-if [ $scenario == 'nldas2' ]; then
+# we only do this if we are going to create a fraction ts
+if [ "$FRACTIONVARKEY" != "" ]; then
 	cmd="$MET_SCRIPT_PATH/sh/calc_daily_ts $HOURLYVARKEY $DAILYVARKEY $RASTER_SQL_FILE $db_host $db_name $END_DATETIME"
   echo "Calling Calc Daily"
   echo $cmd
   eval $cmd
   exit
 else
-  echo "Skipping Create Daily"
+  echo "FRACTIONVARKEY not defined. Skipping Create Daily"
   exit
 fi
