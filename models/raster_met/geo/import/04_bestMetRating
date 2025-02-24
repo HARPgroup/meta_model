@@ -52,10 +52,10 @@ AND featureid = :scenariopid; \n
 \n
 
 WITH dailyRating as ( \n
-	SELECT modelProp.featureid as featureid, \n
+	SELECT ts.featureid as featureid, \n
 	CASE \n
-		WHEN ts.tsvalue IS NOT NULL THEN scenPropVarDef.hydroid  \n
-		ELSE NULL  \n
+		WHEN ts.tsvalue IS NOT NULL THEN ts.hydroid \n
+		ELSE NULL \n
 	END as scenPropVarID, \n
 	basets.START_DATE, \n
 	basets.END_DATE, \n
@@ -66,27 +66,33 @@ WITH dailyRating as ( \n
 			generate_series(extract(epoch from '${ts_START_DATE} 23:59:59-05'::timestamptz),  \n
 				extract(epoch from '${ts_END_DATE} 23:59:59-05'::timestamptz), 86400) as END_DATE \n
 	) as basets \n
-	LEFT JOIN dh_timeseries as ts \n 
+	LEFT JOIN ( \n
+		SELECT modelProp.featureid as featureid, \n
+			ts.tstime,ts.tsendtime, \n
+			ts.tsvalue, \n
+			scenPropVarDef.hydroid \n
+		FROM dh_timeseries as ts \n
+		LEFT JOIN dh_properties as scenProp \n
+		ON ts.featureid = scenProp.pid \n
+		LEFT JOIN dh_properties as modelProp \n
+		ON scenProp.featureid = modelProp.pid \n
+		LEFT JOIN dh_properties as scenVarProp \n
+		ON scenVarProp.featureid = scenProp.pid \n
+		LEFT JOIN dh_variabledefinition as scenPropVarDef \n
+		ON scenVarProp.propcode = scenPropVarDef.varkey \n
+		LEFT JOIN dh_variabledefinition as scenVarDef \n
+		ON scenVarProp.varid = scenVarDef.hydroid \n
+		WHERE modelProp.propcode = :'metModel' \n
+		AND scenProp.propname IN (${SCENARIOS_TO_RANK}) \n
+		AND modelProp.featureid = :coveragefeatureid \n
+		AND scenVarProp.propname = 'Met Data Varkey' \n
+		AND scenVarDef.varkey = 'spatial_data_source' \n
+	) as ts \n
 	ON ( \n 
 		basets.START_DATE >= ts.tstime AND \n 
 		basets.END_DATE <= ts.tsendtime \n 
-	) \n 
-	LEFT JOIN dh_properties as scenProp \n
-	ON ts.featureid = scenProp.pid \n
-	LEFT JOIN dh_properties as modelProp \n
-	ON scenProp.featureid = modelProp.pid  \n
-	LEFT JOIN dh_properties as scenVarProp \n
-	ON scenVarProp.featureid = scenProp.pid \n
-	LEFT JOIN dh_variabledefinition as scenPropVarDef \n
-	ON scenVarProp.propcode = scenPropVarDef.varkey \n
-	LEFT JOIN dh_variabledefinition as scenVarDef \n
-	ON scenVarProp.varid = scenVarDef.hydroid \n
-	WHERE modelProp.propcode = :'metModel' \n
-	AND scenProp.propname IN (${SCENARIOS_TO_RANK}) \n
-	AND modelProp.featureid = :coveragefeatureid \n
-	AND scenVarProp.propname = 'Met Data Varkey' \n
-	AND scenVarDef.varkey = 'spatial_data_source' \n
-	ORDER BY basets.START_DATE \n
+	) \n
+	ORDER BY basets.START_DATE \n	
 ), \n
 maxRating AS ( \n
 	SELECT featureid as featureid, \n
@@ -107,7 +113,8 @@ bestRating AS ( \n
 	AND dailyRating.END_DATE = maxRating.END_DATE \n
 	AND (dailyRating.tsvalue = maxRating.maxtsvalue OR  \n
 		maxRating.maxtsvalue IS NULL) \n
-	AND dailyRating.featureid = maxRating.featureid \n
+	AND (dailyRating.featureid = maxRating.featureid OR \n
+		maxRating.maxtsvalue IS NULL)  \n
 	GROUP BY dailyRating.featureid, dailyRating.START_DATE, \n
 		dailyRating.END_DATE, dailyRating.scenPropVarID \n
 	ORDER BY dailyRating.featureid,dailyRating.START_DATE \n
