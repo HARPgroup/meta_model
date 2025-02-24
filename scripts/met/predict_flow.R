@@ -1,6 +1,7 @@
 suppressPackageStartupMessages(library(lubridate))
 suppressPackageStartupMessages(library(jsonlite))
 suppressPackageStartupMessages(library(R6))
+source("https://raw.githubusercontent.com/HARPgroup/meta_model/master/scripts/precip/lm_analysis_plots.R")
 
 # Arguments passed in from command line;
 #1 = The file path to the statistics output by the stormSep_USGS script for each
@@ -17,10 +18,11 @@ pathToWriteData <- args[3]
 
 stormStats <- read.csv(stormStatsPath)
 
-monthEventOut <- read_json(JSONPath)
+monthEventOut <-plotBin$new()
+monthEventOut$fromJSON(JSONPath, TRUE)
 
 # adding predicted flow to storm stats also
-stormStats[,"predicted_flow_MG"]=numeric()
+stormStats[,"predicted_flow_MG"] <- numeric()
 
 # Set start and end dtates as dates
 stormStats$startDate <- as.Date(stormStats$startDate)
