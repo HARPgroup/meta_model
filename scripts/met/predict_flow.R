@@ -40,10 +40,10 @@ predict.flow <- function(storm_data,ratings_data){
     intercept <- coefficients[1]
     slope <- coefficients[2]
     # Getting STorm Data from the correct month
-    message("Obtaining data from input month")
+    message(paste("Obtaining data from input month",i))
     storm_data_new <- subset(storm_data, beginMonth %in% month )
     # Inserting predicted flow into precip data frame (guessing column name? Units?)
-    message("Calculating predicted flow")
+    message(paste("Calculating predicted flow with slope",slope,"and intercept",intercept))
     storm_data_new$predicted_flow_MG <- slope*storm_data_new$rollDayWStorm_MG + intercept
     
     #Adding data to dataframe
