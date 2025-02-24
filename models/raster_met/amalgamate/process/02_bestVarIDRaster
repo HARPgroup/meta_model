@@ -95,7 +95,7 @@ WITH usgsCoverage as (  \n
 	ON 1 = 1  \n
 )  \n
 ,amalgamateUnion as (  \n
-	SELECT ST_union(rast,'LAST') as rast  \n
+	SELECT ST_SetBandNoDataValue(ST_union(rast,'LAST'),9999) as rast  \n
 	FROM bestData  \n
 )  \n
 ,finalRast as (  \n
