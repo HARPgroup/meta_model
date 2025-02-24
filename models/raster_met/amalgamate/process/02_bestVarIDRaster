@@ -86,7 +86,7 @@ WITH usgsCoverage as (  \n
 			rt.rast,1,  \n
 			cov.dh_geofield_geom,  \n
 			cov.dataID \n
-		), cov.dh_geofield_geom \n
+		), cov.dh_geofield_geom, 9999 \n
 	) as rast \n
 	FROM usgsCoverage as cov  \n
 	LEFT JOIN (select rast from raster_templates where varkey = :'resample_varkey') as rt  \n
@@ -95,11 +95,11 @@ WITH usgsCoverage as (  \n
 	LIMIT 3
 )  \n
 ,amalgamateUnion as (  \n
-	SELECT ST_union(rast,'SUM') as rast  \n
+	SELECT ST_union(rast,'LAST') as rast  \n
 	FROM bestData  \n
 )  \n
 ,finalRast as (  \n
-	SELECT ST_union(fullUnion.rast,'SUM') as rast  \n
+	SELECT ST_union(fullUnion.rast,'LAST') as rast  \n
 	FROM (  \n
 	--	SELECT rast FROM backgroundTemplate  \n
 	--	UNION ALL  \n
