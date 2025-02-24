@@ -82,11 +82,13 @@ WITH usgsCoverage as (  \n
 ,bestData as (  \n
 	SELECT cov.hydroid,cov.hydrocode,cov.tstime,cov.tsendtime,  \n
 	st_clip( \n
-		ST_SetValue( \n
-			rt.rast,1,  \n
-			cov.dh_geofield_geom,  \n
-			cov.dataID \n
-		), cov.dh_geofield_geom, 9999 \n
+		ST_SetBandNoDataValue(
+			ST_SetValue( \n
+				rt.rast,1,  \n
+				cov.dh_geofield_geom,  \n
+				cov.dataID \n
+			), 9999),
+		cov.dh_geofield_geom \n
 	) as rast \n
 	FROM usgsCoverage as cov  \n
 	LEFT JOIN (select rast from raster_templates where varkey = :'resample_varkey') as rt  \n
