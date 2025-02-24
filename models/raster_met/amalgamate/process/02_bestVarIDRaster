@@ -107,7 +107,8 @@ WITH usgsCoverage as (  \n
 insert into dh_timeseries_weather (tstime,tsendtime, featureid, entity_type, rast, bbox, varid) \n
 select :tsstartin,:tsendin,:scenariopid,'dh_properties',  \n
 fr.rast, ST_ConvexHull(fr.rast), :ratings  \n
-FROM finalRast as fr;
+FROM finalRast as fr
+RETURNING tid;
 "
 
 # turn off the expansion of the asterisk
