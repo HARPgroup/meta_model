@@ -92,7 +92,7 @@ WITH usgsCoverage as (  \n
 	LEFT JOIN (select rast from raster_templates where varkey = :'resample_varkey') as rt  \n
 	ON 1 = 1  \n
 	WHERE cov.dataID = 1459
-	LIMIT 10
+	LIMIT 5
 )  \n
 ,amalgamateUnion as (  \n
 	SELECT ST_union(rast,'LAST') as rast  \n
