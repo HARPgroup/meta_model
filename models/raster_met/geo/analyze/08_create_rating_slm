@@ -5,6 +5,9 @@ if [ "$geo_config" = "" ]; then
   geo_config="$META_MODEL_ROOT/models/raster_met/geo/geo.config"
 fi
 . $geo_config
+if [[ "$GEO_MET_MODEL" != "simple_lm" ]]; then
+  exit
+fi
 
 echo "Creating model rating timeseries."
 

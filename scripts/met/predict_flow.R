@@ -63,4 +63,4 @@ predicted_data <- predicted_data[,c("startDate","endDate","rating")]
 names(predicted_data)<-c("start_date", "end_date", "rating")
 
 # Writing out predicted flow data as csv
-write.csv(predicted_data,pathToWriteData)
+write.csv(predicted_data,pathToWriteData,row.names = FALSE)
