@@ -70,7 +70,7 @@ WITH usgsCoverage as (  \n
 		AND v.varkey = :'ratings_varkey'  \n
 		AND scen.propname = :'amalgamate_scenario'  \n
 		AND ts.tsendtime = :'tsendin'  \n
-	ORDER BY covArea --DESC  \n
+	ORDER BY covArea DESC  \n
 )  \n
 ,backgroundTemplate as (  \n
 	SELECT ST_SetValue(rt.rast, 1, ST_ConvexHull(rt.rast), v.hydroid) as rast  \n
