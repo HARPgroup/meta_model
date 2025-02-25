@@ -9,8 +9,11 @@ fi
 ts_START_DATE=`date -d "${START_DATE}" +'%Y-%m-%d'`
 ts_END_DATE=`date -d "${END_DATE}" +'%Y-%m-%d'`
 
+#NLDAS end time is set different between simple_lm and storm_vol
 if [ "$MET_DATA_SOURCE" = "nldas2" ]; then
-  ts_END_DATE=`date --date "$ts_END_DATE - 1 day" +'%Y-%m-%d'`
+	if [[ "$GEO_MET_MODEL" = "simple_lm" ]]; then
+	ts_END_DATE=`date --date "$ts_END_DATE - 1 day" +'%Y-%m-%d'`
+	fi
 fi
 
 #Establish and insert best-fit ratings. Delete existing ratings as needed.
