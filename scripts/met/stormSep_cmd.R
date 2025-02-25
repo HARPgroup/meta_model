@@ -93,8 +93,8 @@ maxes <- data.frame(timestamp = baseQ$timestamp[c(FALSE,maxes,FALSE)],
 #Find the break associated with this run and buffer by 10%. Based the hreg on
 #the timescale selected by the user
 # baselineFlowOption = One of c("Water Year","Month","Calendar Year","All")
-print("Setting baseline flow")
 if(baselineFlowOption == "All"){
+  print("Setting baseline flow to all")
   #Use the entire baseflow dataset to get baseline flow, brk
   brk <- hreg(baseQ$baseQ,limit = 1)
   brk <- brk * 1.1
@@ -104,6 +104,7 @@ if(baselineFlowOption == "All"){
   #Based on the user option, determine the start month of the year
   #designation. Water Years run from October - September, Climate years from
   #April - March, and Calendar Years from January - December
+  print("Setting baseline flow to year")
   if(baselineFlowOption == "Water Year"){
     WYS <- "10-01"
   }else if(baselineFlowOption == "Climate Year"){
@@ -163,6 +164,7 @@ if(baselineFlowOption == "All"){
     brk[baseQ$Year == i] <- brki
   }
 }else if(baselineFlowOption == "Month"){
+  print("Setting baseline flow to month")
   #Make dates of the input timesteps:
   dataDates <- as.Date(timeIn)
   
@@ -199,11 +201,13 @@ mins <- sqldf("SELECT mins.*, baseQ.baselineQ
         ON mins.timestamp = baseQ.timestamp")
 
 if(allMinimaStorms){
+  print("Searching all storms")
   #Use all minima as potential storm start and stop points
   x <- mins$timestamp
   #Get the corresponding local maximums
   y <- maxes$maxes
 }else{
+  print("Searching only storms above baseline")
   #Get only the minima timestamps that lie below baseline flow
   x <- mins$timestamp[mins$mins < mins$baselineQ]
   #Get the corresponding local maximums
