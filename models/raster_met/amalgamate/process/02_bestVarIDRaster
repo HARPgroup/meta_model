@@ -109,7 +109,8 @@ WITH usgsCoverage as (  \n
 )  \n
 insert into dh_timeseries_weather (tstime,tsendtime, featureid, entity_type, rast, bbox, varid) \n
 select :tsstartin,:tsendin,:scenariopid,'dh_properties',  \n
-fr.rast, ST_ConvexHull(fr.rast), :ratings  \n
+ST_reclass(fr.rast,'0-9999:0-9999','16BUI'), 
+ST_ConvexHull(fr.rast), :ratings  \n
 FROM finalRast as fr
 RETURNING tid;
 "
