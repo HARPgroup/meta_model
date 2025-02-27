@@ -16,7 +16,7 @@ do
 	#Use amalgamate.sh to amalgamate the raster, one dataset at a time
     cmd="${MET_SCRIPT_PATH}/sh/amalgamate.sh $TS_START_IN $TS_END_IN $RESAMPLE_VARKEY $AMALGAMATE_SCENARIO $AMALGAMATE_VARKEY $RATINGS_VARKEY $COVERAGE_BUNDLE $COVERAGE_FTYPE $SCENARIO_NAME $EXTENT_HYDROCODE $EXTENT_BUNDLE $EXTENT_FTYPE $AMALGAMATE_SQL_FILE $i $db_host $db_name"
 	echo "Running ${cmd}"
-	eval cmd
+	eval $cmd
 	i=true
 	exit
 done
