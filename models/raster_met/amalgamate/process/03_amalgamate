@@ -9,7 +9,7 @@ fi
 SCENARIOS_TO_RANK_CLEAN=`echo "${SCENARIOS_TO_RANK}" | sed -e "s/^'//;s/'$//;s/','/ /g"`
 
 #Iterate through scenarios identified in $SCENARIOS_TO_RANK_CLEAN and amalgamate a best fit precip raster
-i=false
+i=true
 for j in $SCENARIOS_TO_RANK_CLEAN;
 do
 	echo "Amalgamating scenario $j"
@@ -17,6 +17,5 @@ do
     cmd="${MET_SCRIPT_PATH}/sh/amalgamate.sh $TS_START_IN $TS_END_IN $RESAMPLE_VARKEY $AMALGAMATE_SCENARIO $AMALGAMATE_VARKEY $RATINGS_VARKEY $COVERAGE_BUNDLE $COVERAGE_FTYPE $j $EXTENT_HYDROCODE $EXTENT_BUNDLE $EXTENT_FTYPE $AMALGAMATE_SQL_FILE $i $db_host $db_name"
 	echo "Running ${cmd}"
 	eval $cmd
-	i=true
-	exit
+	i=false
 done
