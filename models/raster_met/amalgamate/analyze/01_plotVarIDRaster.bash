@@ -8,6 +8,6 @@ fi
 
 echo "Plotting target raster:"
 #Use amalgamate.sh to amalgamate the raster, one dataset at a time
-cmd="${MET_SCRIPT_PATH}/sh/plotRaster.sh $TS_START_IN $TS_END_IN $AMALGAMATE_SCENARIO $RATINGS_VARKEY $EXTENT_HYDROCODE $EXTENT_BUNDLE $EXTENT_FTYPE $AMALGAMATE_SQL_FILE $db_host $db_name"
+cmd="${MET_SCRIPT_PATH}/sh/plotRaster.sh $TS_START_IN $TS_END_IN $AMALGAMATE_SCENARIO $RATINGS_VARKEY $EXTENT_HYDROCODE $EXTENT_BUNDLE $EXTENT_FTYPE $AMALGAMATE_SQL_FILE $db_host $db_name $AMALGAMATE_PLOT_PATH $TEMPDIR"
 echo "Running ${cmd}"
 eval $cmd
