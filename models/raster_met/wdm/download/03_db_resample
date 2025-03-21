@@ -22,7 +22,7 @@ if [ "$DISAGGREGATE_VARKEY" != "" ]; then
 fi
 
 # BEGIN - actually loading local data
-echo "Aggregating precip for $coverage from "$datasource
+echo "Resampling precip for $coverage from $varkey"
 outfile=`basename $COVERAGE_PRECIP_FILE`
 echo "calculated tstime $tstime=TZ=\"$TZ\" date -d \"$START_DATE\" +'%s'"
 echo "calculated tsendtime $tsendtime=TZ=\"$TZ\" date -d \"$END_DATE\" +'%s'"

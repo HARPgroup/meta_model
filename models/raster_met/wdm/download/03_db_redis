@@ -15,12 +15,6 @@ if [ "$DISAGGREGATE_VARKEY" = "" ]; then
   echo "DISAGGREGATE_VARKEY not set. Skipping."
   exit
 fi
-
-#If the daily varkey is not set, we skip this step since we are not given a base daily timeseries to use as defaults
-if [ "$DAILY_VARKEY" = "" ]; then
-  echo "DAILY_VARKEY not set. Skipping."
-  exit
-fi
 echo "Temporal DISAGGREGATION requested"
 
 # we bail unless RESAMPLE_VARKEY IS set
@@ -39,8 +33,8 @@ outfile=`basename $COVERAGE_PRECIP_FILE`
 echo "calculated tstime $tstime=TZ=\"$TZ\" date -d \"$START_DATE\" +'%s'"
 echo "calculated tsendtime $tsendtime=TZ=\"$TZ\" date -d \"$END_DATE\" +'%s'"
 # do the actual export
-echo "$MET_SCRIPT_PATH/sh/disaggregate_resample_raster_ts $coverage $varkey $DISAGGREGATE_VARKEY $DAILY_VARKEY $RESAMPLE_VARKEY $RASTER_SQL_FILE /tmp/$outfile $db_host $db_name $COVERAGE_BUNDLE $COVERAGE_FTYPE $DISSAG_TZ_OFFSET $tstime $tsendtime"
-$MET_SCRIPT_PATH/sh/disaggregate_resample_raster_ts $coverage $varkey $DISAGGREGATE_VARKEY $DAILY_VARKEY $RESAMPLE_VARKEY $RASTER_SQL_FILE /tmp/$outfile $db_host $db_name $COVERAGE_BUNDLE $COVERAGE_FTYPE $DISSAG_TZ_OFFSET $tstime $tsendtime
+echo "$MET_SCRIPT_PATH/sh/disaggregate_resample_raster_ts $coverage $varkey $DISAGGREGATE_VARKEY $RESAMPLE_VARKEY $RASTER_SQL_FILE /tmp/$outfile $db_host $db_name $COVERAGE_BUNDLE $COVERAGE_FTYPE $DISSAG_TZ_OFFSET $tstime $tsendtime"
+$MET_SCRIPT_PATH/sh/disaggregate_resample_raster_ts $coverage $varkey $DISAGGREGATE_VARKEY $RESAMPLE_VARKEY $RASTER_SQL_FILE /tmp/$outfile $db_host $db_name $COVERAGE_BUNDLE $COVERAGE_FTYPE $DISSAG_TZ_OFFSET $tstime $tsendtime
 sftp ${db_host}:"/tmp/$outfile" "${tempdir}/${outfile}"
 echo "Installing: install -D "${tempdir}/${outfile}" $COVERAGE_PRECIP_FILE"
 install -D "${tempdir}/${outfile}" $COVERAGE_PRECIP_FILE
