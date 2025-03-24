@@ -1,0 +1,14 @@
+#!/bin/bash
+# loads the args, the raster specific config and change to tempdir
+wdm_config=`find_config wdm.config`
+if [ "$geo_config" = "" ]; then
+  wdm_config="$META_MODEL_ROOT/models/raster_met/wdm/wdm.config"
+fi
+. $wdm_config
+
+if [[ "$MET_PROCESS_METHOD" != "alt" ]]; then
+  exit
+fi
+
+echo "MET_PROCESS_METHOD 'alt' requested. Using existing data from $MET_EXPORT_DIR"
+echo "No further processing required."

@@ -16,6 +16,8 @@ source("https://raw.githubusercontent.com/HARPgroup/meta_model/master/scripts/pr
 args <- commandArgs(trailingOnly = TRUE)
 print("Setting arguments...")
 
+# args[1]<-"http://deq1.bse.vt.edu:81/met/simple_lm_nldas2_tiled/precip/usgs_ws_01613900_precip_weekly.csv"
+# args[2]<-"http://deq1.bse.vt.edu:81/met/simple_lm_nldas2_tiled/stats/usgs_ws_01613900-model.json"
 weekly_dataFilePath <- args[1]
 StatsPath <- args[2]
 outPath <- args[3]

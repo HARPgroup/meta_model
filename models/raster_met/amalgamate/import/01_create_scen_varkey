@@ -1,0 +1,30 @@
+#!/bin/bash
+# loads the args, the raster specific config and change to temp dir
+amalgamate_config=`find_config amalgamate.config`
+if [ "$amalgamate_config" = "" ]; then
+  amalgamate_config="$META_MODEL_ROOT/models/raster_met/amalgamate/amalgamate.config"
+fi
+. $amalgamate_config
+
+# This only runs if we are making a scenario into it's own varkey
+if [ "$PROMOTE_DATASET" != "1" ]; then
+  echo "PROMOTE_DATASET not set. Will not make dataset into feature based dataset. Exiting." 1>&2
+  exit
+fi
+
+sql="insert into dh_variabledefinition (varkey, varcode, varname) 
+select foo.varkey, foo.varcode, foo.varname
+from (
+  select '$scenario' as varkey, '$scenario' as varcode, '$scenario' as varname
+) as foo
+left outer join dh_variabledefinition as bar
+on (
+  bar.varkey = '$scenario'
+)
+WHERE bar.hydroid is null
+"
+
+echo "Creating variable with \"echo $sql | psql -h $DB_HOST $DB_NAME\" " 1>&2
+
+#echo $sql | psql -h $DB_HOST $DB_NAME
+
