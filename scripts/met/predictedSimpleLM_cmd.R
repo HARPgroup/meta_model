@@ -12,57 +12,36 @@ suppressPackageStartupMessages(library(jsonlite))
 source("https://raw.githubusercontent.com/HARPgroup/meta_model/master/scripts/precip/lm_analysis_plots.R")
 
 
+
 # Setting arguments
 args <- commandArgs(trailingOnly = TRUE)
 print("Setting arguments...")
 
-weekly_dataFilePath <- args[1]
+# For example Data:
+args[1]<-"http://deq1.bse.vt.edu:81/met/simple_lm_PRISM/precip/usgs_ws_01615000_precip_weekly.csv"
+args[2]<-"http://deq1.bse.vt.edu:81/met/simple_lm_PRISM/stats/usgs_ws_01615000-model.json"
+
+
+weeklyDataFilePath <- args[1]
 StatsPath <- args[2]
 outPath <- args[3]
 
 # Loading in files
-precip_data <- read.csv(weekly_dataFilePath)
+weekly_precip_data <- read.csv(weeklyDataFilePath)
 simpleLMs <-plotBin$new()
 simpleLMs$fromJSON(StatsPath, TRUE)
 
 
 # Confirming date column tyoe
-precip_data$start_date <- as_date(precip_data$start_date)
-precip_data$end_date <- as_date(precip_data$end_date)
+weekly_precip_data$start_date <- as_date(weekly_precip_data$start_date)
+weekly_precip_data$end_date <- as_date(weekly_precip_data$end_date)
 
-# Creating emtoy column for predicted flow
-precip_data[,"predicted_flow_cfs"]=numeric()
+# Creating emto\py column for predicted flow cfs
+weekly_precip_data[,"predicted_flow"]=numeric()
 
+predicted_data <- predict.flow(weekly_precip_data, simpleLMs, "precip_cfs", "mo")
 
-predict.flow.weekly <- function(precip_data,simple_lm_model){
-  # Create empty dataframe, for values ot be added to
-  predicted_data <- precip_data[0,]
-  # Find predicted values for each month
-  for(i in 1:12){
-    # Obtaining coefficients
-    month <- as.numeric(i)
-    coefficients <- simple_lm_model$atts$lms[[month]]$coefficients
-    intercept <- coefficients[1]
-    slope <- coefficients[2]
-    # Getting Precip Data from the correct month
-    message("Obtaining data from current month")
-    new_predicted <- subset(precip_data, mo %in% month )
-    # Inserting predicted flow into precip data frame (Units?)
-    message("Calculating predicted flow")
-    new_predicted$predicted_flow_cfs <- slope*new_predicted$precip_cfs + intercept
-    
-    #Adding data to dataframe
-    predicted_data <- rbind(predicted_data,new_predicted)
-  }
-  return(predicted_data)
-}
-
-
-predicted_data <- predict.flow.weekly(precip_data,simpleLMs)
-
-predicted_data$rating <- 1-(abs(predicted_data$predicted_flow_cfs-predicted_data$obs_flow)/predicted_data$obs_flow)
-
-predicted_data <- predicted_data[,c("start_date","end_date","rating")]
+predicted_data$rating <- 1-(abs(predicted_data$predicted_flow-predicted_data$obs_flow)/predicted_data$obs_flow)
 
 # Write out new dataframe
 write.csv(predicted_data,outPath, row.names = FALSE)
