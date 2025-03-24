@@ -12,8 +12,8 @@ args <- commandArgs(trailingOnly = TRUE)
 print("Setting arguments...")
 
 #Example:
-args[1]<-"http://deq1.bse.vt.edu:81/met/stormVol_prism/flow/usgs_ws_01615000-stormevent-stats.csv"
-args[2]<-"http://deq1.bse.vt.edu:81/met/stormVol_prism/stats/usgs_ws_01615000-model.json"
+# args[1]<-"http://deq1.bse.vt.edu:81/met/stormVol_prism/flow/usgs_ws_01615000-stormevent-stats.csv"
+# args[2]<-"http://deq1.bse.vt.edu:81/met/stormVol_prism/stats/usgs_ws_01615000-model.json"
 
 # Inputs
 stormEventStatsPath <- args[1]
