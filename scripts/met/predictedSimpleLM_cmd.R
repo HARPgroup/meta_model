@@ -17,10 +17,10 @@ source("https://raw.githubusercontent.com/HARPgroup/meta_model/master/scripts/pr
 args <- commandArgs(trailingOnly = TRUE)
 print("Setting arguments...")
 
+
 # For example Data:
 # args[1]<-"http://deq1.bse.vt.edu:81/met/simple_lm_PRISM/precip/usgs_ws_01615000_precip_weekly.csv"
 # args[2]<-"http://deq1.bse.vt.edu:81/met/simple_lm_PRISM/stats/usgs_ws_01615000-model.json"
-
 
 weeklyDataFilePath <- args[1]
 StatsPath <- args[2]

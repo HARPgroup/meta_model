@@ -1,0 +1,12 @@
+#!/bin/bash
+# loads the args, the raster specific config and change to tempdir
+om_config=`find_config om.config`
+if [ "$om_config" = "" ]; then
+  om_config="$META_MODEL_ROOT/models/om/om.config"
+fi
+. $om_config
+# NOTE: segment in this module is the elementid of the om entity to be migrated TO
+
+cd /var/www/html/om
+echo "php fn_clearRun.php $segment $scenario"
+php fn_clearRun.php $segment $scenario

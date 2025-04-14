@@ -6,7 +6,7 @@ if [ "$geo_config" = "" ]; then
 fi
 . $geo_config
 
-if [[ "$GEO_MET_MODEL" != "lm_simple" ]]; then
+if [[ "$GEO_MET_MODEL" != "simple_lm" ]]; then
   exit
 fi
 
