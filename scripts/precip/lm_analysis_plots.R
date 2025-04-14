@@ -128,3 +128,29 @@ mon_lm <- function(sample_data, y_var, x_var, mo_var, data_name, label_name){
   message("Notice: mon_lm() is deprecated, and now returns only the output pf mon_lm_stats().  PLots can be done by calling mon_lm_plot()")
   return(mon_lm_stats(sample_data, y_var, x_var, mo_var))
 }
+
+# Predict Flow Function
+predict.flow <- function(weekly_data,ratings_data, precip_col_name, mo_col_name){
+  # Create empty dataframe, for values ot be added to
+  predicted_data <- weekly_data[0,]
+  # Find predicted values for each month
+  for(i in 1:12){
+    # Obtaining coefficients
+    month <- as.numeric(i)
+    coefficients <- ratings_data$atts$lms[[month]]$coefficients
+    intercept <- coefficients[1]
+    slope <- coefficients[2]
+    # Getting STorm Data from the correct month
+    message(paste("Obtaining data from input month",i))
+    data_new <- subset(weekly_data, weekly_data[[mo_col_name]] %in% month )
+    # Inserting predicted flow into precip data frame (guessing column name? Units?)
+    message(paste("Calculating predicted flow with slope",slope,"and intercept",intercept))
+    data_new$predicted_flow <- slope*data_new[[precip_col_name]] + intercept
+    
+    #Adding data to dataframe
+    # predicted_data$predicted_flow_MG <- with(predicted_data,precip_data_new$predicted_flow[match(obs_date,precip_data_new$obs_date)]
+    predicted_data <- rbind(predicted_data,data_new)
+  }
+  return(predicted_data)
+}
+
