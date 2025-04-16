@@ -31,7 +31,7 @@ FROM  (
   on (
     ovar.varkey = '$AMALGAMATE_VARKEY'
   )
-  WHERE feat.hydrocode = $cov_hydrocode
+  WHERE feat.hydrocode = '$EXTENT_HYDROCODE'
  and scen.propname = '$AMALGAMATE_SCENARIO'
 ) as foo
 WHERE entity_type = 'dh_properties'  
