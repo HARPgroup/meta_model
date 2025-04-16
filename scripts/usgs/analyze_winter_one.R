@@ -394,7 +394,7 @@ fw_target <- fn$sqldf(
   "
 )
 fw_max = quantile(fw_historic$flow,probs=c(0.95))[1]
-
+fw_max = max(fw_max,max(fw_target$flow))
 # Runoff boxplot
 fname <- paste0(
   'recharge_context_', gage, '_',
