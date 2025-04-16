@@ -38,7 +38,7 @@ WHERE entity_type = 'dh_properties'
   AND featureid = foo.scenariopid 
   AND varid = oldvarid
   AND foo.newvarid IS NOT NULL 
-;"
+"
 
 if [ "$segment" == "all" ]; then
   # we want to migrate all at once, which is economical, timewise
