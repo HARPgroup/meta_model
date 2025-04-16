@@ -302,15 +302,20 @@ plt<-plt+scale_y_continuous(sec.axis = sec_axis(~./0.1, name = "Probability Esti
 # ******************************************************************************************
 # END plotting function
 # get timeseries value# Saving file to the correct location
-filename <- paste("usgs", gage, "mllr_bar_winterflows", target_year, ".png", sep="_")
+fname <- paste("usgs", gage, "mllr_bar_winterflows", target_year, ".png", sep="_")
+fpath <-  paste(
+  save_directory,
+  fname,
+  sep='/'
+)
 furl <- paste(
   str_replace(fpath,'/media/model', omsite),
   sep='/'
 )
-ggsave(file=filename, path = save_directory , width=6, height=6)
+ggsave(file=fname, path = save_directory , width=6, height=6)
 # save this as a property
 
-message(paste("Saved file: ", filename, " in ", save_directory, "with URL", furl))
+message(paste("Saved file: ", fname, " in ", save_directory, "with URL", furl))
 # todo: stash properties and timeseries
 # get the current years 10%
 # this calc fails if there si no flow for this gage, so screen it.
