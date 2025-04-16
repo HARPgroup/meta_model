@@ -29,10 +29,10 @@ FROM  (
   )
   LEFT JOIN dh_variabledefinition AS ovar
   on (
-    ovar.varkey = '$amalgamate_varkey'
+    ovar.varkey = '$AMALGAMATE_VARKEY'
   )
   WHERE feat.hydrocode = $cov_hydrocode
- and scen.propname = '$amalgamate_scenario'
+ and scen.propname = '$AMALGAMATE_SCENARIO'
 ) as foo
 WHERE entity_type = 'dh_properties'  
   AND featureid = foo.scenariopid 
