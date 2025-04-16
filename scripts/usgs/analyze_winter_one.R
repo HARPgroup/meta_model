@@ -113,7 +113,7 @@ lines <- data.frame(names, values)
 
 plot_xtitle <- "Winter Flow, cfs"
 plot_xsubtitle <- paste(
-  "Mean flows from November to February of each year on record ",
+  "Mean flows from November to February \n of each year on record ",
   "(Updated ", Sys.Date(), ")", sep=""
 );
 
