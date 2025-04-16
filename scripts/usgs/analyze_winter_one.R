@@ -417,8 +417,7 @@ fpath <-  paste(
   sep='/'
 )
 furl <- paste(
-  save_url,
-  fname,
+  str_replace(fpath,'/media/model', omsite),
   sep='/'
 )
 png(fpath)
@@ -437,3 +436,15 @@ points(
 legend("topleft", cex=0.75, pch=c(5,1), legend=c("Hist",target_year))
 
 dev.off()
+
+# don't include the path here since rest properties may not always be singular by name
+img_prop <- RomProperty$new(
+  ds, list(
+    propname="context_plot", entity_type="dh_timeseries",
+    featureid=ts$tid, varkey = 'dh_image_file',
+    bundle='dh_properties'
+  ),TRUE
+)
+# now add the image
+img_prop$propcode <- furl
+img_prop$save(TRUE)
