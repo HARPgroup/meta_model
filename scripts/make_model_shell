@@ -5,6 +5,11 @@ if [ "$#" -gt 1 ]; then
 else
   modules="land river"
 fi
+if [ "$#" -gt 2 ]; then
+  submodules=$3
+else
+  submodules="prep run link analyze"
+fi
 base_path=$META_MODEL_ROOT/models/$model_name
 mkdir $base_path
 if [ ! -e $base_path/get_work_path ]; then
@@ -18,7 +23,7 @@ fi
 
 touch $base_path/model_config
 for i in $modules; do
-  for j in prep run link analyze; do
+  for j in $submodules; do
     if [ ! -e $base_path/$i ]; then
       mkdir $base_path/$i
     fi

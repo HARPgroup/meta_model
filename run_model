@@ -57,6 +57,8 @@ if ( -d $model_plugins ) then
   foreach module ( $modules )
     # todo: put checks in to see if this module is enabled in the run
     foreach step ( $run_steps )
+      setenv module "$module"
+      setenv step "$step"
       set script_path = "$model_plugins/$module/$step"
       if ( -d $script_path ) then 
         if ( $script  == "all" ) then
