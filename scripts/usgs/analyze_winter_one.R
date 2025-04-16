@@ -1,4 +1,4 @@
-# config.local.private sets: lib_directory, auth_directory, base_url, file_directory
+# config.local.private sets: lib_directory, auth_directory, base_url, save_directory
 # if running in RStudio this will not work as it forces path to the "working directory"
 # Must open and run contents of config.local.private once per session
 basepath='/var/www/R';
@@ -48,27 +48,10 @@ if (length(argst) > 0) {
 }
 
 # override the file save directory
-file_directory = '/var/www/html/images/dh';
 message(paste("Generating MLLR images for a set of", gage))
 gage_hydrocode = paste0('usgs_', gage)
 gage_feature <- RomFeature$new(ds, list(hydrocode = gage_hydrocode, bundle = 'usgsgage'), TRUE)
-# Saving file to the correct location
-filename <- paste("usgs", gage, "mllr_bar_winterflows", target_year, ".png", sep="_")
-filepath <- paste(file_directory, filename, sep="/")
-if (overwrite_file) {
-  message("Overwrite Force call")
-}
-if (file.exists(filepath) & !overwrite_file) {
-  # check in case the file is out of date, in which case overwrite it anyhow
-  linfo = file.info(filepath)
-  if (as.Date(linfo$mtime) > as.Date(paste0(target_year, '-03-01'),origin="America/New_York")) {
-    message(paste( gage, "is up to date as of ",as.Date(linfo$mtime)  ))
-    message("*********** SKIPPING ************* ")
-    next
-  } else {
-    message(paste("File is out of date",as.Date(linfo$mtime) ))
-  }
-}
+
 
 # Initialize variables
 n_f_flow <- c()
@@ -207,8 +190,8 @@ for (m in 1:length(month)) {
   b1 <- as.numeric(as.character(b1$propvalue))
 
   if (length(b0) && length(b1)) {
-	  print(paste("b0: ",b0,sep=""))
-	  print(paste("b1: ",b1,sep=""))
+	  message(paste("b0: ",b0,sep=""))
+    message(paste("b1: ",b1,sep=""))
 	  valid_months[m] = TRUE;
 	  beta_table_i <- data.frame(month[m],b0,b1)
 	  beta_table <- rbind(beta_table, beta_table_i)
@@ -222,7 +205,7 @@ for (m in 1:length(month)) {
 # END Table 1
 # ******************************************************************************************
 # Output the beta_table
-message(beta_table)
+#message(beta_table)
 
 # ******************************************************************************************
 # Plot 2: Plot the equation of MLLR on graph to illustrate intersection of flow & prob
@@ -279,10 +262,10 @@ if (valid_months['september'] == TRUE) {
   labs[5] = "September 10th %ile"
 }
 
-message(valid_months);
-message(july_est);
-message(august_est);
-message(september_est);
+#message(valid_months);
+#message(july_est);
+#message(august_est);
+#message(september_est);
 # put x and ys into a data frame for plotting
 july_mllr <- data.frame(x,(july_est))
 august_mllr <- data.frame(x,(august_est))
@@ -318,15 +301,16 @@ plt<-plt+scale_y_continuous(sec.axis = sec_axis(~./0.1, name = "Probability Esti
 # END Plot 2
 # ******************************************************************************************
 # END plotting function
-# get timeseries value
-ggsave(file=filename, path = file_directory , width=6, height=6)
-# save this as a property
+# get timeseries value# Saving file to the correct location
+filename <- paste("usgs", gage, "mllr_bar_winterflows", target_year, ".png", sep="_")
 furl <- paste(
-  '/images/dh',
-  filename,
+  str_replace(fpath,'/media/model', omsite),
   sep='/'
 )
-message(paste("Saved file: ", filename, " in ", file_directory, "with URL", furl))
+ggsave(file=filename, path = save_directory , width=6, height=6)
+# save this as a property
+
+message(paste("Saved file: ", filename, " in ", save_directory, "with URL", furl))
 # todo: stash properties and timeseries
 # get the current years 10%
 # this calc fails if there si no flow for this gage, so screen it.
