@@ -34,6 +34,7 @@ target_year <- year(Sys.time())
 message(paste("length of argst = ", length(argst)))
 if (length(argst) < 1) {
   message(paste("Use: analyze_winter_one.R gage [year=", target_year,"] [save_directory=/media/model/usgs/mllr]"))
+  q()
 }
 if (length(argst) > 0) {
   gage <- as.character(argst[1])
