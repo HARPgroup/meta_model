@@ -47,7 +47,7 @@ if (length(argst) > 0) {
 }
 
 # override the file save directory
-file_directory = '/var/www/html/images/dh';
+file_directory = save_directory
 message(paste("Generating MLLR images for a set of", gage))
 gage_hydrocode = paste0('usgs_', gage)
 gage_feature <- RomFeature$new(ds, list(hydrocode = gage_hydrocode, bundle = 'usgsgage'), TRUE)
