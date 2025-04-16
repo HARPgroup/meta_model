@@ -32,7 +32,7 @@ argst <- commandArgs(trailingOnly=T)
 overwrite_file = FALSE
 target_year <- year(Sys.time())
 message(paste("length of argst = ", length(argst)))
-lf (length(argst) < 1) {
+if (length(argst) < 1) {
   message(paste("Use: analyze_winter_one.R gage [year=", target_year,"] [save_directory=/media/model/usgs/mllr]"))
 }
 if (length(argst) > 0) {
@@ -47,7 +47,7 @@ if (length(argst) > 0) {
 }
 
 # override the file save directory
-file_directory = save_directory
+file_directory = '/var/www/html/images/dh';
 message(paste("Generating MLLR images for a set of", gage))
 gage_hydrocode = paste0('usgs_', gage)
 gage_feature <- RomFeature$new(ds, list(hydrocode = gage_hydrocode, bundle = 'usgsgage'), TRUE)
