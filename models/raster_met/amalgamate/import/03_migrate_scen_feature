@@ -48,4 +48,4 @@ else
   sql="$sql AND tsendtime = $TS_END_IN"
 fi
 echo "Migrating data with \"echo $sql | psql -h $DB_HOST $DB_NAME\" " 1>&2
-#echo $sql | psql -h $DB_HOST $DB_NAME
+echo $sql | psql -h $DB_HOST $DB_NAME
