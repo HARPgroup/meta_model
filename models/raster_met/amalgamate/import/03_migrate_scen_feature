@@ -43,8 +43,9 @@ WHERE entity_type = 'dh_properties'
 if [ "$segment" == "all" ]; then
   # we want to migrate all at once, which is economical, timewise
   # so we do nothing to the sql
+  continue
 else 
-  sql="$sql AND tsendtime = TS_END_IN"
+  sql="$sql AND tsendtime = $TS_END_IN"
 fi
 echo "Migrating data with \"echo $sql | psql -h $DB_HOST $DB_NAME\" " 1>&2
 #echo $sql | psql -h $DB_HOST $DB_NAME
