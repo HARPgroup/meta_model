@@ -69,7 +69,8 @@ WITH usgsCoverage as (  \n
 		AND model.propname ilike '%${MET_MODEL_VERSION}'  \n
 		AND v.varkey = :'ratings_varkey'  \n
 		AND scen.propname = :'amalgamate_scenario'  \n
-		AND ts.tsendtime = :'tsendin'  \n
+		AND ts.tsendtime >= :'tsendin'  \n
+		AND ts.tstime <= :'tsendin'  \n
 	ORDER BY covArea DESC  \n
 )  \n
 ,backgroundTemplate as (  \n
