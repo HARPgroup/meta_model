@@ -26,6 +26,9 @@ ratings_sql="
 \\set scenarioPropName '$RANKING_SCENARIO' \n
 \\set hydrocode  '$coverage' \n
 \\set metModel '$MET_MODEL_VERSION' \n
+\\set bundle '$COVERAGE_BUNDLE'   \n
+\\set ftype '$COVERAGE_FTYPE'  \n
+\\set defaultvarkey '$BACKGROUND_VARKEY'
 SELECT hydroid AS ratings FROM dh_variabledefinition WHERE varkey = :'ratingsVarkey' \\gset \n
 SELECT scen.pid as scenariopid \n
 FROM dh_properties as scen \n
@@ -37,16 +40,8 @@ WHERE feat.hydrocode = :'hydrocode'  \n
 AND feat.bundle = '$COVERAGE_BUNDLE'  \n
 and feat.ftype = '$COVERAGE_FTYPE' \n
 and scen.propname = :'scenarioPropName' \\gset \n
-SELECT feat.hydroid as coveragefeatureid \n
-FROM dh_properties as scen \n
-LEFT JOIN dh_properties as model \n
-ON model.pid =  scen.featureid \n
-LEFT JOIN dh_feature as feat \n
-on feat.hydroid = model.featureid \n
-WHERE feat.hydrocode = :'hydrocode'  \n
-AND feat.bundle = '$COVERAGE_BUNDLE'  \n
-and feat.ftype = '$COVERAGE_FTYPE' \n
-and scen.propname = :'scenarioPropName' \\gset \n
+SELECT hydroid as defaultvarid from dh_variabledefinition as v  \n
+WHERE v.varkey = :'defaultvarkey' \\gset
 \n
 DELETE FROM dh_timeseries \n
 WHERE varid = :ratings  \n
@@ -54,73 +49,85 @@ AND entity_type = 'dh_properties' \n
 AND featureid = :scenariopid; \n
 \n
 
-WITH dailyRating as ( \n
-	SELECT ts.featureid as featureid, \n
-	CASE \n
-		WHEN ts.tsvalue IS NOT NULL THEN ts.hydroid \n
-		ELSE NULL \n
-	END as scenPropVarID, \n
-	basets.START_DATE, \n
-	basets.END_DATE, \n
-	ts.tsvalue as tsvalue \n
-	FROM ( \n
-		SELECT generate_series(extract(epoch from '${ts_START_DATE} 12:00:00 UTC'::timestamptz), \n
-				extract(epoch from '${ts_END_DATE} 12:00:00 UTC'::timestamptz), 86400) as START_DATE, \n
-			generate_series(extract(epoch from '${ts_START_DATE} 12:00:00 UTC'::timestamptz),  \n
-				extract(epoch from '${ts_END_DATE} 12:00:00 UTC'::timestamptz), 86400) as END_DATE \n
-	) as basets \n
+WITH usgs_features AS (   \n
+	SELECT f.hydroid   \n
+	FROM dh_feature as f   \n
+	WHERE f.hydrocode = :'hydrocode'   \n
+		AND f.bundle = :'bundle'   \n
+		AND f.ftype = :'ftype'   \n
+)   \n
+,dailyRating as ( \n
+	SELECT f.hydroid as featureid,  \n
+	CASE  \n
+	WHEN ts.tsvalue IS NOT NULL THEN ts.hydroid  \n
+	ELSE NULL  \n
+	END as scenPropVarID,  \n
+	basets.START_DATE,  \n
+	basets.END_DATE,  \n
+	ts.tsvalue as tsvalue  \n
+	FROM usgs_features as f \n
 	LEFT JOIN ( \n
-		SELECT modelProp.featureid as featureid, \n
-			ts.tstime,ts.tsendtime, \n
-			ts.tsvalue, \n
-			scenPropVarDef.hydroid \n
-		FROM dh_timeseries as ts \n
-		LEFT JOIN dh_properties as scenProp \n
-		ON ts.featureid = scenProp.pid \n
-		LEFT JOIN dh_properties as modelProp \n
-		ON scenProp.featureid = modelProp.pid \n
-		LEFT JOIN dh_properties as scenVarProp \n
-		ON scenVarProp.featureid = scenProp.pid \n
-		LEFT JOIN dh_variabledefinition as scenPropVarDef \n
-		ON scenVarProp.propcode = scenPropVarDef.varkey \n
-		LEFT JOIN dh_variabledefinition as scenVarDef \n
-		ON scenVarProp.varid = scenVarDef.hydroid \n
+		SELECT generate_series(extract(epoch from '${ts_START_DATE} 00:00:00'::timestamptz), \n
+				extract(epoch from '${ts_END_DATE} 00:00:00'::timestamptz), 86400) as START_DATE, \n
+			generate_series(extract(epoch from '${ts_START_DATE} 23:59:59'::timestamptz),  \n
+				extract(epoch from '${ts_END_DATE} 23:59:59 UTC'::timestamptz), 86400) as END_DATE \n
+	) as basets \n
+	ON 1 = 1
+	LEFT JOIN ( \n
+		 SELECT modelProp.featureid as featureid,    \n
+		 ts.tstime,ts.tsendtime, ts.varid,   \n
+		 ts.tsvalue,    \n
+		 scenPropVarDef.hydroid    \n
+		 FROM dh_timeseries as ts    \n
+		 LEFT JOIN dh_properties as scenProp    \n
+		 ON ts.featureid = scenProp.pid    \n
+		 LEFT JOIN dh_properties as modelProp    \n
+		 ON scenProp.featureid = modelProp.pid    \n
+		 LEFT JOIN dh_properties as scenVarProp    \n
+		 ON scenVarProp.featureid = scenProp.pid    \n
+		 LEFT JOIN dh_variabledefinition as scenPropVarDef    \n
+		 ON scenVarProp.propcode = scenPropVarDef.varkey    \n
+		 LEFT JOIN dh_variabledefinition as scenVarDef    \n
+		 ON scenVarProp.varid = scenVarDef.hydroid    \n
 		WHERE modelProp.propcode = :'metModel' \n
 		AND scenProp.propname IN (${SCENARIOS_TO_RANK}) \n
-		AND modelProp.featureid = :coveragefeatureid \n
 		AND scenVarProp.propname = 'Met Data Varkey' \n
 		AND scenVarDef.varkey = 'spatial_data_source' \n
 	) as ts \n
 	ON ( \n 
+		ts.featureid = f.hydroid AND
 		basets.START_DATE >= ts.tstime AND \n 
 		basets.END_DATE <= ts.tsendtime \n 
 	) \n
 	ORDER BY basets.START_DATE \n	
 ), \n
 maxRating AS ( \n
-	SELECT featureid as featureid, \n
-	START_DATE as START_DATE, \n
-	END_DATE as END_DATE, \n
-	max(tsvalue) as maxtsvalue \n
-	FROM dailyRating  \n
-	GROUP BY featureid, START_DATE, END_DATE \n
+	 SELECT featureid as featureid,   \n
+	 START_DATE as START_DATE,   \n
+	 END_DATE as END_DATE,   \n
+	 max(tsvalue) as maxtsvalue   \n
+	 FROM dailyRating   \n
+	 GROUP BY featureid, START_DATE, END_DATE   \n
 ), \n
 bestRating AS ( \n
-	SELECT dailyRating.featureid AS featureid, \n
-     dailyRating.START_DATE as tstime, \n
-	dailyRating.END_DATE as tsendtime, \n
-	dailyRating.scenPropVarID as tsvalue \n
-	FROM dailyRating \n
-	INNER JOIN maxRating \n
-	ON dailyRating.START_DATE = maxRating.START_DATE \n
-	AND dailyRating.END_DATE = maxRating.END_DATE \n
-	AND (dailyRating.tsvalue = maxRating.maxtsvalue OR  \n
-		maxRating.maxtsvalue IS NULL) \n
-	AND (dailyRating.featureid = maxRating.featureid OR \n
-		maxRating.maxtsvalue IS NULL)  \n
-	GROUP BY dailyRating.featureid, dailyRating.START_DATE, \n
-		dailyRating.END_DATE, dailyRating.scenPropVarID \n
-	ORDER BY dailyRating.featureid,dailyRating.START_DATE \n
+	SELECT dailyRating.featureid AS featureid,      \n
+	dailyRating.START_DATE as tstime,      \n
+	dailyRating.END_DATE as tsendtime,      \n
+	CASE WHEN count(dailyRating.scenPropVarID) > 1     \n
+		THEN :defaultvarid     \n
+		ELSE max(dailyRating.scenPropVarID)     \n
+	END as tsvalue     \n
+	FROM dailyRating      \n
+	INNER JOIN maxRating      \n
+	ON dailyRating.START_DATE = maxRating.START_DATE      \n
+	AND dailyRating.END_DATE = maxRating.END_DATE      \n
+	AND (dailyRating.tsvalue = maxRating.maxtsvalue OR      \n
+		maxRating.maxtsvalue IS NULL)      \n
+	AND (dailyRating.featureid = maxRating.featureid OR      \n
+		maxRating.maxtsvalue IS NULL)      \n
+	GROUP BY dailyRating.featureid, dailyRating.START_DATE,      \n
+		dailyRating.END_DATE     \n
+		ORDER BY dailyRating.featureid,dailyRating.START_DATE      \n
 ) \n
  \n
 INSERT INTO dh_timeseries ( tstime,tsendtime, tsvalue, featureid, varid, entity_type ) \n

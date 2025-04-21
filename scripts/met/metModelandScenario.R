@@ -119,10 +119,10 @@ if(!is.na(pathToWrite) & !is.na(ratingsFile)){
   #DB using the same times associated with our precip datasets, running noon to
   #noon UTC and ending on the selected day
   ratings$start_date_sec <- as.numeric(
-    as.POSIXct(paste0((as.Date(ratings$start_date) - 1)," 12:00:00"),tz = "UTC")
+    as.POSIXct(paste0((as.Date(ratings$start_date) - 1)," 00:00:00"),tz = "EST")
   )
   ratings$end_date_sec <- as.numeric(
-    as.POSIXct(paste0(ratings$end_date," 12:00:00"),tz = "UTC")
+    as.POSIXct(paste0(ratings$end_date," 23:59:59"),tz = "EST")
   )
   #Add featureid and entity_type to ratings for proper export to dh_timeseries
   ratings$featureid <- rankingScenario$pid
