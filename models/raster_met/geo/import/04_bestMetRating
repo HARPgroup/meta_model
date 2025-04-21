@@ -28,7 +28,7 @@ ratings_sql="
 \\set metModel '$MET_MODEL_VERSION' \n
 \\set bundle '$COVERAGE_BUNDLE'   \n
 \\set ftype '$COVERAGE_FTYPE'  \n
-\\set defaultvarkey '$BACKGROUND_VARKEY'
+\\set defaultvarkey '$BACKGROUND_VARKEY'  \n
 SELECT hydroid AS ratings FROM dh_variabledefinition WHERE varkey = :'ratingsVarkey' \\gset \n
 SELECT scen.pid as scenariopid \n
 FROM dh_properties as scen \n
