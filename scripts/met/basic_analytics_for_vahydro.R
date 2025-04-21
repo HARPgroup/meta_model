@@ -7,13 +7,13 @@ library(zoo)
 
 ## For ANY data
 
-summary_analytics <- function(df){
+summary_analytics <- function(met_data){
 
   # Create daily summary to use for all data. This makes hourly data daily sums.
 daily_summary <- 
   sqldf(
     "SELECT yr, mo, da, obs_date, SUM(precip_in) AS total_precip
-  FROM df
+  FROM met_data
   GROUP BY yr, mo, da"
   ) #include obs_date after SQL to data frame
 precip_daily_max_in <- max(daily_summary$total_precip)
@@ -54,8 +54,8 @@ precip_annual_min_year <-
 
 #if else statement evaluates the amount of unique hours and if 24,
 #then hourly max is taken. If not, hourly max is NA
-if(length(unique(df$hr)) == 24){
-  precip_hourly_max_in <- max(df$precip_in)
+if(length(unique(met_data$hr)) == 24){
+  precip_hourly_max_in <- max(met_data$precip_in)
 } else {
   precip_hourly_max_in <- NA
 }
@@ -72,12 +72,12 @@ l90_precip_in_roll <-
     na.rm = TRUE)
 
 #l90 using IHA
-if(length(unique(df$hr)) == 24){
+if(length(unique(met_data$hr)) == 24){
   Qout_zoo <- zoo(as.numeric(daily_summary$total_precip), order.by = as.POSIXct(daily_summary$obs_date))
   Qout_g2 <- data.frame(group2(Qout_zoo))
   l90_precip_in <- min(Qout_g2$X90.Day.Min)
 } else {
-  Qout_zoo <- zoo(as.numeric(df$precip_in), order.by = as.POSIXct(df$obs_date))
+  Qout_zoo <- zoo(as.numeric(met_data$precip_in), order.by = as.POSIXct(met_data$obs_date))
   Qout_g2 <- data.frame(group2(Qout_zoo))
   l90_precip_in <- min(Qout_g2$X90.Day.Min)
 }
