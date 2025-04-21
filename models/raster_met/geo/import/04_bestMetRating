@@ -64,10 +64,10 @@ WITH dailyRating as ( \n
 	basets.END_DATE, \n
 	ts.tsvalue as tsvalue \n
 	FROM ( \n
-		SELECT generate_series(extract(epoch from '${ts_START_DATE} 12:00:00'::timestamptz), \n
-				extract(epoch from '${ts_END_DATE} 12:00:00'::timestamptz), 86400) as START_DATE, \n
-			generate_series(extract(epoch from '${ts_START_DATE} 12:00:00'::timestamptz),  \n
-				extract(epoch from '${ts_END_DATE} 12:00:00'::timestamptz), 86400) as END_DATE \n
+		SELECT generate_series(extract(epoch from '${ts_START_DATE} 12:00:00 UTC'::timestamptz), \n
+				extract(epoch from '${ts_END_DATE} 12:00:00 UTC'::timestamptz), 86400) as START_DATE, \n
+			generate_series(extract(epoch from '${ts_START_DATE} 12:00:00 UTC'::timestamptz),  \n
+				extract(epoch from '${ts_END_DATE} 12:00:00 UTC'::timestamptz), 86400) as END_DATE \n
 	) as basets \n
 	LEFT JOIN ( \n
 		SELECT modelProp.featureid as featureid, \n
