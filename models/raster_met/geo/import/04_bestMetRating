@@ -129,7 +129,6 @@ AND f.ftype = :'ftype'
 	 dailyRating.END_DATE
 	 ORDER BY dailyRating.featureid,dailyRating.START_DATE 
  ) 
- select to_timestamp(tstime),to_timestamp(tsendtime) from bestRating
  
  INSERT INTO dh_timeseries ( tstime,tsendtime, tsvalue, featureid, varid, entity_type ) 
  SELECT a.tstime::bigint, a.tsendtime::bigint, a.tsvalue, 
