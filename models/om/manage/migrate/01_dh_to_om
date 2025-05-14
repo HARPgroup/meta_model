@@ -8,4 +8,4 @@ fi
 # NOTE: segment in this module is the elementid of the om entity to be migrated TO
 
 cd /var/www/html/om
-Rscript /opt/model/om/R/set_element.R pid $segment
+Rscript /opt/model/om/R/set_element.R pid $segment $tempdir
