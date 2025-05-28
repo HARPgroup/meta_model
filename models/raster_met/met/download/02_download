@@ -12,6 +12,6 @@ echo "Downloading from "${datasource}
 echo "Trying ${datasource} for ${ddate}"
 
 echo "In: cd $NLDAS_ROOT"
-echo "Running: ./get_nldas_data.bash $yr $jday $yr"
+echo "Running: ./get_nldas_data $yr $jday $yr"
 cd $NLDAS_ROOT
-./get_nldas_data.bash $yr $jday $yr
+./get_nldas_data $yr $jday $NLDAS_ROOT

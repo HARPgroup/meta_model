@@ -40,7 +40,7 @@ WHERE entity_type = 'dh_properties'
   AND foo.newvarid IS NOT NULL 
 "
 
-if [ "$segment" == "all" ]; then
+if [ "$ddate" == "all" ]; then
   # we want to migrate all at once, which is economical, timewise
   # so we do nothing to the sql
   continue

@@ -22,5 +22,5 @@ endif
 
 source $MODEL_ROOT/run_bhatt/fragments/set_landuse
 foreach lu ($perlnds $implnds)
-  rm ${CBP_EXPORT_DIR}/land/subsheds/pwater/${lu}${segment}_pwater.csv
+  rm ${CBP_EXPORT_DIR}/land/${scenario}/pwater/${lu}${segment}_pwater.csv
 end
