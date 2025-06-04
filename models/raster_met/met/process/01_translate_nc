@@ -8,17 +8,20 @@ echo "Loading met_config from $met_config"
 . $met_config
 
 nc_src_files=`ls $src_dir/*.nc`
+echo "Removing old format downloads"
+echo "rm $src_dir/*grb*"
+rm $src_dir/*grb*
+
 echo "Trying to reproject $nc_src_files for $ddate"
 for originalFile in $nc_src_files; do
-  echo "Clearing pre-existing file ${originalFile}.repro.gtiff"
-  if [ -e ${originalFile}.repro.gtiff ]; then
-    echo "Clearing pre-existing file ${originalFile}.repro.gtiff"
-    rm ${originalFile}.repro.gtiff
+  if [ -e ${originalFile}.bil ]; then
+    echo "Clearing pre-existing file ${originalFile}.bil"
+    rm ${originalFile}.bil
   fi
   extension="${originalFile##*.}"
   if [ "$extension" == "nc" ]; then
     echo "converting netcdf to getiff..."
     echo "gdalwarp $originalFile -t_srs EPSG:4326 -of \"EHdr\" \"${originalFile}.bil\""
-	gdalwarp NETCDF:"$originalFile":Rainf -t_srs EPSG:4326 -of "EHdr" "${originalFile}.bil"
+    gdalwarp NETCDF:"$originalFile":Rainf -t_srs EPSG:4326 -of "EHdr" "${originalFile}.bil"
   fi
 done
