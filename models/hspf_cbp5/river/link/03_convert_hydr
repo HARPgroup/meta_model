@@ -13,4 +13,4 @@ cd $tempdir
 set csvfile = $CBP_EXPORT_DIR/river/${scenario}/hydr/${seg}_hydr'.csv'
 # Run conversion script to add Qout and other derived/alias columns
 echo "Notice (unit conversions): Rscript $MODEL_ROOT/run/export/hsp_hydr_conversion.R $csvfile"
-Rscript $MODEL_ROOT/run/export/hsp_hydr_conversion.R $csvfile 
+Rscript $META_MODEL_ROOT/scripts/river/hsp_hydr_conversion.R $csvfile 
