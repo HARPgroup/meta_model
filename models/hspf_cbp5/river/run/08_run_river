@@ -16,9 +16,5 @@ if (!(-e $inp)) then
   exit
 endif
 
-#echo $inp | $HSPF_EXEC 
-set HSP_VERSION = "hspf"
-export HSP_VERSION
-echo "Running: $MODEL_ROOT/run/standard/run_river.csh $scenario $segment $MODEL_ROOT"
-$MODEL_ROOT/run/standard/run_river.csh $scenario $segment $MODEL_ROOT
-# @todo: put in run execution checks like normal HSPF has
+echo $inp | $HSPF_EXEC
+
