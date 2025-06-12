@@ -21,7 +21,7 @@ data_source_path <- argst[3] # Path to data table within h5 that begins with /[g
 fid = H5Fopen(h5_file_path) # Opens the h5 file, fid is a h5 identifier
 data <- h5read(fid,data_source_path, bit64conversion = "double")
 H5close()
-data <- data$table
+#data <- data$table
 origin <- "1970-01-01"
 data$index <- as.POSIXct((data$index)/10^9, origin = origin, tz = "UTC")
 
