@@ -20,7 +20,7 @@ for originalFile in $nc_src_files; do
   fi
   extension="${originalFile##*.}"
   if [ "$extension" == "nc" ]; then
-    echo "converting netcdf to getiff..."
+    echo "converting netcdf to bil ..."
     echo "gdalwarp $originalFile -t_srs EPSG:4326 -of \"EHdr\" \"${originalFile}.bil\""
     gdalwarp NETCDF:"$originalFile":Rainf -t_srs EPSG:4326 -of "EHdr" "${originalFile}.bil"
   fi

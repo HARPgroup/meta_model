@@ -21,6 +21,7 @@ else
   echo "Importing file converted from $src_dir ..."
   for met_file in $import_files; do
     # set the variable TIFFTAG_DATETIME from meta-data
+    echo "Trying: eval 'gdalinfo $met_file |grep TIFFTAG_DATETIME'"
     eval `gdalinfo $met_file |grep TIFFTAG_DATETIME`
     if [ "$TIFFTAG_DATETIME" == "" ]; then
       echo "Could not find TIFFTAG_DATETIME in meta-data for $met_file ($TIFFTAG_DATETIME)"

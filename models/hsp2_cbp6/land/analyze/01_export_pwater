@@ -18,10 +18,10 @@ echo "The real hsp2 is being used"
 foreach lu ($perlnds $implnds)
 
   set h5file = $lu$seg'.h5'
-  set has_pwater=`Rscript $MODEL_ROOT/run/export/detect_data_source.R $h5file "/RESULTS/PERLND_P001/PWATER"`
-  echo "$has_pwater= Rscript $MODEL_ROOT/run/export/detect_data_source.R $h5file '/RESULTS/PERLND_P001/PWATER' "
-  set has_iwater=`Rscript $MODEL_ROOT/run/export/detect_data_source.R $h5file "/RESULTS/PERLND_I001/IWATER"`
-  echo "set has_iwater= Rscript $MODEL_ROOT/run/export/detect_data_source.R $h5file '/RESULTS/PERLND_I001/IWATER'"
+  set has_pwater=`Rscript $META_MODEL_ROOT/scripts/h5/detect_data_source.R $h5file "/RESULTS/PERLND_P001/PWATER"`
+  echo "$has_pwater= Rscript $META_MODEL_ROOT/scripts/h5/detect_data_source.R $h5file '/RESULTS/PERLND_P001/PWATER' "
+  set has_iwater=`Rscript $META_MODEL_ROOT/scripts/h5/detect_data_source.R $h5file "/RESULTS/PERLND_I001/IWATER"`
+  echo "set has_iwater= Rscript $META_MODEL_ROOT/scripts/h5/detect_data_source.R $h5file '/RESULTS/PERLND_I001/IWATER'"
 
   if ( "$has_pwater" == "1" ) then
     set run_landsum=1
@@ -36,9 +36,9 @@ foreach lu ($perlnds $implnds)
     continue
   endif
 
-  echo "Notice: Rscript $MODEL_ROOT/run/export/export_hsp_h5.R $h5file $csvfile $ds"
-  Rscript $MODEL_ROOT/run/export/export_hsp_h5.R $h5file $csvfile $ds
+  echo "Notice: Rscript $META_MODEL_ROOT/scripts/h5/export_hsp_h5.R $h5file $csvfile $ds"
+  Rscript $META_MODEL_ROOT/scripts/h5/export_hsp_h5.R $h5file $csvfile $ds
 
-  echo "Notice: Rscript $MODEL_ROOT/run/export/hsp_index_conversion.R $csvfile"
-  Rscript $MODEL_ROOT/run/export/hsp_index_conversion.R $csvfile
+  echo "Notice: Rscript $META_MODEL_ROOT/scripts/h5/hsp_index_conversion.R $csvfile"
+  Rscript $META_MODEL_ROOT/scripts/h5/hsp_index_conversion.R $csvfile
 end

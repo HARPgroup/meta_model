@@ -45,6 +45,9 @@ else
                 hr4digit="${hr2digit}00"
                 fname=`ls $src_dir/*.${hr4digit}.* | grep $final_ext`
                 if [ "$fname" != "" ]; then
+        echo "###################################"
+        echo "Handling $fname"
+        echo "###################################"
                     TIFFTAG_DATETIME="${yr}-${mo}-${da}T${hr2digit}:00:00"
                     # edit file meta data to set date time for later use
                     echo "Setting TIFFTAG_DATETIME: gdal_edit.py $fname -mo \"TIFFTAG_DATETIME=${TIFFTAG_DATETIME}\""
