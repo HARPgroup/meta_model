@@ -129,4 +129,5 @@ ggplot(monthlyAGWS, aes(x=date)) + geom_area(aes(y=LZS, fill = 'blue'))+ geom_ar
 
 ggsave(image_path)
 # attach this to the lu property
+message(paste("saving fig.aglzuz at",image_url,"to pid", lu$pid))
 vahydro_post_metric_to_scenprop(lu$pid, 'dh_image_file', image_url, 'fig.aglzuz', NULL, ds)
