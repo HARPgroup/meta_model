@@ -10,7 +10,6 @@ echo "Changing to $tempdir"
 cd $tempdir
 
 # perlnds and implnds now set in script/[scenario].con (and default.con falls back)
-#source $tree/run_bhatt/fragments/set_landuse
 echo "The real hsp2 is being used"
 echo "Getting VENV_MODEL='cbp get_config ${scenario} script VENV_MODEL'"
 set VENV_MODEL=`cbp get_config ${scenario} script VENV_MODEL`
