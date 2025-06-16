@@ -20,8 +20,7 @@ set ftype = $LAND_FTYPE
 set image_file_path=$CBP_EXPORT_DIR/land/$scenario/images
 echo "This contains model image file of base flow simulation" > /tmp/README.txt
 install -D /tmp/README.txt "${image_file_path}/"
-# load perlands and implnds variables
-source $MODEL_ROOT/run_bhatt/fragments/set_landuse
+# process perlands and implnds variables (loaded in model_config)
 foreach landuse ($perlnds $implnds)
   set output_file_path="$CBP_EXPORT_DIR/land/$scenario/pwater/${landuse}${seg}_pwater.csv"
   set pwater_file = "$image_file_path/${landuse}${segment}_pwater.csv"

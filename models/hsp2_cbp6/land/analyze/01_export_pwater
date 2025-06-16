@@ -13,7 +13,6 @@ cd $tempdir
 
 echo "Exporting PWATER/IWATER data for $seg"
 
-source $tree/run_bhatt/fragments/set_landuse
 echo "The real hsp2 is being used"
 foreach lu ($perlnds $implnds)
 
