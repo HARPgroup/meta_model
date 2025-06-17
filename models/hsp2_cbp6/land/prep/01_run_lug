@@ -26,7 +26,6 @@ else
 endif
 
 
-source $MODEL_ROOT/run_bhatt/fragments/set_landuse
 if (-e problem) then
   rm problem
 endif

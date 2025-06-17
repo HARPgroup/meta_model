@@ -36,6 +36,11 @@ image_directory_path <- argst[5] # paste0('/media/model/p532/out/land/', scenari
 #image_directory_path <- '/media/model/p532/out/land/hsp2_2022/images' # needs to be commented when running on the server 
 model_version <- argst[6]
 lseg_ftype <- argst[7]
+if (length(argst) > 7){
+  indicator_lus <- tr_split(argst[8],pattern = ",")[[1]]
+} else {
+  indicator_lus <- c('for', 'pas')
+}
 
 
 image_path_split <- strsplit(image_directory_path, split = '/')

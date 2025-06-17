@@ -11,7 +11,6 @@ source $META_MODEL_ROOT/models/$MODEL/model_config
 echo "Changing to $tempdir"
 cd $tempdir
 
-source $tree/run_bhatt/fragments/set_landuse
 echo "The real hsp2 is being used"
 echo "Getting VENV_MODEL='cbp get_config ${scenario} script VENV_MODEL'"
 set VENV_MODEL=`cbp get_config ${scenario} script VENV_MODEL`

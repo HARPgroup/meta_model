@@ -9,7 +9,7 @@ source $META_MODEL_ROOT/models/$MODEL/model_config
 echo "Changing to $tempdir"
 cd $tempdir
 
-source $tree/run_bhatt/fragments/set_landuse
+# perlnds and implnds now set in script/[scenario].con (and default.con falls back)
 echo "The real hsp2 is being used"
 echo "Getting VENV_MODEL='cbp get_config ${scenario} script VENV_MODEL'"
 set VENV_MODEL=`cbp get_config ${scenario} script VENV_MODEL`
@@ -27,7 +27,10 @@ foreach lu ($perlnds $implnds)
     $HSP_EXEC run $inp
   endif
 end
-wait
+
+if ( $SLURM_ENABLED == 1) then
+  wait
+fi 
 
 # now copy files
 foreach lu ($perlnds $implnds)

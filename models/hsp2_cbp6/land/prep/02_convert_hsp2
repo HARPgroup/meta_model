@@ -3,7 +3,6 @@ set scenario=$1
 set segment=$2
 set tmp_dir=$3
 
-source $MODEL_ROOT/run_bhatt/fragments/set_landuse
 if (-e problem) then
   rm problem
 endif

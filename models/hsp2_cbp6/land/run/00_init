@@ -18,7 +18,6 @@ if ( ! -d $tempdir ) then
   mkdir $tempdir
 endif
 
-source $tree/run_bhatt/fragments/set_landuse
 cd $tempdir
   
 foreach lu ($perlnds $implnds)
