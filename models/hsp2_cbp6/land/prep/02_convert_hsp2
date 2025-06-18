@@ -1,7 +1,13 @@
 #!/bin/csh
 set scenario=$1
 set segment=$2
-set tmp_dir=$3
+set tempdir=$3
+# backward compat
+set seg=$segment
+set tree=$MODEL_ROOT
+source $META_MODEL_ROOT/models/$MODEL/model_config
+echo "Changing to $tempdir"
+cd $tempdir
 
 if (-e problem) then
   rm problem
