@@ -19,7 +19,7 @@ fi
 
 #Skip if the RESAMPLE_VARKEY has been set
 if [ "$RESAMPLE_VARKEY" != "" ]; then
-  echo "RESAMPLE_VARKEY set. Skipping."
+  echo "RESAMPLE_VARKEY set to \"$RESAMPLE_VARKEY\". Skipping."
   exit
 fi
 
