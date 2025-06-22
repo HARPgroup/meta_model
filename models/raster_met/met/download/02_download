@@ -7,6 +7,10 @@ fi
 echo "Loading met_config from $met_config"
 . $met_config
 
+if [ "$datasource" != "nldas2" ]; then
+  exit
+fi
+
 echo "Downloading from "${datasource}
 
 echo "Trying ${datasource} for ${ddate}"
