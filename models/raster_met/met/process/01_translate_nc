@@ -20,8 +20,30 @@ for originalFile in $nc_src_files; do
   fi
   extension="${originalFile##*.}"
   if [ "$extension" == "nc" ]; then
+    # Extract precip layer
     echo "converting netcdf to bil ..."
-    echo "gdalwarp $originalFile -t_srs EPSG:4326 -of \"EHdr\" \"${originalFile}.bil\""
+    echo "gdalwarp NETCDF:\"$originalFile\":Rainf -t_srs EPSG:4326 -of \"EHdr\" \"${originalFile}.bil\""
     gdalwarp NETCDF:"$originalFile":Rainf -t_srs EPSG:4326 -of "EHdr" "${originalFile}.bil"
+    # if requested "NLDAS2_MAKE_GRB", create a copy of this in grb format with all layers
+    # This is for backwards compatibility with the P6 CBP wdm creators in C++
+    if [ "$NLDAS2_MAKE_GRB" == "1" ]; then
+      out_type='grb'
+      file_base=${originalFile%.*}
+      out_file="${file_base}."$out_type  # final file to import
+      lyr_file="${file_base}.tiff" # intermediate file - must have this  to accept layer setting, then convert
+      rm $out_file
+      rm $lyr_file 
+      gdal_create -if $NLDAS2_GRB_TEMPLATE -bands 11 $lyr_file
+      # clip 
+      # Note: -srcband is always 1, since we've extracted the band already by specifying the band name like ":Tair"
+      bnd=0
+      for i in Tair Qair PSurf Wind_E Wind_N LWdown CRainf_frac CAPE PotEvap Rainf SWdown ;  do
+      #for i in Rainf;  do
+         bnd=$((bnd + 1))
+         gdalwarp NETCDF:"$infile":$i -t_srs EPSG:4326 $lyr_file -srcband 1 -dstband $bnd
+      done
+      gdalwarp -of grib -t_srs EPSG:4326 $lyr_file $out_file
+      mv $out_file ${src_dir}/
+    fi
   fi
 done
