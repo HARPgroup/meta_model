@@ -40,6 +40,7 @@ for originalFile in $nc_src_files; do
       for i in Tair Qair PSurf Wind_E Wind_N LWdown CRainf_frac CAPE PotEvap Rainf SWdown ;  do
       #for i in Rainf;  do
          bnd=$((bnd + 1))
+         echo "Running: gdalwarp NETCDF:\"$infile\":$i -t_srs EPSG:4326 $lyr_file -srcband 1 -dstband $bnd"
          gdalwarp NETCDF:"$infile":$i -t_srs EPSG:4326 $lyr_file -srcband 1 -dstband $bnd
       done
       gdalwarp -of grib -t_srs EPSG:4326 $lyr_file $out_file
