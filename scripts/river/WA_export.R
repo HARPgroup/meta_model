@@ -52,6 +52,10 @@ metrics_data <- hydrotools::om_vahydro_metric_grid(
 
 #Get object of interest using the given pid and elid 
 obj <- metrics_data[metrics_data$pid == pid, ]
+if (nrow(obj) == 0) {
+  message(paste(obj$propname, "(pid=", obj$pid,")","does not have model a run log file. Exiting."))
+  q("n")
+}
 if (!("Smin_mg" %in% names(obj))) {
   message(paste(obj$propname, "(pid=", obj$pid,")","does not have storage information. Exiting."))
   q("n")
