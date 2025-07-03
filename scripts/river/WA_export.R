@@ -6,6 +6,7 @@ basepath='/var/www/R';
 source(paste(basepath,'config.R',sep='/'))
 suppressPackageStartupMessages(library(hydrotools))
 suppressPackageStartupMessages(library(lubridate))
+suppressPackageStartupMessages(library(stringr))
 ## Abbreviated Form of WA Eqn:
 ## WA_cpl = Qdemand_cpl - MIF*Qbase_cpl + Smin_cpl/CPL
 ### Where CPL = Critical Period Length 
@@ -44,19 +45,22 @@ df_metrics <- data.frame(
   'metric' = c(paste0('Smin_L', CPL, '_mg'), paste0('l', CPL, '_Qout'), paste0('l', CPL, '_Qout')),
   'runlabel' = c('Smin_mg','lCPL_Qout_dem', 'lCPL_Qout_base')
 )
-metrics_data <- om_vahydro_metric_grid(
+metrics_data <- hydrotools::om_vahydro_metric_grid(
   metric = metric, runids = df_metrics, bundle = 'all', ftype = "all",
-  base_url = paste(site,'entity-model-prop-level-export',sep="/"),
   ds = ds
 )
 
 #Get object of interest using the given pid and elid 
 obj <- metrics_data[metrics_data$pid == pid, ]
+if (nrow(obj) == 0) {
+  message(paste(obj$propname, "(pid=", obj$pid,")","does not have model a run log file. Exiting."))
+  q("n")
+}
 if (!("Smin_mg" %in% names(obj))) {
   message(paste(obj$propname, "(pid=", obj$pid,")","does not have storage information. Exiting."))
   q("n")
 }
-basin_data <- fn_extract_basin(metrics_data, obj$riverseg)
+basin_data <- hydrotools::fn_extract_basin(metrics_data, obj$riverseg)
 obj$Smin_basin_mg <- sum(basin_data$Smin_mg)
 
 #Calculate Qavailable and WA
@@ -81,4 +85,4 @@ vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, paste0(
 vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, paste0('WA_', CPL, '_mgd'), obj$WA_basin_mgd, ds)
 
 message(paste("Calculated available flow as (", obj$lCPL_Qout_dem, "-", obj$Qout_mif, ")/1.547 =",obj$Qavailable_mgd))
-message(paste("Calculating basinwide available flow as ", obj$Qavailable_mgd, "+", obj$smin_basin_mg, "/", CPL, "=",obj$WA_basin_mgd))
+message(paste("Calculating basinwide available flow as ", obj$Qavailable_mgd, "+", obj$Smin_basin_mg, "/", CPL, "=",obj$WA_basin_mgd))
