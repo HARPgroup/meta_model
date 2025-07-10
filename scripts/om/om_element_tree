@@ -1,0 +1,33 @@
+#!/bin/bash
+if [ $# -eq 0 ]; then
+  echo "Use: om_element_tree elementid [include_children=1]" 1>&2
+  exit
+fi
+. om_config
+elid=$1
+include_children=1
+if [ $# -gt 1 ]; then
+  include_children=$2
+fi
+echo "Called:  om_element_tree $elid $include_children" 1>&2
+
+sql="\\set elid $elid \n
+\\set include_children $include_children \n
+
+WITH RECURSIVE element_tree AS (
+      SELECT p.*
+      FROM map_model_linkages as p
+      WHERE p.dest_id = :elid 
+        AND linktype = 1
+      UNION
+      SELECT c.*
+      FROM map_model_linkages as c 
+      inner join element_tree as p
+      on (c.dest_id = p.src_id and c.linktype = 1 and :include_children = 1)
+    )
+SELECT src_id from element_tree;"
+
+#echo $sql
+#set -f
+echo -e $sql | psql -t -h $DB_HOST model 
+

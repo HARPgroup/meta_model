@@ -9,7 +9,12 @@ custom2=`Rscript $META_MODEL_ROOT/scripts/rest/get_property.R dh_properties $pid
 # Summarize all children
 manifest="$OM_DATA_DIR/manifest.${runid}.${elid}.log"
 # Children first, so we filter out the river seg elid
-for i in `cat $manifest | grep -v $elid`; do
+ml=`cat $manifest | grep -v $elid`
+ul=`$META_MODEL_ROOT/scripts/om/om_element_tree $elid`
+els=`echo "$ul $ml"| tr ' ' '\n' | sort -nu`
+echo "Summarizing $els"
+#for i in `cat $manifest | grep -v $elid`; do
+for i in $els; do
   echo "Running: $META_MODEL_ROOT/scripts/om/summarize_element $i $runid $model_version"
   $META_MODEL_ROOT/scripts/om/summarize_element $i $runid $model_version
 done 

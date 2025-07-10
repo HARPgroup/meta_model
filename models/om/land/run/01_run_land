@@ -1,12 +1,62 @@
-#!/bin/csh
-set scenario=$1
-set segment=$2
-set tempdir=$3
-
-set tempbase=`basename $tempdir`
-cd $MODEL_ROOT/tmp/$user-scratch
-rm -Rf $tempbase
+#!/bin/bash
+scenario=$1
+segment=$2
+tempdir=$3
+land_config=`find_config land.config`
+if [ "$land_config" = "" ]; then
+  land_config="$META_MODEL_ROOT/models/om/land/land.config"
+fi
+. $land_config
 # load model entity to get run_mode and flow_mode, timestep, start and end dates
+# get the land river segs associated with this river segment
+echo "scen: $scenario, seg: $segment"
+sql="
+  select m.pid, a.name, a.hydrocode, a.ftype, e.propvalue as elid 
+  from dh_feature as a
+  left outer join dh_properties as m
+  on (
+    a.hydroid = m.featureid
+    and m.propcode = '$model_version'
+  )
+  left outer join dh_properties as e
+  on (
+    m.pid = e.featureid
+    and e.propname = 'om_element_connection'
+  )
+  where a.hydrocode like '%_${segment}'
+    and a.ftype = '$LRSEG_FTYPE'
+"
+
+echo $sql
+echo $sql | psql -h $DB_HOST $DB_NAME
+
+sql="
+  select m.pid, a.name, a.hydrocode, a.ftype, ro.pid, e.propvalue as elid 
+  from dh_feature as a
+  left outer join dh_properties as m
+  on (
+    a.hydroid = m.featureid
+    and m.propcode = '$model_version'
+  )
+  left outer join dh_properties as ro
+  on (
+    m.pid = ro.featureid
+    and ro.propname = '1. Local Runoff Inflows'
+  )
+  left outer join dh_properties as e
+  on (
+    ro.pid = e.featureid
+    and e.propname = 'om_element_connection'
+  )
+  where a.hydrocode like '%_${segment}'
+    and a.ftype = '$LRSEG_FTYPE'
+"
+
+echo $sql
+echo $sql | psql -h $DB_HOST $DB_NAME
+exit
+
+
 # probably can do this with get_prop function?
 # /usr/bin/php -f /var/www/html/om/run_shakeTree.php 1 elid runid sdate edate cdate xtype scen -1 6 normal varX=n 0 dt
 # xtype = shake tree or standard
