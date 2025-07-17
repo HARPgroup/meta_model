@@ -1,0 +1,29 @@
+#!/bin/bash
+# loads the met specific config
+### ***************************
+### This script converts the source
+### Files into a geoTiff format
+### with the name ${originalFile}.repro.gtiff
+### All steps after this one in the 
+### Workflow will expect this geoTiff
+### ***************************
+
+met_config=`find_config met.config`
+if [ "$met_config" = "" ]; then
+  met_config="$META_MODEL_ROOT/models/raster_met/met/met.config"
+fi
+echo "Loading met_config from $met_config"
+. $met_config
+
+
+echo "Trying to reproject $src_files for $ddate"
+for originalFile in $src_files; do
+  echo "Clearing pre-existing file ${originalFile}.repro.gtiff"
+  if [ -e ${originalFile}.repro.gtiff ]; then
+    echo "Clearing pre-existing file ${originalFile}.repro.gtiff"
+    rm ${originalFile}.repro.gtiff
+  fi
+  echo "Converting raster to geoTiff..."
+  echo "gdalwarp $originalFile -of \"gtiff\" \"${originalFile}.repro.gtiff\""
+  gdalwarp $originalFile -of "gtiff" "${originalFile}.repro.gtiff"
+done
