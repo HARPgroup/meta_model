@@ -8,12 +8,12 @@ echo "Loading met_config from $met_config"
 . $met_config
 
 
-echo "Trying to reproject $src_files for $ddate"
+echo "Trying to reproject for $ddate"
 for originalFile in $src_files; do
-  echo "cp \"${originalFile}.repro.gtiff\" \"${originalFile}.oproj.gtiff\ ""
+  echo "cp ${originalFile}.repro.gtiff ${originalFile}.oproj.gtiff"
   cp "${originalFile}.repro.gtiff" "${originalFile}.oproj.gtiff"
   echo "Reprojecting raster..."
-  echo "gdalwarp ${originalFile}.oproj.gtiff -t_srs EPSG:4326 -of \"gtiff\" \"${originalFile}.repro.gtiff\""
+  echo "gdalwarp ${originalFile}.oproj.gtiff -t_srs EPSG:4326 -of gtiff ${originalFile}.repro.gtiff"
   gdalwarp ${originalFile}.oproj.gtiff -t_srs EPSG:4326 -of "gtiff" "${originalFile}.repro.gtiff"
   rm "${originalFile}.oproj.gtiff"
 done
