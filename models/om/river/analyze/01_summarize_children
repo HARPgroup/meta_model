@@ -10,9 +10,12 @@ custom2=`Rscript $META_MODEL_ROOT/scripts/rest/get_property.R dh_properties $pid
 manifest="$OM_DATA_DIR/manifest.${runid}.${elid}.log"
 # Children first, so we filter out the river seg elid
 ml=`cat $manifest | grep -v $elid`
-ul=`$META_MODEL_ROOT/scripts/om/om_element_tree $elid`
+# Use paramter max recursive level of 4 so as not to go too far upstream
+# but insure that we get things like runoff components that are nested 4 deep
+# we could do the runoff components specially if this proves too time consuming anyhow
+ul=`$META_MODEL_ROOT/scripts/om/om_element_tree $elid 1 4`
 els=`echo "$ul $ml"| tr ' ' '\n' | sort -nu`
-echo "Summarizing $els"
+echo "Summarizing children $els"
 #for i in `cat $manifest | grep -v $elid`; do
 for i in $els; do
   echo "Running: $META_MODEL_ROOT/scripts/om/summarize_element $i $runid $model_version"
