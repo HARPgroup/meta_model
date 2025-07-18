@@ -1,0 +1,20 @@
+#!/bin/bash
+# loads the met specific config
+met_config=`find_config met.config`
+if [ "$met_config" = "" ]; then
+  met_config="$META_MODEL_ROOT/models/raster_met/met/met.config"
+fi
+echo "Loading met_config from $met_config"
+. $met_config
+
+
+echo "Trying to reproject for $ddate"
+for originalFile in $src_files; do
+  echo "cp ${originalFile}.${final_ext} ${originalFile}.oproj.gtiff"
+  cp "${originalFile}.${final_ext}" "${originalFile}.oproj.gtiff"
+  rm ${originalFile}.${final_ext}
+  echo "Reprojecting raster..."
+  echo "gdalwarp ${originalFile}.oproj.gtiff -t_srs EPSG:4326 -of gtiff ${originalFile}.${final_ext}"
+  gdalwarp ${originalFile}.oproj.gtiff -t_srs EPSG:4326 -of "gtiff" "${originalFile}.${final_ext}"
+  rm "${originalFile}.oproj.gtiff"
+done

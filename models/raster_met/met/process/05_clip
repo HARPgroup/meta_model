@@ -11,14 +11,15 @@ echo "Loading met_config from $met_config"
 echo "Trying to clip $src_files for $ddate"
 
 for originalFile in $src_files; do
-  if [ -e ${originalFile}${final_ext} ]; then
-    echo "Clearing old version of ${originalFile}${final_ext} "
-    rm ${originalFile}${final_ext}
-  fi 
-
-  echo "Reprojecting raster..."
-  echo "gdalwarp -of \"gtiff\" -cutline $maskExtent -crop_to_cutline \"${originalFile}.repro.gtiff\" \"${originalFile}${final_ext}\" "
-  gdalwarp -of "gtiff" -cutline $maskExtent -crop_to_cutline "${originalFile}.repro.gtiff" "${originalFile}${final_ext}"
+  ofile="${originalFile}.${final_ext}"
+  tfile=${originalFile}.tmp_clip.${final_ext}
+  echo "Making a copy cp $ofile $tfile"
+  cp $ofile $tfile
+  rm $ofile
+  echo "Clipping raster..."
+  echo "gdalwarp -of \"gtiff\" -cutline $maskExtent -crop_to_cutline \"$tfile\" \"$ofile\" "
+  gdalwarp -of "gtiff" -cutline $maskExtent -crop_to_cutline "$tfile" "$ofile"
+  rm $tfile
   # these files will be deleted during the final step in case we need to do verification
 done
 

@@ -1,0 +1,23 @@
+#!/bin/bash
+# loads the met specific config
+met_config=`find_config met.config`
+if [ "$met_config" = "" ]; then
+  met_config="$META_MODEL_ROOT/models/raster_met/met/met.config"
+fi
+echo "Loading met_config from $met_config"
+. $met_config
+
+
+echo "Checking whether to extract band $TS_BAND from $src_files for $ddate"
+for originalFile in $src_files; do
+  ofile="${originalFile}.${final_ext}"
+  tfile="${originalFile}.allbands.gtiff"
+  if [ "$TS_BAND" != "false" ]; then
+    echo "Extracting $TS_BAND from $ofile"
+    cp "$ofile" "$tfile"
+    echo "cp \"$ofile\" \"$tfile\""
+    echo "gdal_translate -b $TS_BAND -of gtiff \"$tfile\" \"$ofile\" "
+    gdal_translate -b $TS_BAND -of gtiff "$tfile" "$ofile"
+    rm "$tfile"
+  fi
+done
