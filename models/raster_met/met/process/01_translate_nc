@@ -17,7 +17,10 @@ for originalFile in $nc_src_files; do
     # Also, by converting this to the GRB format, it allows backwards compatibility with the P6 CBP wdm C++
     out_type='grb'
     file_base=${originalFile%.*}
-    out_file="${file_base}."$out_type  # final file to import
+    file_base=${file_base%.*}
+    # the new nldas2 has file ending 020.nc, and the old had 002.grb
+    # so we rewrite the file name here.
+    out_file="${file_base}.002."$out_type  # final file to import
     lyr_file="${file_base}.tiff" # intermediate file - must have this  to accept layer setting, then convert
     if [ -f $outfile ]; then
       if [ "$NLDAS2_UPDATE_GRB" != "1" ]; then
