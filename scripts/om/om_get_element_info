@@ -35,5 +35,7 @@ sql="
 
 set -f
 # can't echo this to stdout or it clobbers script pipes
-#echo -e "$sql | psql --csv -A --field-separator=',' -t -h $DB_HOST $DB_NAME"
+if [ "$3" == "1" ]; then
+  echo -e "$sql | psql --csv -A --field-separator=',' -t -h $DB_HOST $DB_NAME"
+fi
 echo -e $sql | psql --csv -A --field-separator="," -t -h $DB_HOST $DB_NAME

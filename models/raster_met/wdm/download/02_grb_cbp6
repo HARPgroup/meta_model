@@ -15,3 +15,7 @@ fi
 # grid2land.sh $data_start $data_end $base_dir $outdir $i
 # a2l_one $sdatemins $edatemins $outdir $lsegdir $i
 # LongTermAvgRNMax $lsegdir/met2date $lsegdir/RNMax 1 $i
+
+# et refresh_years from config
+refresh_years=`cbp get_config $scenario met CBP_REFRESH_YEARS`
+$MET_SCRIPT_PATH/sh/make_met2date $i $mtds $mtde "$refresh_years" landseg
