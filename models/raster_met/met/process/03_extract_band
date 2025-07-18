@@ -10,12 +10,14 @@ echo "Loading met_config from $met_config"
 
 echo "Checking whether to extract band $TS_BAND from $src_files for $ddate"
 for originalFile in $src_files; do
+  ofile="${originalFile}.${final_ext}"
+  tfile="${originalFile}.allbands.gtiff"
   if [ "$TS_BAND" != "false" ]; then
-    echo "Extracting $TS_BAND from ${originalFile}.repro.gtiff"
-    cp "${originalFile}.repro.gtiff" "${originalFile}.allbands.gtiff"
-    echo "cp \"${originalFile}.repro.gtiff\" \"${originalFile}.allbands.gtiff\""
-    echo "gdal_translate -b $TS_BAND -of gtiff \"${originalFile}.allbands.gtiff\" \"$originalFile.repro.gtiff\" "
-    gdal_translate -b $TS_BAND -of gtiff "${originalFile}.allbands.gtiff" "$originalFile.repro.gtiff"
-    rm "${originalFile}.allbands.gtiff"
+    echo "Extracting $TS_BAND from $ofile"
+    cp "$ofile" "$tfile"
+    echo "cp \"$ofile\" \"$tfile\""
+    echo "gdal_translate -b $TS_BAND -of gtiff \"$tfile\" \"$ofile\" "
+    gdal_translate -b $TS_BAND -of gtiff "$tfile" "$ofile"
+    rm "$tfile"
   fi
 done

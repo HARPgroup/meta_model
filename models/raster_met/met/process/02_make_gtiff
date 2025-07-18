@@ -3,7 +3,7 @@
 ### ***************************
 ### This script converts the source
 ### Files into a geoTiff format
-### with the name ${originalFile}.repro.gtiff
+### with the name ofile
 ### All steps after this one in the 
 ### Workflow will expect this geoTiff
 ### ***************************
@@ -18,12 +18,13 @@ echo "Loading met_config from $met_config"
 
 echo "Trying to reproject $src_files for $ddate"
 for originalFile in $src_files; do
-  echo "Clearing pre-existing file ${originalFile}.repro.gtiff"
-  if [ -e ${originalFile}.repro.gtiff ]; then
-    echo "Clearing pre-existing file ${originalFile}.repro.gtiff"
-    rm ${originalFile}.repro.gtiff
+  ofile=${originalFile}.$final_ext
+  if [ -e $ofile ]; then
+    echo "Clearing pre-existing file $ofile"
+    rm $ofile
   fi
   echo "Converting raster to geoTiff..."
-  echo "gdalwarp $originalFile -of \"gtiff\" \"${originalFile}.repro.gtiff\""
-  gdalwarp $originalFile -of "gtiff" "${originalFile}.repro.gtiff"
+  echo "gdalwarp $originalFile -of \"gtiff\" \"$ofile\""
+  gdalwarp $originalFile -of "gtiff" "$ofile"
 done
+

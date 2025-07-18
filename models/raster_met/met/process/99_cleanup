@@ -10,7 +10,8 @@ echo "Loading met_config from $met_config"
 
 echo "Cleaning up files for $ddate"
 
-for originalFile in $src_files; do
-  echo "Trying to remove: rm ${originalFile}.repro.gtiff"
-  rm "${originalFile}.repro.gtiff"
-done
+# this is no longer relaevant since we work in the destination dir
+#for originalFile in $src_files; do
+#  echo "Trying to remove: rm ${originalFile}.repro.gtiff"
+#  rm "${originalFile}.repro.gtiff"
+#done
