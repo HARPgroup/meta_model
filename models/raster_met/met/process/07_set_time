@@ -17,8 +17,8 @@ if [ "$datasource" == "PRISM" ]; then
         if [ -e $fname ]; then
             eval `gdalinfo $fname |grep TIFFTAG_DATETIME`
             TIFFTAG_DATETIME="${yr}-${mo}-${da}T${tz_hr}:00:00"
-            echo "Setting TIFFTAG_DATETIME: gdal_edit.py $fname -mo \"TIFFTAG_DATETIME=${TIFFTAG_DATETIME}\""
-            gdal_edit.py $fname -mo "TIFFTAG_DATETIME=${TIFFTAG_DATETIME}"
+            echo "Setting TIFFTAG_DATETIME: gdal_edit.py -mo \"TIFFTAG_DATETIME=${TIFFTAG_DATETIME}\" $fname"
+            gdal_edit.py -mo "TIFFTAG_DATETIME=${TIFFTAG_DATETIME}" $fname
         fi
     done
 elif [ "$datasource" == "daymet" ]; then

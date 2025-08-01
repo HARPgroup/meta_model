@@ -1,0 +1,25 @@
+#!/bin/bash
+# loads the met specific config
+### ***************************
+### THis cleans up tiff files with the 020 index
+### as we make tiffs have 002 format so that there
+### will be only one tiff regardless of whether the source
+### is pre-2024 change in format from NLDAS2
+### ***************************
+
+met_config=`find_config met.config`
+if [ "$met_config" = "" ]; then
+  met_config="$META_MODEL_ROOT/models/raster_met/met/met.config"
+fi
+echo "Loading met_config from $met_config"
+. $met_config
+
+
+# Clean up old school formats
+echo "Finding old_tiff_files= ls $src_dir/*020.grb.repro.gtiff "
+old_tiff_files=`ls $src_dir/*020.grb.repro.gtiff`
+for i in $old_tiff_files; do
+  echo "Removing: rm $i"
+  rm $i
+done
+
