@@ -17,6 +17,7 @@ q="WITH p6 as (
   )
   where a.bundle = '$bundle2'
   and a.ftype = '$ftype2'
+  and ( (a.hydrocode != '$target') OR ('$ftype2' != '$ftype1') )
 ),
 p5 as (
   select a.hydroid, a.hydrocode, b.dh_geofield_geom as geom
@@ -38,6 +39,7 @@ SELECT hydrocode from (
   limit 1
 ) as foo
 "
+#echo $q
 
 nearn=`echo $q | psql -t -h $DBHOST $DBNAME --pset="footer=off"`
 nearn=`echo $nearn |tr -d " "`

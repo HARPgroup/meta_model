@@ -28,10 +28,14 @@ sql="
     m.pid = c2.featureid
     and c2.propname = 'custom2'
   )
-  where e.propvalue = $1
-  and m.propcode = '$2'
+  WHERE e.propvalue = $1
+  AND (
+    m.propcode = '$2'
+    OR '-1' = '$2'
+  )
 "
 
+#echo $sql
 
 set -f
 # can't echo this to stdout or it clobbers script pipes
