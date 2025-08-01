@@ -15,6 +15,11 @@ model_version=$3
 # Get info about this element, including its object_class
 echo "info=$META_MODEL_ROOT/scripts/om/om_get_element_info $elid $model_version "
 info=`$META_MODEL_ROOT/scripts/om/om_get_element_info $elid $model_version`
+echo "Info: $info"
+if [ "$info" == "" ]; then
+  # try with no model version
+  info=`$META_MODEL_ROOT/scripts/om/om_get_element_info $elid -1`
+fi
 cd /var/www/R
 # summarize if a script exists for this object_class
 # Rscript vahydro/R/post.runoff.R $pid $elid $runid
