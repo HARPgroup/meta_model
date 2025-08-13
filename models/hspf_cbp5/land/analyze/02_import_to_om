@@ -21,4 +21,6 @@ if ( "$scenario_alias" != "" ) then
   else
     echo "Land export is off EXPORT_RUNOFF_OM = $EXPORT_RUNOFF_OM, no runoff component file imported."
   endif
+else
+  echo "land_scenario_alias is not defined in config/control/scripts/${scenario}.con .. skipping export to OM."
 endif
