@@ -56,6 +56,10 @@ if (nrow(obj) == 0) {
   message(paste(obj$propname, "(pid=", pid,")","does not have model a run log file. Exiting."))
   q()
 }
+if (str_length(obj$riverseg) == 0) {
+  message(paste(obj$propname, "(pid=", pid,")","does not have a riversegdefined. Exiting."))
+  q("n")
+}
 if (!("Smin_mg" %in% names(obj))) {
   message(paste(obj$propname, "(pid=", pid,")","does not have storage information. Exiting."))
   q("n")
@@ -80,9 +84,13 @@ sceninfo <- list(
 scenprop <- RomProperty$new( ds, sceninfo, TRUE)
 
 #Export metrics to VAhydro
-vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, paste0('Qavailable_', CPL, '_mgd'), obj$Qavailable_cfs / 1.547, ds)
-vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, paste0('WA_', CPL, '_mgd'), obj$WA_mgd, ds)
-vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, paste0('WA_', CPL, '_mgd'), obj$WA_basin_mgd, ds)
+vahydro_post_metric_to_scenprop(
+  scenprop$pid, 'om_class_Constant', NULL, 
+  paste0('Qavailable_', CPL, '_mgd'), 
+  obj$Qavailable_cfs / 1.547, ds
+  )
+scenprop$set_prop(paste0('Qavailable_', CPL, '_mgd'), propvalue = obj$Qavailable_cfs / 1.547)
+scenprop$set_prop(paste0('WA_', CPL, '_mgd'), propvalue = obj$WA_basin_mgd)
 
 message(paste("Calculated available flow as (", obj$lCPL_Qout_dem, "-", obj$Qout_mif, ")/1.547 =",obj$Qavailable_mgd))
 message(paste("Calculating basinwide available flow as ", obj$Qavailable_mgd, "+", obj$Smin_basin_mg, "/", CPL, "=",obj$WA_basin_mgd))

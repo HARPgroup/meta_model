@@ -1,0 +1,3 @@
+# provide standard model QA by ftype (expects uniform outputs)
+# Files in this directory should have the naming convention 
+# qa_[ftype].R
