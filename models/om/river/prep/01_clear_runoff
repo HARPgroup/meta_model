@@ -1,0 +1,38 @@
+#!/bin/bash
+# loads the args, the raster specific config and change to tempdir
+om_config=`find_config om.config`
+if [ "$om_config" = "" ]; then
+  om_config="$META_MODEL_ROOT/models/om/om.config"
+fi
+. $om_config
+
+FORCE_RUNOFF_RERUN=`cbp get_config $scenario script FORCE_RUNOFF_RERUN`
+RUNOFF_CONTAINER_CUSTOM1=`cbp get_config $scenario script RUNOFF_CONTAINER_CUSTOM1`
+RUNOFF_OBJECT_CUSTOM1=`cbp get_config $scenario script RUNOFF_OBJECT_CUSTOM1`
+if [ "$FORCE_RUNOFF_RERUN" != "1" ]; then
+  echo "FORCE_RUNOFF_RERUN = '$FORCE_RUNOFF_RERUN' -- will use cached runoff if valid."
+  exit
+fi
+
+# find the runoff container, clear it's run log
+echo "/opt/model/om/sh/dh/om_get_child_custom2 $elid cova_runoff"
+roc=`/opt/model/om/sh/dh/om_get_child_custom2 $elid cova_runoff`
+# find the specific runoff type container
+echo "/opt/model/om/sh/dh/om_get_child_custom2 $roc $RUNOFF_CONTAINER_CUSTOM1"
+rtc=`/opt/model/om/sh/dh/om_get_child_custom2 $roc $RUNOFF_CONTAINER_CUSTOM1`
+# find the child runof elements from the container, clear their log(s)
+echo "/opt/model/om/sh/dh/om_get_child_custom2 $rtc $RUNOFF_OBJECT_CUSTOM1"
+ro_obs=`/opt/model/om/sh/dh/om_get_child_custom2 $rtc $RUNOFF_OBJECT_CUSTOM1`
+
+# Example command:
+cd /var/www/html/om/ 
+
+scr="/usr/bin/php -f /var/www/html/om/fn_clearRun.php"
+args="$rtc $scenario"
+echo "Running: $scr $args"
+$scr $args
+for i in $ro_obs;do
+  args="$i $scenario"
+  echo "Running: $scr $args"
+  $scr $args
+done

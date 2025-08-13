@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# just run with all args from calling
+cd /var/www/html/om 
+/usr/bin/php -f /var/www/html/om/fn_clearRun.php $@
+
