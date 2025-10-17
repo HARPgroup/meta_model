@@ -19,7 +19,7 @@ runid_dem <- as.integer(argst[3]) #demand scenario (ex. 11)
 runid_base <- as.integer(argst[4]) #baseline scenario, default to 0 if none is provided (ex. 0 or NA)
 CPL <- as.integer(argst[5]) #critical period length (days), default to 90
 PoF <- as.integer(argst[6]) #minimum instream flow coefficient, default to 0.9
-
+message(paste("Called: Rscript WA_export.R", paste(argst,collapse=" ")))
 #For testing: Lake Pelham
 # pid = 5714522 ; elid = 352006 ; runid_dem = 11 ; runid_base = 0 ; CPL <- 30 ; PoF <- 0.9
 
@@ -57,7 +57,7 @@ if (nrow(obj) == 0) {
   q()
 }
 if (str_length(obj$riverseg) == 0) {
-  message(paste(obj$propname, "(pid=", pid,")","does not have a riversegdefined. Exiting."))
+  message(paste(obj$propname, "(pid=", pid,")","does not have a riverseg defined. Exiting."))
   q("n")
 }
 if (!("Smin_mg" %in% names(obj))) {
