@@ -24,8 +24,15 @@ echo "Called:  om_element_tree $elid $include_children" 1>&2
 sql="WITH RECURSIVE element_tree AS (
       SELECT p.*, 0 AS level
       FROM map_model_linkages as p
+      left outer join scen_model_element as zlevel
+      on ( zlevel.elementid = p.src_id ) 
       WHERE p.dest_id = $elid 
         AND linktype = 1
+        AND ( 
+          (zlevel.custom1 <> 'cova_upstream') 
+          OR ('cova_upstream' = '-1') 
+          OR (zlevel.custom1 is null)
+        ) 
       UNION
       SELECT c.*, p.level + 1 as level
       FROM map_model_linkages as c 
