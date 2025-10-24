@@ -66,7 +66,11 @@ if (!("Smin_mg" %in% names(obj))) {
 }
 basin_data <- hydrotools::fn_extract_basin(metrics_data, obj$riverseg)
 obj$Smin_basin_mg <- sum(basin_data$Smin_mg, na.rm=TRUE)
-
+na_smin = basin_data[is.na(basin_data$Smin_mg),]
+if (nrow(na_smin) > 0) {
+  message("NULL Smin data found fo the following:")
+  message(paste(na_smin, collapse = " "))
+}
 #Calculate Qavailable and WA
 obj$Qout_mif <- PoF*obj$lCPL_Qout_base #min instream flow (cfs)
 obj$Qavailable_cfs <- round((obj$lCPL_Qout_dem - obj$Qout_mif), digits = 3) #available flow (cfs): Qavailable = Qdemand - PoF*Qbaseline 
