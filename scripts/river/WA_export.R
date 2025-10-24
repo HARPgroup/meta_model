@@ -65,7 +65,7 @@ if (!("Smin_mg" %in% names(obj))) {
   q("n")
 }
 basin_data <- hydrotools::fn_extract_basin(metrics_data, obj$riverseg)
-obj$Smin_basin_mg <- sum(basin_data$Smin_mg)
+obj$Smin_basin_mg <- sum(basin_data$Smin_mg, na.rm=TRUE)
 
 #Calculate Qavailable and WA
 obj$Qout_mif <- PoF*obj$lCPL_Qout_base #min instream flow (cfs)
