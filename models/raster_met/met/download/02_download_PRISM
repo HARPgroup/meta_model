@@ -41,7 +41,8 @@ if [ "$pexist_date" == "$todays_date" ]; then
 fi
 echo "Getting data for month ${yr}-${mo}-${da}..."
 #Download the daily PRISM data for target day, reporject, and crop
-downloadPRISM $yr $mo $da
+echo "Calling: downloadPRISM $yr $mo $da $BASE_URI"
+downloadPRISM $yr $mo $da $BASE_URI $FILE_BASE $FILE_EXT
 if [ "$originalFile" == "-9999" ]; then
   echo "PRISM download could not find $download_name ... exiting. " > problem
   exit
