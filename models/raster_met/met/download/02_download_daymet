@@ -37,7 +37,11 @@ if [ "$jday" == "366" ]; then
   echo "Copying prism from $PRISM"
   cp $PRISM/$yr/$jday/* $base_dir/$yr/$jday/
 else
-  downloadDaymet $yr-$mo-$da $bboxnorth $bboxsouth $bboxwest $bboxeast
+  downloadDaymet $yr-$mo-$da
+  cmd="$MET_SCRIPT_PATH/daymet/downloadAnnualDaymet"
+  echo "Annual Daymet Download Parser"
+  echo $cmd
+  eval $cmd
 fi
 if [ "$originalFile" == "-9999" ]; then
   echo "daymet download could not find $download_name ... exiting. " > problem
