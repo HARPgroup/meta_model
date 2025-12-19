@@ -8,6 +8,11 @@ echo "Loading met_config from $met_config"
 . $met_config
 
 nc_src_files=`ls $src_dir/*.nc`
+if [ "$NLDAS2_GRB_TEMPLATE" == "" ]; then
+  echo "ERROR: NLDAS2_GRB_TEMPLATE is not defined in met/${scenario}.con -- quitting." >> problem
+  echo "ERROR: NLDAS2_GRB_TEMPLATE is not defined in met/${scenario}.con -- quitting."
+  exit
+fi
 echo "Trying to reproject $nc_src_files for $ddate"
 for originalFile in $nc_src_files; do
   extension="${originalFile##*.}"
@@ -30,6 +35,7 @@ for originalFile in $nc_src_files; do
     fi
     rm $out_file
     rm $lyr_file 
+    echo "Create GRB: gdal_create -if $NLDAS2_GRB_TEMPLATE -bands 11 $lyr_file"
     gdal_create -if $NLDAS2_GRB_TEMPLATE -bands 11 $lyr_file
     # clip 
     # Note: -srcband is always 1, since we've extracted the band already by specifying the band name like ":Tair"
