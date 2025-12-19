@@ -15,8 +15,6 @@ fi
 # Changing to 
 echo "Changing to temp dir: cd $tempdir "
 cd $tempdir
-# load the functions used herein
-source $MET_SCRIPT_PATH/daymet/downloadDailyDaymet.sh
 echo "Verifying $base_dir/$yr and $base_dir/$yr/$jday" 
 # make sure we have our data dirs
 if [ ! -d "$base_dir/$yr" ]; then
@@ -37,8 +35,7 @@ if [ "$jday" == "366" ]; then
   echo "Copying prism from $PRISM"
   cp $PRISM/$yr/$jday/* $base_dir/$yr/$jday/
 else
-  downloadDaymet $yr-$mo-$da
-  cmd="$MET_SCRIPT_PATH/daymet/downloadAnnualDaymet"
+  cmd="$MET_SCRIPT_PATH/daymet/downloadAnnualDaymet $yr-$mo-$da"
   echo "Annual Daymet Download Parser"
   echo $cmd
   eval $cmd
@@ -48,5 +45,3 @@ if [ "$originalFile" == "-9999" ]; then
   exit
 fi
 
-# stash in the daymet dowload place.
-cp ORIGINAL_*${yr}-${mo}-${da}* $base_dir/$yr/$jday/
