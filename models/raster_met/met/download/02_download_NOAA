@@ -12,6 +12,16 @@ if [ "$datasource" != "noaa_drought" ]; then
   exit
 fi
 
+# make sure we have our data dirs
+if [ ! -d "$base_dir/$yr" ]; then
+    echo "Doing: mkdir $base_dir/$yr"
+    mkdir $base_dir/$yr
+fi
+if [ ! -d "$base_dir/$yr/$jday" ]; then
+    echo "Doing: mkdir $base_dir/$yr/$jday"
+    mkdir $base_dir/$yr/$jday
+fi  
+
 url="${BASE_URI}/$yr/$mo/$da/nws_precip_wytd_$yr$mo${da}_conus.tif"
 
-wget $url -O "noaa_raster_$jday.tif"
+wget $url -O "${src_dir}/noaa_raster_$jday.tif"
