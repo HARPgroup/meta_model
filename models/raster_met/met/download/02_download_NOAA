@@ -1,0 +1,17 @@
+#!/bin/bash
+# loads the met specific config
+met_config=`find_config met.config`
+if [ "$met_config" = "" ]; then
+  met_config="$META_MODEL_ROOT/models/raster_met/met/met.config"
+fi
+echo "Loading met_config from $met_config"
+. $met_config
+
+
+if [ "$datasource" != "noaa_drought" ]; then
+  exit
+fi
+
+url="${BASE_URI}/$yr/$mo/$da/nws_precip_wytd_$yr$mo${da}_conus.tif"
+
+wget $url -O "noaa_raster_$jday.tif"
