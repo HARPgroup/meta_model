@@ -36,6 +36,16 @@ elif [ "$datasource" == "daymet" ]; then
             gdal_edit.py $fname -mo "TIFFTAG_DATETIME=${TIFFTAG_DATETIME}"
         fi
     done
+elif [ "$datasource" == "noaa_drought" ]; then
+    # single day files only,
+    for fname in $import_files; do
+        if [ -e $fname ]; then
+			eval `gdalinfo $fname |grep TIFFTAG_DATETIME`
+            TIFFTAG_DATETIME="${yr}-${mo}-${da}T${tz_hr}:00:00"
+            echo "Setting TIFFTAG_DATETIME: gdal_edit.py -mo \"TIFFTAG_DATETIME=${TIFFTAG_DATETIME}\" $fname"
+            gdal_edit.py -mo "TIFFTAG_DATETIME=${TIFFTAG_DATETIME}" $fname
+        fi
+    done
 else
     # This must be NLDAS2 with hourly files
     if [ -d "$base_dir/$yr" ]; then
