@@ -37,7 +37,10 @@ feature <- RomFeature$new(
 model <- om_model_object(ds, feature, model_version)
 # if a matching model does not exist, this will go ahead and create one
 scenario <- om_get_model_scenario(ds, model, scenario_name)
-
+# THIS DOES NOT DO ANYTHING - this is copied from elsewhere as a template but
+# no data model has been created to detail what we would like to store
+# maybe this should be a timeseries?  Just have a link to the file with a 
+# tstime stamp that indicates what day/hour it is?
 met_data <- read.table(met_file, header = TRUE, sep=",")
 numrecs <- nrow(met_data)
 vahydro_post_metric_to_scenprop(scenario$pid, 'om_class_Constant', NULL, 'num_records', numrecs, ds)
