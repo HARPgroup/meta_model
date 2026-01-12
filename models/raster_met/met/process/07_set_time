@@ -17,8 +17,8 @@ if [ "$datasource" == "PRISM" ]; then
         if [ -e $fname ]; then
             eval `gdalinfo $fname |grep TIFFTAG_DATETIME`
             TIFFTAG_DATETIME="${yr}-${mo}-${da}T${tz_hr}:00:00"
-            echo "Setting TIFFTAG_DATETIME: gdal_edit.py -mo \"TIFFTAG_DATETIME=${TIFFTAG_DATETIME}\" $fname"
-            gdal_edit.py -mo "TIFFTAG_DATETIME=${TIFFTAG_DATETIME}" $fname
+            echo "Setting TIFFTAG_DATETIME: $gdal_cdm $meta_switch \"TIFFTAG_DATETIME=${TIFFTAG_DATETIME}\" $fname"
+            $gdal_cmd $meta_switch "TIFFTAG_DATETIME=${TIFFTAG_DATETIME}" $fname
         fi
     done
 elif [ "$datasource" == "daymet" ]; then
@@ -32,8 +32,8 @@ elif [ "$datasource" == "daymet" ]; then
             #TIFFTAG_DATETIME for daymet
             tstime_start="${yr}-${mo}-${da}T${tz_hr}:00:00"
             TIFFTAG_DATETIME=`date -d "${tstime_start} 1 day" +'%Y-%m-%dT%H:%M:%S'`
-            echo "Setting TIFFTAG_DATETIME: gdal_edit.py $fname -mo \"TIFFTAG_DATETIME=${TIFFTAG_DATETIME}\""
-            gdal_edit.py $fname -mo "TIFFTAG_DATETIME=${TIFFTAG_DATETIME}"
+            echo "Setting TIFFTAG_DATETIME: $gdal_cmd $fname $meta_switch \"TIFFTAG_DATETIME=${TIFFTAG_DATETIME}\""
+            $gdal_cmd $fname $meta_switch "TIFFTAG_DATETIME=${TIFFTAG_DATETIME}"
         fi
     done
 elif [ "$datasource" == "noaa_drought" ]; then
@@ -42,28 +42,28 @@ elif [ "$datasource" == "noaa_drought" ]; then
         if [ -e $fname ]; then
 			eval `gdalinfo $fname |grep TIFFTAG_DATETIME`
             TIFFTAG_DATETIME="${yr}-${mo}-${da}T${tz_hr}:00:00"
-            echo "Setting TIFFTAG_DATETIME: gdal_edit.py -mo \"TIFFTAG_DATETIME=${TIFFTAG_DATETIME}\" $fname"
-            gdal_edit.py -mo "TIFFTAG_DATETIME=${TIFFTAG_DATETIME}" $fname
+            echo "Setting TIFFTAG_DATETIME: $gdal_cmd $fname $meta_switch \"TIFFTAG_DATETIME=${TIFFTAG_DATETIME}\""
+            $gdal_cmd $fname $meta_switch "TIFFTAG_DATETIME=${TIFFTAG_DATETIME}"
         fi
     done
 else
-    # This must be NLDAS2 with hourly files
-    if [ -d "$base_dir/$yr" ]; then
-        if [ -d "$base_dir/$yr/$jday" ]; then
-            for i in 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23; do 
-                hr2digit=`printf %02d $i`
-                hr4digit="${hr2digit}00"
-                fname=`ls $src_dir/*.${hr4digit}.* | grep $final_ext`
-                if [ "$fname" != "" ]; then
-        echo "###################################"
-        echo "Handling $fname"
-        echo "###################################"
-                    TIFFTAG_DATETIME="${yr}-${mo}-${da}T${hr2digit}:00:00"
-                    # edit file meta data to set date time for later use
-                    echo "Setting TIFFTAG_DATETIME: gdal_edit.py $fname -mo \"TIFFTAG_DATETIME=${TIFFTAG_DATETIME}\""
-                    gdal_edit.py $fname -mo "TIFFTAG_DATETIME=${TIFFTAG_DATETIME}"
-                fi
-            done
+  # This is NLDAS2 with hourly files
+  if [ -d "$base_dir/$yr" ]; then
+    if [ -d "$base_dir/$yr/$jday" ]; then
+      for i in 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23; do 
+        hr2digit=`printf %02d $i`
+        hr4digit="${hr2digit}00"
+        fname=`ls $src_dir/*.${hr4digit}.* | grep $final_ext`
+        if [ "$fname" != "" ]; then
+          echo "###################################"
+          echo "Handling $fname"
+          echo "###################################"
+          TIFFTAG_DATETIME="${yr}-${mo}-${da}T${hr2digit}:00:00"
+          # edit file meta data to set date time for later use
+          echo "Setting TIFFTAG_DATETIME: $gdal_cmd $fname $meta_switch \"TIFFTAG_DATETIME=${TIFFTAG_DATETIME}\""
+          $gdal_cmd $fname $meta_switch "TIFFTAG_DATETIME=${TIFFTAG_DATETIME}"
         fi
+      done
     fi
+  fi
 fi
