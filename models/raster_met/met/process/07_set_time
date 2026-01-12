@@ -10,10 +10,6 @@ echo "Loading met_config from $met_config"
 # files to import can be inferred
 echo "Looking for geotiff files in $base_dir/$yr/$jday"
 
-# gdal has undergone a change in 2025 that intro'd a cmd line utility "gdal" that replaced
-# the features of gdal_edit.py, and gdal_Edit.py went away
-# So, we check here for the gdal executable and modify our command accordingly
-
 if [ "$datasource" == "PRISM" ]; then
     # single day files only,
     echo "datasource is $datasource, checking $src_dir for $import_files"
