@@ -6,7 +6,9 @@ if [ "$met_config" = "" ]; then
 fi
 echo "Loading met_config from $met_config"
 . $met_config
-
+if [ "$FILE_EXT" != "nc" ]; then
+  echo "Source files are not nc format, so this step is unnecessary"
+fi
 nc_src_files=`ls $src_dir/*.nc`
 if [ "$NLDAS2_GRB_TEMPLATE" == "" ]; then
   echo "ERROR: NLDAS2_GRB_TEMPLATE is not defined in met/${scenario}.con -- quitting." >> problem
@@ -51,9 +53,9 @@ for originalFile in $nc_src_files; do
           gdal_create -if $NLDAS2_GRB_TEMPLATE -bands 11 $kc_file
           echo "Running: gdalwarp NETCDF:\"$originalFile\":$i -t_srs EPSG:4326 $kc_file -srcband 1 -dstband $bnd"
           gdalwarp NETCDF:"$originalFile":$i -t_srs EPSG:4326 $kc_file -srcband 1 -dstband $bnd
-          echo "Convertinf K to C: gdal_calc.py -A $kc_file --A_band=$bnd --calc="A - 273.15" --overwrite --outfile=$kc_file"
-          gdal_calc.py -A $kc_file --A_band=$bnd --calc="A - 273.15" --overwrite --outfile=$kc_file
           # perform Kelvin to Celsius translation
+          echo "Convertinf K to C: gdal_calc.py -A $kc_file --A_band=$bnd --calc="A - 273.15" --overwrite --outfile=$kc_file"
+          $gdal_calc -A $kc_file --A_band=$bnd --calc="A - 273.0" --overwrite --outfile=$kc_file
           echo "Converting EPSG 4326"
           gdalwarp $kc_file -t_srs EPSG:4326 $lyr_file -srcband $bnd -dstband $bnd
           rm $kc_file
