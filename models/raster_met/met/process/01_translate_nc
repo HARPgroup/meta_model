@@ -49,16 +49,23 @@ for originalFile in $nc_src_files; do
           echo "Running: gdalwarp NETCDF:\"$originalFile\":$i -t_srs EPSG:4326 $lyr_file -srcband 1 -dstband $bnd"
           gdalwarp NETCDF:"$originalFile":$i -t_srs EPSG:4326 $lyr_file -srcband 1 -dstband $bnd
        else
-          kc_file="${file_base}.kc.tif"
-          gdal_create -if $NLDAS2_GRB_TEMPLATE -bands 11 $kc_file
-          echo "Running: gdalwarp NETCDF:\"$originalFile\":$i -t_srs EPSG:4326 $kc_file -srcband 1 -dstband $bnd"
-          gdalwarp NETCDF:"$originalFile":$i -t_srs EPSG:4326 $kc_file -srcband 1 -dstband $bnd
+          k_file="${file_base}.k.tif"
+          c_file="${file_base}.c.tif"
+          # make a file with the Kelvin data
+          echo "Creating Empty K file: gdal_create -if $NLDAS2_GRB_TEMPLATE -bands 1 $k_file"
+          gdal_create -if $NLDAS2_GRB_TEMPLATE -bands 1 $k_file
+          # this is needed because gdal calc cannot write back to the same file
+          echo "Creating Empty C file: gdal_create -if $NLDAS2_GRB_TEMPLATE -bands 1 $c_file"
+          gdal_create -if $NLDAS2_GRB_TEMPLATE -bands 1 $c_file
+          echo "Copying orig K to K file: gdalwarp NETCDF:\"$originalFile\":$i -t_srs EPSG:4326 $k_file -srcband 1 -dstband $bnd"
+          gdalwarp NETCDF:"$originalFile":$i -t_srs EPSG:4326 $k_file -srcband 1 -dstband 1
           # perform Kelvin to Celsius translation
-          echo "Convertinf K to C: gdal_calc.py -A $kc_file --A_band=$bnd --calc="A - 273.15" --overwrite --outfile=$kc_file"
-          $gdal_calc -A $kc_file --A_band=$bnd --calc="A - 273.0" --overwrite --outfile=$kc_file
-          echo "Converting EPSG 4326"
-          gdalwarp $kc_file -t_srs EPSG:4326 $lyr_file -srcband $bnd -dstband $bnd
-          rm $kc_file
+          echo "Converting K to C: $gdal_calc $gdal_ifile_switch \"${gdal_ifile_prefix}$k_file\" --calc=\"A - 273.0\" --overwrite $gdal_ofile_switch$c_file"
+          $gdal_calc $gdal_ifile_switch "${gdal_ifile_prefix}$k_file" --calc="A - 273.0" --overwrite $gdal_ofile_switch$c_file
+          echo "Overwrite the Kelvin with C from K2C"
+          gdalwarp $c_file -t_srs EPSG:4326 $lyr_file -srcband 1 -dstband $bnd
+          rm $k_file
+          rm $c_file
        fi
     done
     gdalwarp -of grib -t_srs EPSG:4326 $lyr_file $out_file
