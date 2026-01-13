@@ -17,7 +17,7 @@ if [ "$datasource" == "PRISM" ]; then
         if [ -e $fname ]; then
             eval `gdalinfo $fname |grep TIFFTAG_DATETIME`
             TIFFTAG_DATETIME="${yr}-${mo}-${da}T${tz_hr}:00:00"
-            echo "Setting TIFFTAG_DATETIME: $gdal_cdm $gdal_meta_switch \"TIFFTAG_DATETIME=${TIFFTAG_DATETIME}\" $fname"
+            echo "Setting TIFFTAG_DATETIME: $gdal_cmd $gdal_meta_switch \"TIFFTAG_DATETIME=${TIFFTAG_DATETIME}\" $fname"
             $gdal_cmd $gdal_meta_switch "TIFFTAG_DATETIME=${TIFFTAG_DATETIME}" $fname
         fi
     done
@@ -32,8 +32,8 @@ elif [ "$datasource" == "daymet" ]; then
             #TIFFTAG_DATETIME for daymet
             tstime_start="${yr}-${mo}-${da}T${tz_hr}:00:00"
             TIFFTAG_DATETIME=`date -d "${tstime_start} 1 day" +'%Y-%m-%dT%H:%M:%S'`
-            echo "Setting TIFFTAG_DATETIME: $gdal_cmd $fname $meta_switch \"TIFFTAG_DATETIME=${TIFFTAG_DATETIME}\""
-            $gdal_cmd $fname $meta_switch "TIFFTAG_DATETIME=${TIFFTAG_DATETIME}"
+            echo "Setting TIFFTAG_DATETIME: $gdal_cmd $fname $gdal_meta_switch \"TIFFTAG_DATETIME=${TIFFTAG_DATETIME}\""
+            $gdal_cmd $fname $gdal_meta_switch "TIFFTAG_DATETIME=${TIFFTAG_DATETIME}"
         fi
     done
 elif [ "$datasource" == "noaa_drought" ]; then
@@ -42,8 +42,8 @@ elif [ "$datasource" == "noaa_drought" ]; then
         if [ -e $fname ]; then
 			eval `gdalinfo $fname |grep TIFFTAG_DATETIME`
             TIFFTAG_DATETIME="${yr}-${mo}-${da}T${tz_hr}:00:00"
-            echo "Setting TIFFTAG_DATETIME: $gdal_cmd $fname $meta_switch \"TIFFTAG_DATETIME=${TIFFTAG_DATETIME}\""
-            $gdal_cmd $fname $meta_switch "TIFFTAG_DATETIME=${TIFFTAG_DATETIME}"
+            echo "Setting TIFFTAG_DATETIME: $gdal_cmd $fname $gdal_meta_switch \"TIFFTAG_DATETIME=${TIFFTAG_DATETIME}\""
+            $gdal_cmd $fname $gdal_meta_switch "TIFFTAG_DATETIME=${TIFFTAG_DATETIME}"
         fi
     done
 else
@@ -60,8 +60,8 @@ else
           echo "###################################"
           TIFFTAG_DATETIME="${yr}-${mo}-${da}T${hr2digit}:00:00"
           # edit file meta data to set date time for later use
-          echo "Setting TIFFTAG_DATETIME: $gdal_cmd $fname $meta_switch \"TIFFTAG_DATETIME=${TIFFTAG_DATETIME}\""
-          $gdal_cmd $fname $meta_switch "TIFFTAG_DATETIME=${TIFFTAG_DATETIME}"
+          echo "Setting TIFFTAG_DATETIME: $gdal_cmd $fname $gdal_meta_switch \"TIFFTAG_DATETIME=${TIFFTAG_DATETIME}\""
+          $gdal_cmd $fname $gdal_meta_switch "TIFFTAG_DATETIME=${TIFFTAG_DATETIME}"
         fi
       done
     fi
