@@ -10,6 +10,11 @@ suppressPackageStartupMessages(library(lubridate))
 #df2 <- fread("OR1_7700_7980_divr.csv") # for testing only
 
 argst <- commandArgs(trailingOnly = T)
+if (length(argst) < 6) {
+  message("This script will modify a file by joining a column from the other file onto it.")
+  message("Use: join_col.csv file_to_modify join_file join_column new_column format(wdm or header) timestep(hour, day)")
+  q()
+}
 csv1 <- argst[1]
 csv2 <- argst[2]
 old_col <- argst[3] #should be 'values' when wdm is used 
