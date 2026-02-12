@@ -18,5 +18,6 @@ fi
 
 # et refresh_years from config
 refresh_years=`cbp get_config $scenario met G2L_REFRESH_YEARS`
-$MET_SCRIPT_PATH/sh/make_met2date $i $mtds $mtde "$refresh_years" landseg
+echo "Calling met2date: $MET_SCRIPT_PATH/sh/make_met2date $coverage $CBP_START $CBP_END "$refresh_years" landseg"
+$MET_SCRIPT_PATH/sh/make_met2date $coverage $CBP_START $CBP_END "$refresh_years" landseg
 
