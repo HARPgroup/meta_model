@@ -17,5 +17,6 @@ fi
 # LongTermAvgRNMax $lsegdir/met2date $lsegdir/RNMax 1 $i
 
 # et refresh_years from config
-refresh_years=`cbp get_config $scenario met CBP_REFRESH_YEARS`
+refresh_years=`cbp get_config $scenario met G2L_REFRESH_YEARS`
 $MET_SCRIPT_PATH/sh/make_met2date $i $mtds $mtde "$refresh_years" landseg
+

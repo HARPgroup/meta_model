@@ -1,0 +1,23 @@
+#!/bin/bash
+# loads the args, the raster specific config and change to tempdir
+wdm_config=`find_config wdm.config`
+if [ "$wdm_config" = "" ]; then
+  wdm_config="$META_MODEL_ROOT/models/raster_met/wdm/wdm.config"
+fi
+. $wdm_config
+
+if [[ $MET_PROCESS_METHOD != "cbp6" ]]; then
+  exit
+fi
+
+# since the cbp6 met2date script does not allow us to specify output dir yet, we 
+# copy to the end location here
+echo "REPEATING this copy step since the met2date function updated source data"
+echo "Copying baseline met data from $NLDAS_ROOT/out/lseg_csv/${BASELINE_MET_SCENARIO}/${coverage}.*"
+echo "into directory $COVERAGE_WDM_DIR/lseg_csv"
+for i in `ls $NLDAS_ROOT/out/lseg_csv/${BASELINE_MET_SCENARIO}/${coverage}.*`; do
+  csv_file_name=`basename $i`
+  echo "install -D $i $COVERAGE_WDM_DIR/$csv_file_name"
+  install -D $i $COVERAGE_WDM_DIR/$csv_file_name
+done
+

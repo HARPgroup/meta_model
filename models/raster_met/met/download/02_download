@@ -15,9 +15,9 @@ echo "Downloading from "${datasource}
 
 echo "Trying ${datasource} for ${ddate}"
 
-echo "In: cd $NLDAS_ROOT"
+echo "In: cd $base_dir"
+cd $base_dir
 echo "Clearing old: rm $yr/$jday/*"
 rm $yr/$jday/*
 echo "Running: ./get_nldas_data $yr $jday $yr"
-cd $NLDAS_ROOT
 ./get_nldas_data $yr $jday $NLDAS_ROOT
