@@ -15,7 +15,7 @@ if [ "$NLDAS2_GRB_TEMPLATE" == "" ]; then
   echo "ERROR: NLDAS2_GRB_TEMPLATE is not defined in met/${scenario}.con -- quitting."
   exit
 fi
-echo "Trying to reproject $nc_src_files for $ddate"
+echo "Trying to translate NC format to GRB for $nc_src_files for $ddate"
 for originalFile in $nc_src_files; do
   extension="${originalFile##*.}"
   if [ "$extension" == "nc" ]; then

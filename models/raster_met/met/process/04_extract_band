@@ -6,7 +6,10 @@ if [ "$met_config" = "" ]; then
 fi
 echo "Loading met_config from $met_config"
 . $met_config
-
+if [[ "$TS_BAND" =~ [^0-9] ]]; then
+  echo "TS_BAND $TS_BAND is non-numeric, skipping extraction."
+  exit
+fi
 
 echo "Checking whether to extract band $TS_BAND from $src_files for $ddate"
 for originalFile in $src_files; do

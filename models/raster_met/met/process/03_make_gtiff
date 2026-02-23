@@ -16,7 +16,7 @@ echo "Loading met_config from $met_config"
 . $met_config
 
 
-echo "Trying to reproject $src_files for $ddate"
+echo "Making geotiff from $src_files for $ddate"
 for originalFile in $src_files; do
   ofile=${originalFile}.$final_ext
   if [ -e $ofile ]; then
