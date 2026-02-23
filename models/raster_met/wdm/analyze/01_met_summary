@@ -8,7 +8,7 @@ fi
 
 echo "Generating Coverage Meteorology Analytics"
 
-
-scr_args="$META_MODEL_ROOT/scripts/met/precip_coverage_summary.R $scenario $coverage $COVERAGE_BUNDLE $COVERAGE_FTYPE $MODEL_VERSION_CODE $COVERAGE_PRECIP_FILE" 
+pfile="${COVERAGE_WDM_DIR}/${coverage}.PRC"
+scr_args="$META_MODEL_ROOT/scripts/met/precip_coverage_summary.R $scenario $coverage $COVERAGE_BUNDLE $COVERAGE_FTYPE $MODEL_VERSION_CODE $pfile" 
 echo "Rscript $scr_args"
 Rscript $scr_args 
