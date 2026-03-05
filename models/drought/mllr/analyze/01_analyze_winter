@@ -1,0 +1,25 @@
+#!/bin//bash
+# loads the met specific config
+mllr_config=`find_config mllr.config`
+if [ "$mllr_config" = "" ]; then
+  mllr_config="$META_MODEL_ROOT/models/drought/mllr/mllr.config"
+fi
+echo "Loading mllr_config from $mllr_config"
+. $mllr_config
+
+cd $tempdir
+
+# TODO: put this tsv as a config file somewhere or make it an automated list
+if [[ "$gageid" == "all" ]]; then
+  filename="/media/model/usgs/mllr/sites.csv"
+  while IFS= read -r line; do
+    #echo "Text read from file: $line"
+    IFS=$'\t' read gageno <<< "$line"
+    echo "Handling $gageno: Rscript $META_MODEL_ROOT/scripts/usgs/analyze_winter_one.R $gageno $year"
+    Rscript $META_MODEL_ROOT/scripts/usgs/analyze_winter_one.R $gageno $year
+  done < $filename
+else
+  gageno=$gageid
+  echo "Handling $gageno: Rscript $META_MODEL_ROOT/scripts/usgs/analyze_winter_one.R $gageno $year"
+  Rscript $META_MODEL_ROOT/scripts/usgs/analyze_winter_one.R $gageno $year
+fi

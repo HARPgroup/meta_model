@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # add a script to return a name for a temp dir for holding persistent info if needed
-# can be anyh scripting langauge since it is returning a single value
+# can be any scripting langauge since it is returning a single value
 
 # Example:
 #dirnum=`echo "echo $((RANDOM+1))" | ksh`
@@ -12,3 +12,6 @@
 #  tempdir="$MODEL_ROOT/tmp/${user}-scratch/"`printf "%04d" $dirnum`
 #fi
 #echo $tempdir
+yr=`date +"%Y"`
+tempdir=/tmp/mllr$yr
+echo $tempdir

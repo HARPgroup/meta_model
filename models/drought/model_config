@@ -1,16 +1,16 @@
 #!/bin/csh
 echo "Loading model configuration"
-if (! $?MODEL_ROOT) then
-  echo "Variable MODEL_ROOT is undefined.  Exiting."
-  exit
-endif
-# Load defaults
-# Put whatever you need in here to be available to script pieces
-# Use csh so the meta source protocol works
-echo "model_config finished."
-# to create a custom list of modules/run_steps, do this:
-# these will later be used if user submits "all" as list of modules to run
-# set all_modules = [ land river ]
-# set all_run_steps = [ prep run link ]
+#if (! $?MODEL_ROOT) then
+#  echo "Variable MODEL_ROOT is undefined.  Exiting."
+#  exit
+#endif
+# what is the date?
+# what is the julian day?
+# what is the base file name?
+# do we have a feature hydrocode?
+# which database host?
 # Define modules to loop through
-set modules='mllr'
+set all_modules = ( mllr )
+set all_run_steps = ( download analyze )
+set MODEL_BIN = $META_MODEL_ROOT
+echo "model_config finished."
