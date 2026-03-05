@@ -49,8 +49,9 @@ setenv MODEL_BIN "$MODEL_BIN"
 setenv META_MODEL_ROOT "$META_MODEL_ROOT"
 echo "setting MODEL to $model"
 setenv MODEL "$model"
-setenv START_YEAR "$START_YEAR"
-setenv END_YEAR "$END_YEAR"
+# IF we start seeing erorrs WRT START_YEAR or END_YEAR uncomment these:
+#setenv START_YEAR "$START_YEAR"
+#setenv END_YEAR "$END_YEAR"
 setenv modules "$modules" # makes it available to sourced scripts
 # iterate through different component of the model execution cycle
 if ( -d $model_plugins ) then

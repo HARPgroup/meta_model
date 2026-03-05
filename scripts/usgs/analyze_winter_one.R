@@ -29,7 +29,6 @@ suppressPackageStartupMessages(library("hydrotools"))
 
 # argst=c('01634000',1,2025)
 argst <- commandArgs(trailingOnly=T)
-overwrite_file = FALSE
 target_year <- year(Sys.time())
 message(paste("length of argst = ", length(argst)))
 if (length(argst) < 1) {
@@ -40,10 +39,10 @@ if (length(argst) > 0) {
   gage <- as.character(argst[1])
   gage <- sprintf("%08s", gage)
   if (length(argst) > 1) {
-    overwrite_file <- as.logical(as.integer(argst[2]))
+    target_year = argst[2]
   }
   if (length(argst) > 2) {
-    target_year = argst[3]
+    save_directory = argst[3]
   }
 }
 

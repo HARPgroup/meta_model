@@ -6,6 +6,10 @@ if [ "$geo_config" = "" ]; then
 fi
 . $geo_config
 
+if [[ "$MET_PROCESS_METHOD" == "cbp6" ]]; then
+  exit
+fi
+
 
 # BEGIN - actually loading local data
 echo "Aggregating precip for $coverage from "$datasource
