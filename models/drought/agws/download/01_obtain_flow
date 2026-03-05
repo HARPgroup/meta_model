@@ -1,0 +1,21 @@
+#!/bin/bash
+# loads the args, raster & geo specific config AND CHANGE TO TEMPDIR
+agws_config=`find_config agws.config`
+if [ "$agws_config" = "" ]; then
+  agws_config="$META_MODEL_ROOT/models/drought/agws/agws.config"
+fi
+. $agws_config
+# BEGIN - actually loading local data
+
+echo "Downloading USGS gage flow for ${coverage}"
+# Now, we should have a method to save a given coverages gage, but since 
+# our basic use case is for gage catchments, we can count on the fact that the gage hydrocode
+# contains the USGS gage ID
+gageid=`echo $coverage | sed 's/[^[:digit:]]\+//g'`
+outfile="${coverage}-flow.csv"
+
+echo "Calling: Rscript $META_MODEL_ROOT/scripts/river/usgsdata.R $gageid $outfile"
+Rscript $META_MODEL_ROOT/scripts/river/usgsdata.R $gageid $outfile
+# note: the install -D command create the destination directory path if it doesn't exist
+echo "Running: install -D $outfile $COVERAGE_FLOW_FILE"
+install -D $outfile $COVERAGE_FLOW_FILE
