@@ -14,8 +14,8 @@ echo "Downloading USGS gage flow for ${coverage}"
 gageid=`echo $coverage | sed 's/[^[:digit:]]\+//g'`
 outfile="${coverage}-flow.csv"
 
-echo "Calling: Rscript $META_MODEL_ROOT/scripts/river/usgsdata.R $gageid $outfile"
-Rscript $META_MODEL_ROOT/scripts/river/usgsdata.R $gageid $outfile
+echo "Calling: Rscript $META_MODEL_ROOT/scripts/usgs/usgsdata.R $gageid $outfile"
+Rscript $META_MODEL_ROOT/scripts/usgs/usgsdata.R $gageid $outfile
 # note: the install -D command create the destination directory path if it doesn't exist
 echo "Running: install -D $outfile $COVERAGE_FLOW_FILE"
 install -D $outfile $COVERAGE_FLOW_FILE
