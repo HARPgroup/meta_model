@@ -1,0 +1,21 @@
+#!/bin/bash
+# loads the args, raster & geo specific config AND CHANGE TO TEMPDIR
+agws_config=`find_config agws.config`
+if [ "$agws_config" = "" ]; then
+  agws_config="$META_MODEL_ROOT/models/drought/agws/agws.config"
+fi
+. $agws_config
+# BEGIN - actually loading local data
+
+echo "Identifying and analyzing baseflow events for ${coverage}"
+# Now, we should have a method to save a given coverages gage, but since 
+# our basic use case is for gage catchments, we can count on the fact that the gage hydrocode
+# contains the USGS gage ID
+gageid=`echo $coverage | sed 's/[^[:digit:]]\+//g'`
+eventfile="bf_events_${coverage}.csv"
+cp ${USGS_DATA_DIR}/agws/${eventfile} ./
+echo "Calling: Rscript $META_MODEL_ROOT/scripts/usgs/bf_trimming_analysis.R \"$eventfile\" \"$eventfile\""
+Rscript $META_MODEL_ROOT/scripts/usgs/bf_trimming_analysis.R "$eventfile" "$eventfile"
+# note: the install -D command create the destination directory path if it doesn't exist
+echo "Running: install -D $eventfile ${USGS_DATA_DIR}/agws/${eventfile}"
+install -D $eventfile "${USGS_DATA_DIR}/agws/${eventfile}"
