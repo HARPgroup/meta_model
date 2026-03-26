@@ -18,7 +18,7 @@ if [ "$FORCE_RERUN" != "1" ]; then
     exit
   fi
 else 
-  echo "FORCE_RERUN requested. Cachking disabled for ${segment}."
+  echo "FORCE_RERUN requested. Caching disabled for ${segment}."
 fi
 
 # Example command:
