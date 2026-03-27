@@ -28,8 +28,8 @@ fi
 
 echo "Getting data for month ${yr}-${mo}-${da}..."
 #Download the daily PRISM data for target day, reporject, and crop
-if [ "$jday" == "366" ]; then
-  # daymet does not have Dec 31 on leap years, so we copy from PRISM
+if [ "$jday" == "001" ]; then
+  # daymet does not have Dec 31 on leap years, so we copy from PRISM on the first of the year as we believe daymet is shifted one day
   echo "This is the last day of a leap year, daymet has no data."
   PRISM=`cbp get_config $scenario met PRISM_DIR`
   echo "Copying prism from $PRISM"
