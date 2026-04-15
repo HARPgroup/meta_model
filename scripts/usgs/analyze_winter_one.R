@@ -8,7 +8,6 @@ save_directory = "/media/model/usgs/mllr"
 # This code will be updated using "chron" every March 1st
 # Load necessary libraries
 suppressPackageStartupMessages(library('zoo'))
-suppressPackageStartupMessages(library('IHA'))
 suppressPackageStartupMessages(library('stringr'))
 suppressPackageStartupMessages(library('lubridate'))
 suppressPackageStartupMessages(library('ggplot2'))

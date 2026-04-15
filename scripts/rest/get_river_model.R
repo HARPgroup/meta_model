@@ -31,6 +31,11 @@ riverseg<- RomFeature$new(
   TRUE
 )
 message(paste("Searching for model", model_version,"on feature",riverseg$hydroid))
+
+if(is.na(riverseg$hydroid)){
+  stop("No riverseg feature found, exiting.")
+}
+
 model <- RomProperty$new(
   ds,
   list(
