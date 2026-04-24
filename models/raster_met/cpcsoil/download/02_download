@@ -10,7 +10,7 @@ echo "Loading cpcsoil_config from $cpcsoil_config"
 dfile="$BASE_URI/$datasource/$varkey"
 #https://psl.noaa.gov/thredds/fileServer/Datasets/cpcsoil/soilw.mon.mean.nc
 echo "Downloading from "${dfile}
-wget $dfile
+wget --timeout=600 $dfile
 
 #echo "In: cd $base_dir"
 #cd $base_dir
