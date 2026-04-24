@@ -1,0 +1,20 @@
+#!/bin/bash
+# loads the met specific config
+cpcsoil_config=`find_config cpcsoil.config`
+if [ "$cpcsoil_config" = "" ]; then
+  cpcsoil_config="$META_MODEL_ROOT/models/raster_met/cpcsoil/cpcsoil.config"
+fi
+echo "Loading cpcsoil_config from $cpcsoil_config"
+. $cpcsoil_config
+
+dfile="$BASE_URI/$datasource/$varkey"
+#https://psl.noaa.gov/thredds/fileServer/Datasets/cpcsoil/soilw.mon.mean.nc
+echo "Downloading from "${dfile}
+wget $dfile
+
+#echo "In: cd $base_dir"
+#cd $base_dir
+#echo "Clearing old: rm $yr/$jday/*"
+#rm $yr/$jday/*
+#echo "Running: ./get_nldas_data $yr $jday $yr"
+#./get_nldas_data $yr $jday $NLDAS_ROOT
