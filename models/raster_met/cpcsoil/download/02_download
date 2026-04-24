@@ -18,3 +18,6 @@ wget $dfile
 #rm $yr/$jday/*
 #echo "Running: ./get_nldas_data $yr $jday $yr"
 #./get_nldas_data $yr $jday $NLDAS_ROOT
+# stick it in the repo
+install -D $tmp_dir/${varkey}.nc $MET_EXPOR_DIR/$scenario/$yr/$mo/${varkey}.nc
+# Ex: install -D /tmp/today_1777053514_11030/soilw.mon.mean.nc /media/model/met/cpcsoil/2026/04/soilw.mon.mean.nc

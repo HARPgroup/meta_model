@@ -1,0 +1,75 @@
+#!/bin/bash
+# loads the met specific config
+cpcsoil_config=`find_config cpcsoil.config`
+if [ "$cpcsoil_config" = "" ]; then
+  cpcsoil_config="$META_MODEL_ROOT/models/raster_met/met/cpcsoil.config"
+fi
+echo "Loading cpcsoil_config from $cpcsoil_config"
+. $cpcsoil_config
+if [ "$FILE_EXT" != "nc" ]; then
+  echo "Source files are not nc format, so this step is unnecessary"
+fi
+nc_src_files=`ls $tmp_dir/*.nc`
+if [ "$NLDAS2_GRB_TEMPLATE" == "" ]; then
+#  echo "ERROR: NLDAS2_GRB_TEMPLATE is not defined in met/${scenario}.con -- quitting." >> problem
+  echo "WARNING: NLDAS2_GRB_TEMPLATE is not defined in met/${scenario}.con -- quitting."
+  exit
+fi
+echo "Trying to translate NC format to GRB for $nc_src_files for $ddate"
+for originalFile in $nc_src_files; do
+  extension="${originalFile##*.}"
+  if [ "$extension" == "nc" ]; then
+    # Extract precip layer
+    # nc is hard to extract raster, so create a copy of this in grb format with all layers
+    # Also, by converting this to the GRB format, it allows backwards compatibility with the P6 CBP wdm C++
+    out_type='grb'
+    file_base=${originalFile%.*}
+    file_base=${file_base%.*}
+    # the new nldas2 has file ending 020.nc, and the old had 002.grb
+    # so we rewrite the file name here to 002 so there will only be one gtiff file (overwriting old)
+    out_file="${file_base}.002."$out_type  # final file to import
+    lyr_file="${file_base}.tif" # intermediate file - must have this  to accept layer setting, then convert
+    if [ -f $out_file ]; then
+      if [ "$NLDAS2_UPDATE_GRB" != "1" ]; then
+        echo "Skipping existing grb file $out_file"
+        continue
+      fi
+    fi
+    rm $out_file
+    rm $lyr_file 
+    echo "Create GRB: gdal_create -if $NLDAS2_GRB_TEMPLATE -bands 11 $lyr_file"
+    gdal_create -if $NLDAS2_GRB_TEMPLATE -bands 11 $lyr_file
+    # clip 
+    # Note: -srcband is always 1, since we've extracted the band already by specifying the band name like ":Tair"
+    bnd=0
+    for i in Tair Qair PSurf Wind_E Wind_N LWdown CRainf_frac CAPE PotEvap Rainf SWdown ;  do
+    #for i in Rainf;  do
+       bnd=$((bnd + 1))
+       if [ "$i" != "Tair" ]; then
+          echo "Running: gdalwarp NETCDF:\"$originalFile\":$i -t_srs EPSG:4326 $lyr_file -srcband 1 -dstband $bnd"
+          gdalwarp NETCDF:"$originalFile":$i -t_srs EPSG:4326 $lyr_file -srcband 1 -dstband $bnd
+       else
+          k_file="${file_base}.k.tif"
+          c_file="${file_base}.c.tif"
+          # make a file with the Kelvin data
+          echo "Creating Empty K file: gdal_create -if $NLDAS2_GRB_TEMPLATE -bands 1 $k_file"
+          gdal_create -if $NLDAS2_GRB_TEMPLATE -bands 1 $k_file
+          # this is needed because gdal calc cannot write back to the same file
+          echo "Creating Empty C file: gdal_create -if $NLDAS2_GRB_TEMPLATE -bands 1 $c_file"
+          gdal_create -if $NLDAS2_GRB_TEMPLATE -bands 1 $c_file
+          echo "Copying orig K to K file: gdalwarp NETCDF:\"$originalFile\":$i -t_srs EPSG:4326 $k_file -srcband 1 -dstband $bnd"
+          gdalwarp NETCDF:"$originalFile":$i -t_srs EPSG:4326 $k_file -srcband 1 -dstband 1
+          # perform Kelvin to Celsius translation
+          echo "Converting K to C: $gdal_calc $gdal_ifile_switch \"${gdal_ifile_prefix}$k_file\" --calc=\"A - 273.0\" --overwrite $gdal_ofile_switch$c_file"
+          $gdal_calc $gdal_ifile_switch "${gdal_ifile_prefix}$k_file" --calc="A - 273.0" --overwrite $gdal_ofile_switch$c_file
+          echo "Overwrite the Kelvin with C from K2C"
+          gdalwarp $c_file -t_srs EPSG:4326 $lyr_file -srcband 1 -dstband $bnd
+          rm $k_file
+          rm $c_file
+       fi
+    done
+    gdalwarp -of grib -t_srs EPSG:4326 $lyr_file $out_file
+    rm $lyr_file 
+    mv $out_file ${src_dir}/
+  fi
+done
