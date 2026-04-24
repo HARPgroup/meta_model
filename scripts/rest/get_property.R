@@ -14,6 +14,10 @@ entity_id <- as.integer(argst[2])
 prop_name <- argst[3]
 return_name <- argst[4]
 
+if(length(argst) < 4 | entity_id == ''){
+   stop("Incorrect number of arguments. Check for missing entity_id")
+}
+
 message(paste("Searching for prop", prop_name,"on ",entity_id))
 model <- RomProperty$new(
   ds,
