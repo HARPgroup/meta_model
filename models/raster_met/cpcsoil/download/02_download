@@ -10,7 +10,8 @@ echo "Loading cpcsoil_config from $cpcsoil_config"
 dfile="$BASE_URI/$datasource/$varkey"
 #https://psl.noaa.gov/thredds/fileServer/Datasets/cpcsoil/soilw.mon.mean.nc
 echo "Downloading from "${dfile}
-wget --timeout=600 $dfile
+echo "with: wget -c --timeout=3600 $dfile"
+wget -c --timeout=3600 $dfile
 
 #echo "In: cd $base_dir"
 #cd $base_dir
@@ -19,5 +20,5 @@ wget --timeout=600 $dfile
 #echo "Running: ./get_nldas_data $yr $jday $yr"
 #./get_nldas_data $yr $jday $NLDAS_ROOT
 # stick it in the repo
-install -D $tmp_dir/${varkey}.nc $MET_EXPOR_DIR/$scenario/$yr/$mo/${varkey}.nc
+install -D $tmp_dir/${varkey}.nc $MET_EXPORT_DIR/$scenario/$yr/$mo/${varkey}.nc
 # Ex: install -D /tmp/today_1777053514_11030/soilw.mon.mean.nc /media/model/met/cpcsoil/2026/04/soilw.mon.mean.nc
