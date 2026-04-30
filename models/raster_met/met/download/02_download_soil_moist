@@ -1,0 +1,27 @@
+#!/bin/bash
+# loads the met specific config
+met_config=`find_config met.config`
+if [ "$met_config" = "" ]; then
+  met_config="$META_MODEL_ROOT/models/raster_met/met/met.config"
+fi
+echo "Loading met_config from $met_config"
+. $met_config
+
+
+if [ "$datasource" != "soil_moist" ]; then
+  exit
+fi
+
+# make sure we have our data dirs
+if [ ! -d "$base_dir/$yr" ]; then
+    echo "Doing: mkdir $base_dir/$yr"
+    mkdir $base_dir/$yr
+fi
+if [ ! -d "$base_dir/$yr/$jday" ]; then
+    echo "Doing: mkdir $base_dir/$yr/$jday"
+    mkdir $base_dir/$yr/$jday
+fi  
+
+url="${BASE_URI}/$yr$mo$da_0000_sport_lis_vsm0-100cm_percentile_conus3km_float_wgs84.tif"
+
+wget $url -O "${src_dir}/soil_moist_$jday.tif"
