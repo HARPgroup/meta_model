@@ -1,0 +1,12 @@
+#!/bin/bash
+scenario=$1
+segment=$2
+tempdir=$3
+land_config=`find_config land.config`
+if [ "$land_config" = "" ]; then
+  land_config="$META_MODEL_ROOT/models/om/land/land.config"
+fi
+. $land_config
+# load model entity to get run_mode and flow_mode, timestep, start and end dates
+# get the land river segs associated with this river segment
+echo "scen: $scenario, seg: $segment"

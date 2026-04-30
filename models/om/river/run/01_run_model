@@ -6,6 +6,16 @@ if [ "$om_config" = "" ]; then
 fi
 . $om_config
 
+if [ "$pid" == "" ]; then
+  echo "Could not find model pid. Quitting." >> problem
+  exit
+fi
+
+if [ "$elid" == "" ]; then
+  echo "Could not find model elementid. Quitting." >> problem
+  exit
+fi
+
 if [ "$RUN_METHOD" != "run_model" ]; then
   exit
 fi

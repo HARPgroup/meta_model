@@ -39,7 +39,7 @@ fi
 
 template_table_file=`basename $CBP_RO_TEMPLATE`
 template=`echo "$template_table_file" | cut -d'.' -f1`
-echo "Populating $tablename from $template"
+echo "Creating $tablename from $template and populating from $filename"
 
 set -f
 if [ $overwrite -eq 1 ]; then

@@ -1,15 +1,15 @@
 #!/bin/bash
 # loads the met specific config
-met_config=`find_config met.config`
-if [ "$met_config" = "" ]; then
-  met_config="$META_MODEL_ROOT/models/raster_met/met/met.config"
+cpcsoil_config=`find_config cpcsoil.config`
+if [ "$cpcsoil_config" = "" ]; then
+  cpcsoil_config="$META_MODEL_ROOT/models/raster_met/met/cpcsoil.config"
 fi
-echo "Loading met_config from $met_config"
-. $met_config
+echo "Loading cpcsoil_config from $cpcsoil_config"
+. $cpcsoil_config
 if [ "$FILE_EXT" != "nc" ]; then
   echo "Source files are not nc format, so this step is unnecessary"
 fi
-nc_src_files=`ls $src_dir/*.nc`
+nc_src_files=`ls $tmp_dir/*.nc`
 if [ "$NLDAS2_GRB_TEMPLATE" == "" ]; then
 #  echo "ERROR: NLDAS2_GRB_TEMPLATE is not defined in met/${scenario}.con -- quitting." >> problem
   echo "WARNING: NLDAS2_GRB_TEMPLATE is not defined in met/${scenario}.con -- quitting."

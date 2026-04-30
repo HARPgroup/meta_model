@@ -1,0 +1,30 @@
+#!/bin/bash
+# loads the met specific config
+cpcsoil_config=`find_config cpcsoil.config`
+if [ "$cpcsoil_config" = "" ]; then
+  cpcsoil_config="$META_MODEL_ROOT/models/raster_met/cpcsoil/cpcsoil.config"
+fi
+echo "Loading cpcsoil_config from $cpcsoil_config"
+. $cpcsoil_config
+
+# use set -e to tell the script to exit if anything fails
+# this will prevent over-writing a previously successful download
+# if the download fails
+set -e
+
+dfile="$BASE_URI/$datasource/${varkey}.nc"
+#https://psl.noaa.gov/thredds/fileServer/Datasets/cpcsoil/soilw.mon.mean.nc
+echo "Downloading from "${dfile}
+echo "with: wget -c --tries=0 $dfile"
+wget -c --tries=0 $dfile
+
+#echo "In: cd $base_dir"
+#cd $base_dir
+#echo "Clearing old: rm $yr/$jday/*"
+#rm $yr/$jday/*
+#echo "Running: ./get_nldas_data $yr $jday $yr"
+#./get_nldas_data $yr $jday $NLDAS_ROOT
+# stick it in the repo
+echo "Copying: install -D $tmp_dir/${varkey}.nc $MET_EXPORT_DIR/$scenario/$yr/$mo/${varkey}.nc"
+install -D $tmp_dir/${varkey}.nc $MET_EXPORT_DIR/$scenario/$yr/$mo/${varkey}.nc
+# Ex: install -D /tmp/today_1777053514_11030/soilw.mon.mean.nc /media/model/met/cpcsoil/2026/04/soilw.mon.mean.nc
