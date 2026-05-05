@@ -36,7 +36,7 @@ elif [ "$datasource" == "daymet" ]; then
             $gdal_cmd $fname $gdal_meta_switch "TIFFTAG_DATETIME=${TIFFTAG_DATETIME}"
         fi
     done
-elif [ "$datasource" == "noaa_drought" ]; then
+elif [[ "$datasource" == "noaa_drought" || "$datasource" == "noaa_60d" || "$datasource" == "soil_moist" ]]; then
     # single day files only,
     for fname in $import_files; do
         if [ -e $fname ]; then
