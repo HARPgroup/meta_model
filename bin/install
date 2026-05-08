@@ -1,0 +1,2 @@
+#!/bin/bash
+cp scripts/meta_model_config /etc/meta_model_config

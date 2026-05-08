@@ -1,14 +1,17 @@
 #!/bin/bash
+. meta_model_config
 model_name=$1
+modules="land river"
+submodules="prep run link analyze"
+if [ "$#" -lt 1 ]; then
+  echo "Use: make_model_shell model_name [modules=\"land river\"] [submodules=\"$submodules\"]" 
+  exit
+fi
 if [ "$#" -gt 1 ]; then
   modules=$2
-else
-  modules="land river"
 fi
 if [ "$#" -gt 2 ]; then
   submodules=$3
-else
-  submodules="prep run link analyze"
 fi
 base_path=$META_MODEL_ROOT/models/$model_name
 mkdir $base_path
