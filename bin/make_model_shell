@@ -3,8 +3,9 @@
 model_name=$1
 modules="land river"
 submodules="prep run link analyze"
+steps="00_init 99_cleanup"
 if [ "$#" -lt 1 ]; then
-  echo "Use: make_model_shell model_name [modules=\"land river\"] [submodules=\"$submodules\"]" 
+  echo "Use: make_model_shell model_name [modules=\"$modules\"] [submodules=\"$submodules\"] [steps=\"$steps\"]" 
   exit
 fi
 if [ "$#" -gt 1 ]; then
@@ -13,9 +14,14 @@ fi
 if [ "$#" -gt 2 ]; then
   submodules=$3
 fi
+if [ "$#" -gt 3 ]; then
+  steps=$4
+fi
 base_path=$META_MODEL_ROOT/models/$model_name
-echo "Creating new model $model_name in $base_path"
-mkdir $base_path
+if [ ! -e $base_path ]; then
+  echo "Creating new model $model_name in $base_path"
+  mkdir $base_path
+fi
 if [ ! -e $base_path/get_work_path ]; then
    cp $META_MODEL_ROOT/scripts/get_work_path_template $base_path/get_work_path
 fi
@@ -33,7 +39,15 @@ for i in $modules; do
       echo "Adding module: mkdir $base_path/$i"
       mkdir $base_path/$i
     fi
-    echo "Adding step: mkdir $base_path/$i/$j"
-    mkdir $base_path/$i/$j
+    if [ ! -e $base_path/$i/$j ]; then
+      echo "Adding sub-module: mkdir $base_path/$i/$j"
+      mkdir $base_path/$i/$j
+    fi
+    for k in $steps; do
+      if [ ! -f $base_path/$i/$j/$k ]; then
+        "Adding step: touch $base_path/$i/$j/$k"
+        touch $base_path/$i/$j/$k
+      fi
+    done
   done
 done
