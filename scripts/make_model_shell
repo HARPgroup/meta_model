@@ -14,11 +14,13 @@ if [ "$#" -gt 2 ]; then
   submodules=$3
 fi
 base_path=$META_MODEL_ROOT/models/$model_name
+echo "Creating new model $model_name in $base_path"
 mkdir $base_path
 if [ ! -e $base_path/get_work_path ]; then
    cp $META_MODEL_ROOT/scripts/get_work_path_template $base_path/get_work_path
 fi
 if [ ! -e $base_path/model_config ]; then
+   echo "Add model_config: cp $META_MODEL_ROOT/scripts/model_config_template $base_path/model_config"
    cp $META_MODEL_ROOT/scripts/model_config_template $base_path/model_config
    echo "# Define modules to loop through" >> $base_path/model_config
    echo "set modules='$modules'" >> $base_path/model_config
@@ -28,8 +30,10 @@ touch $base_path/model_config
 for i in $modules; do
   for j in $submodules; do
     if [ ! -e $base_path/$i ]; then
+      echo "Adding module: mkdir $base_path/$i"
       mkdir $base_path/$i
     fi
+    echo "Adding step: mkdir $base_path/$i/$j"
     mkdir $base_path/$i/$j
   done
 done
