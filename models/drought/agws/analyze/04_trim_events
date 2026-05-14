@@ -1,0 +1,17 @@
+#!/bin/bash
+# loads the args, raster & geo specific config AND CHANGE TO TEMPDIR
+agws_config=`find_config agws.config`
+if [ "$agws_config" = "" ]; then
+  agws_config="$META_MODEL_ROOT/models/drought/agws/agws.config"
+fi
+. $agws_config
+# BEGIN - actually loading local data
+
+echo "Trimming baseflow events for ${coverage}"
+
+#cp ${USGS_DATA_DIR}/agws/${eventfile} ./
+echo "Calling: Rscript $META_MODEL_ROOT/scripts/usgs/bf_trimming.R \"$BASEFLOW_STATS_FILE\" \"$BASEFLOW_TRIM_FILE\""
+Rscript $META_MODEL_ROOT/scripts/usgs/bf_trimming_analysis.R "$BASEFLOW_STATS_FILE" "$BASEFLOW_TRIM_FILE"
+# note: the install -D command create the destination directory path if it doesn't exist
+echo "Running: install -D $BASEFLOW_TRIM_FILE ${USGS_DATA_DIR}/agws/${BASEFLOW_TRIM_FILE}"
+install -D $BASEFLOW_TRIM_FILE "${USGS_DATA_DIR}/agws/${BASEFLOW_TRIM_FILE}"

@@ -1,0 +1,19 @@
+#!/bin/bash
+# loads the args, raster & geo specific config AND CHANGE TO TEMPDIR
+agws_config=`find_config agws.config`
+if [ "$agws_config" = "" ]; then
+  agws_config="$META_MODEL_ROOT/models/drought/agws/agws.config"
+fi
+. $agws_config
+# BEGIN - actually loading local data
+
+echo "Identifying potential flow recession days baseflow for ${coverage}"
+
+# TODO: put FLOWCOL in con file somewhere so we can run model info through this?
+FLOWCOL='obs_flow' # for now we assume the standard obs_flow from the previous workflow step
+DATECOL='obs_date'
+echo "Calling: Rscript $META_MODEL_ROOT/scripts/usgs/event_identification.R \"$COVERAGE_FLOW_FILE\" \"$DATECOL\" \"$FLOWCOL\" \"FALSE\" \"$EVENTS_FILE\""
+Rscript $META_MODEL_ROOT/scripts/usgs/event_identification.R "$COVERAGE_FLOW_FILE" "$DATECOL" "$FLOWCOL" "FALSE" "$EVENTS_FILE"
+# note: the install -D command create the destination directory path if it doesn't exist
+echo "Running: install -D $EVENTS_FILE ${USGS_DATA_DIR}/agws/${EVENTS_FILE}"
+install -D $EVENTS_FILE "${USGS_DATA_DIR}/agws/${EVENTS_FILE}"
