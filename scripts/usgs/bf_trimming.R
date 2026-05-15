@@ -3,7 +3,7 @@
 suppressPackageStartupMessages(library(dplyr))
 suppressPackageStartupMessages(library(tidyr))
 suppressPackageStartupMessages(library(purrr))
-
+library(Kendall)
 
 #set up command Args
 argst <- commandArgs(trailingOnly = T)
