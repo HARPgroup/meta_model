@@ -11,6 +11,6 @@ echo "Loading model configuration"
 # which database host?
 # Define modules to loop through
 set all_modules = ( mllr )
-set all_run_steps = ( download analyze )
+set all_run_steps = ( download analyze import )
 set MODEL_BIN = $META_MODEL_ROOT
 echo "model_config finished."
