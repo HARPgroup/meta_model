@@ -37,7 +37,7 @@ regressionFile <- argst[6]
 #Create a hydrocode based on the provided gage_id
 coverage_hydrocode <- paste0("usgs_ws_",gage_id)
 
-source()
+source("https://raw.githubusercontent.com/HARPgroup/meta_model/refs/heads/drought_20260514/scripts/rest/get_model_scenario.R")
 
 regression_coeff <- read.csv(regressionFile)
 
