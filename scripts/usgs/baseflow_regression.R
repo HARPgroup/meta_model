@@ -36,6 +36,6 @@ out <- data.frame(
   m = coeffs$m,
   b = coeffs$b
 )
-
+message(paste0("Found coefficients m = ",coeffs$m," and b = ",coeffs$b))
 # Write final csvs out
 write.csv(out, end_path,row.names = FALSE)
