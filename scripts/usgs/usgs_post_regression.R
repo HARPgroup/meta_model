@@ -49,9 +49,15 @@ model_list <- om_model_and_scenario(ds = ds, coverage_hydrocode = coverage_hydro
                                     model_version = model_version,
                                     scenarioPropName = regressionPropName)
 
-model_list$modelScenario$set_prop(
+
+regression_m <- model_list$modelScenario$set_prop(
   propname = "regression_m", propvalue = regression_coeff$m
 )
-model_list$modelScenario$set_prop(
+message(paste0("Stored regression m in pid = ",regression_m$pid,
+               " on parent entity pid = ",model_list$modelScenario$pid))
+
+regression_b <- model_list$modelScenario$set_prop(
   propname = "regression_b", propvalue = regression_coeff$b
 )
+message(paste0("Stored regression b in pid = ",regression_b$pid,
+               " on parent entity pid = ",model_list$modelScenario$pid))
