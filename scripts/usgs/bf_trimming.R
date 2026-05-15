@@ -1,4 +1,8 @@
 #Trim a series of baseflow events
+#Local Testing:
+# commandArgs <- function(...){
+#   c("strasstats.csv", "strasTrim.csv")
+# }
 # dependencies 
 suppressPackageStartupMessages(library(dplyr))
 suppressPackageStartupMessages(library(tidyr))
@@ -24,10 +28,10 @@ source("https://raw.githubusercontent.com/HARPgroup/baseflow_storage/refs/heads/
 
 #1. Trim the Data with trim_event_mk
 csv1_trimmed <- csv1 %>%
-  group_by(GroupID) %>%
-  group_modify(~ trim_event_mk(.x, alpha = 0.3)) %>%
-  ungroup() %>%
-  filter(kept == TRUE, met_alpha == TRUE)
+  dplyr::group_by(GroupID) %>%
+  dplyr::group_modify(~ trim_event_mk(.x, alpha = 0.3)) %>%
+  dplyr::ungroup() %>%
+  dplyr::filter(kept == TRUE, met_alpha == TRUE)
 
 
 #2. Export as .csv files
