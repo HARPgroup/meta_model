@@ -7,7 +7,7 @@
 # }
 args <- commandArgs(trailingOnly = T)
 if (length(args) < 2){
-  message("Use Rscript baseflow_regression_df.R input_file output_file gage_id [regression_flow_col='Flow'] [add_inches_day=FALSE]")
+  message("Use Rscript baseflow_regression_df.R input_file output_file gage_id [regression_flow_col='Flow']")
   q()
 }
 
@@ -22,7 +22,12 @@ input_file <- paste0(args[1])
 input_file <- str_replace_all(input_file, '\"', '') # quotes coming in give troubles
 gage_id <- args[2]
 end_path <- paste0(args[3])
-
+#Check if regression_flow_col was input or if default should be used
+if (length(args) > 3) {
+  regression_flow_col <- paste0(args[4])
+} else {
+  regression_flow_col <- "Flow"
+}
 
 #Read in summarized baseflow recession stats 
 event_df <- read.csv(input_file)
