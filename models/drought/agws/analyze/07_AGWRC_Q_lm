@@ -13,5 +13,5 @@ echo "Identifying and analyzing baseflow events for ${coverage}"
 echo "Calling: Rscript $META_MODEL_ROOT/scripts/usgs/baseflow_regression.R \"$BASEFLOW_SUMMARY_DF\" $GAGE_ID \"$BASEFLOW_REGRESSION_DF\""
 Rscript $META_MODEL_ROOT/scripts/usgs/baseflow_regression.R "$BASEFLOW_SUMMARY_DF" "$GAGEID" "$BASEFLOW_REGRESSION_DF"
 # note: the install -D command create the destination directory path if it doesn't exist
-echo "Running: install -D $BASEFLOW_REGRESSION_DF ${USGS_DATA_DIR}/agws/${BASEFLOW_REGRESSION_DF}"
-install -D $BASEFLOW_REGRESSION_DF "${USGS_DATA_DIR}/agws/${BASEFLOW_REGRESSION_DF}"
+#echo "Running: install -D $BASEFLOW_REGRESSION_DF ${USGS_DATA_DIR}/agws/${BASEFLOW_REGRESSION_DF}"
+#install -D $BASEFLOW_REGRESSION_DF "${USGS_DATA_DIR}/agws/${BASEFLOW_REGRESSION_DF}"
