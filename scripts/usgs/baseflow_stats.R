@@ -11,7 +11,7 @@ if (length(args) < 3){
   message("Use Rscript baseflow_stats.R input_file luname_seg output_file [SITE_URL=FALSE]")
   q()
 }
-
+suppressPackageStartupMessages(library(stringr))
 source("https://raw.githubusercontent.com/HARPgroup/baseflow_storage/refs/heads/main/attach_event_stats.R")
 source("https://raw.githubusercontent.com/HARPgroup/baseflow_storage/refs/heads/main/add_model_data.R")
 

@@ -15,6 +15,7 @@
 
 #Load in hydrotools and connect to db
 library(hydrotools)
+suppressPackageStartupMessages(library(stringr))
 basepath='/var/www/R'
 source('/var/www/R/config.R')
 
@@ -33,6 +34,7 @@ model_version <- argst[4]
 regressionPropName <- argst[5]
 #The file containing the baseflow recession regression coefficients
 regressionFile <- argst[6]
+regressionFile <- str_replace_all(regressionFile, '\"', '') # quotes coming in give troubles
 
 #Create a hydrocode based on the provided gage_id
 coverage_hydrocode <- paste0("usgs_ws_",gage_id)

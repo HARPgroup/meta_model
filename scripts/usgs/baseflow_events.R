@@ -14,7 +14,7 @@ if (length(args) < 5){
 
 source("https://raw.githubusercontent.com/HARPgroup/baseflow_storage/refs/heads/main/analyze_recession.R")
 suppressPackageStartupMessages(library(purrr))
-
+suppressPackageStartupMessages(library(stringr))
 # get arguments
 input_file <- paste0(args[1])
 input_file <- str_replace_all(input_file, '\"', '') # quotes coming in give troubles
