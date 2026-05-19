@@ -48,16 +48,27 @@ model_list <- om_model_and_scenario(ds = ds, coverage_hydrocode = coverage_hydro
                                     coverage_ftype = coverage_ftype,
                                     model_version = model_version,
                                     scenarioPropName = regressionPropName)
+#Post value to scenario prop and output message with new pid
+postValue <- function(propname, value, scenarioProp){
+  new_prop <- scenarioProp$set_prop(
+    propname = propname, propvalue = value
+  )
+  message(paste0("Stored ",propname," in pid = ",new_prop$pid,
+                 " on parent entity pid = ",scenarioProp$pid))
+}
+#Post the slope
+postValue(propname = "regression_m",value = regression_coeff$m, 
+          scenarioProp = model_list$modelScenario)
+#Post the intercept
+postValue(propname = "regression_b",value = regression_coeff$b, 
+          scenarioProp = model_list$modelScenario)
+#Post the R Squared of the regression
+postValue(propname = "regression_Rsq",value = regression_coeff$Rsq, 
+          scenarioProp = model_list$modelScenario)
+#Post the slope p value
+postValue(propname = "regression_m_pvalue",value = regression_coeff$m_pvalue, 
+          scenarioProp = model_list$modelScenario)
+#Post the intercept p value
+postValue(propname = "regression_b_pvalue",value = regression_coeff$b_pvalue, 
+          scenarioProp = model_list$modelScenario)
 
-
-regression_m <- model_list$modelScenario$set_prop(
-  propname = "regression_m", propvalue = regression_coeff$m
-)
-message(paste0("Stored regression m in pid = ",regression_m$pid,
-               " on parent entity pid = ",model_list$modelScenario$pid))
-
-regression_b <- model_list$modelScenario$set_prop(
-  propname = "regression_b", propvalue = regression_coeff$b
-)
-message(paste0("Stored regression b in pid = ",regression_b$pid,
-               " on parent entity pid = ",model_list$modelScenario$pid))

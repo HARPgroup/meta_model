@@ -32,15 +32,19 @@ if (length(args) > 3) {
 #Read in summarized baseflow recession stats 
 event_df <- read.csv(input_file)
 #Create regression from all events
-coeffs <- fit_agwrc_regression(event_df)
+model <- fit_agwrc_regression(event_df)
+model_summary <- summary(model)
 
 #Output data frame
 out <- data.frame(
   site_no = as.character(gage_id),
   flow_metric = regression_flow_col,
-  m = coeffs$m,
-  b = coeffs$b
+  m = coef(model)[2]$m,
+  b = coef(model)[1]$b,
+  m_pvalue = model_summary$coefficients[2,4],
+  b_pvalue = model_summary$coefficients[1,4],
+  Rsq = model_summary$r.squared
 )
-message(paste0("Found coefficients m = ",coeffs$m," and b = ",coeffs$b))
+message(paste0("Found coefficients m = ",out$m," and b = ",out$b," with R Squared of ",out$Rsq))
 # Write final csvs out
 write.csv(out, end_path,row.names = FALSE)
