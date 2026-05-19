@@ -39,8 +39,8 @@ model_summary <- summary(model)
 out <- data.frame(
   site_no = as.character(gage_id),
   flow_metric = regression_flow_col,
-  m = coef(model)[2]$m,
-  b = coef(model)[1]$b,
+  m = coef(model)[2],
+  b = coef(model)[1],
   m_pvalue = model_summary$coefficients[2,4],
   b_pvalue = model_summary$coefficients[1,4],
   Rsq = model_summary$r.squared
