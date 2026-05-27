@@ -17,7 +17,7 @@ write_path <- args[2]
 
 print("Pull csv from input file path")
 
-gage_obj <- hydrotools::WaterGageBase$new(gage_id = gage_id)
+gage_obj <- hydrotools::WaterGageDaily$new(gage_id = gage_id)
 gage_obj$load_sf_da()
 
 flow_data <- gage_obj$gage_data
