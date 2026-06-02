@@ -23,6 +23,7 @@ date_col <- paste0(args[2])
 flow_col <- paste0(args[3])
 gage_name <- as.character(args[4])
 end_path <- paste0(args[5])
+site_no_col <- paste0(args[6])
 
 message(paste0("DEBUG with: args <- c('",paste(args,collapse="', '")),"')")
 
@@ -31,6 +32,7 @@ message(paste("Reading", input_file))
 flow_csv <- read.csv(input_file)
 flow_csv$Date <- as.Date(flow_csv[[date_col]])
 flow_csv$Flow <- flow_csv[[flow_col]]
+flow_csv$site_no <- flow_csv[[site_no_col]]
 
 #apply to gage of interest
 sites <- list(
