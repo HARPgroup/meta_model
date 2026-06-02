@@ -10,11 +10,11 @@ fi
 echo "Identifying all potential baseflow events for ${coverage}"
 
 # TODO: put FLOWCOL in con file somewhere so we can run model info through this?
-FLOWCOL='Flow' # for now we assume the standard obs_flow from the previous workflow step
+FLOWCOL='Flow'
 DATECOL='Date'
 
-echo "Calling: Rscript $META_MODEL_ROOT/scripts/usgs/baseflow_events.R \"$EVENTS_FILE\" \"$DATECOL\" \"$FLOWCOL\" \"$coverage\" \"$BASEFLOW_EVENTS_FILE\""
-Rscript $META_MODEL_ROOT/scripts/usgs/baseflow_events.R "$EVENTS_FILE" "$DATECOL" "$FLOWCOL" "$coverage" "$BASEFLOW_EVENTS_FILE"
+echo "Calling: Rscript $META_MODEL_ROOT/scripts/usgs/baseflow_events.R \"$EVENTS_FILE\" \"$DATECOL\" \"$FLOWCOL\" \"$coverage\" \"$BASEFLOW_EVENTS_FILE\" \"$SITENOCOL\"" 
+Rscript $META_MODEL_ROOT/scripts/usgs/baseflow_events.R "$EVENTS_FILE" "$DATECOL" "$FLOWCOL" "$coverage" "$BASEFLOW_EVENTS_FILE" "$SITENOCOL"
 # note: the install -D command create the destination directory path if it doesn't exist
 #echo "Running: install -D $BASEFLOW_EVENTS_FILE ${USGS_DATA_DIR}/agws/${BASEFLOW_EVENTS_FILE}"
 #install -D $BASEFLOW_EVENTS_FILE "${USGS_DATA_DIR}/agws/${BASEFLOW_EVENTS_FILE}"
