@@ -12,8 +12,17 @@ if (length(args) < 3){
   q()
 }
 suppressPackageStartupMessages(library(stringr))
+
 source("https://raw.githubusercontent.com/HARPgroup/baseflow_storage/refs/heads/main/attach_event_stats.R")
+# source from attach_event_stats.R 
+source("https://raw.githubusercontent.com/HARPgroup/baseflow_storage/refs/heads/main/summarize_event.R")
+# source from summarize_event.R
+source("https://raw.githubusercontent.com/HARPgroup/baseflow_storage/refs/heads/main/bf_event_stats.R")
+source("https://raw.githubusercontent.com/HARPgroup/baseflow_storage/refs/heads/main/calc_event_stats.R")
+
 source("https://raw.githubusercontent.com/HARPgroup/baseflow_storage/refs/heads/main/add_model_data.R")
+# source from add_model_data.R
+source("https://raw.githubusercontent.com/HARPgroup/baseflow_storage/refs/heads/main/make_model_daily.R")
 
 # get arguments
 input_file <- paste0(args[1])
