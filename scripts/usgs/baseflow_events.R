@@ -17,14 +17,14 @@ suppressPackageStartupMessages(library(purrr))
 suppressPackageStartupMessages(library(stringr))
 suppressPackageStartupMessages(library(dplyr))
 # get arguments
-input_file <- paste0(args[1])
+input_file <- as.character(args[1])
 input_file <- str_replace_all(input_file, '\"', '') # quotes coming in give troubles
-date_col <- paste0(args[2])
-flow_col <- paste0(args[3])
+date_col <- as.character(args[2])
+flow_col <- as.character(args[3])
 gage_name <- as.character(args[4])
-end_path <- paste0(args[5])
-site_no_col <- paste0(args[6])
-min_event_length <- paste0(args[7])
+end_path <- as.character(args[5])
+site_no_col <- as.character(args[6])
+min_event_length <- as.numeric(args[7])
 
 message(paste0("DEBUG with: args <- c('",paste(args,collapse="', '")),"')")
 
@@ -36,24 +36,14 @@ flow_csv$Flow <- flow_csv[[flow_col]]
 flow_csv$site_no <- flow_csv[[site_no_col]]
 
 #apply to gage of interest
-sites <- list(
-  gage = list(data = flow_csv, name = paste0(gage_name))
-)
+result <- analyze_recession(flow_csv, gage_name, min_len = min_event_length)
+df <- result$df
+summary_df <- result$summary
 
-results <- imap(sites, function(site, abbrev) {
-  result <- analyze_recession(site$data, site$name, min_len = min_event_length)
-  df <- result$df
-  summary_df <- result$summary
-  
-  analysis_df <- df %>%
-    filter(!is.na(GroupID)) %>%
-    select(site_no, Date, Flow, AGWR, delta_AGWR, Year, Month, Day, Season, GroupID)
-  
-  list(df = df, summary = summary_df, analysis = analysis_df, name = site$name)
-})
+analysis_df <- df %>%
+  filter(!is.na(GroupID)) %>%
+  select(site_no, Date, Flow, AGWR, delta_AGWR, Year, Month, Day, Season, GroupID)
 
-#extract
-analysis_df <- results$gage$analysis
 
 # Write final csvs out
 write.csv(analysis_df, end_path, row.names = FALSE)
