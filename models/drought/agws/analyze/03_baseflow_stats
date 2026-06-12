@@ -9,8 +9,8 @@ fi
 
 echo "Analyzing baseflow events for ${coverage}"
 
-echo "Calling: Rscript $META_MODEL_ROOT/scripts/usgs/baseflow_stats.R \"$BASEFLOW_EVENTS_FILE\" \"FALSE\" \"$BASEFLOW_STATS_FILE\""
-Rscript $META_MODEL_ROOT/scripts/usgs/baseflow_stats.R "$BASEFLOW_EVENTS_FILE" "FALSE" "$BASEFLOW_STATS_FILE"
+echo "Calling: Rscript $META_MODEL_ROOT/scripts/usgs/baseflow_stats.R \"$BASEFLOW_EVENTS_FILE\" \"FALSE\" \"$BASEFLOW_STATS_FILE\" \"$BASEFLOW_MIN_EVENT_LENGTH\""
+Rscript $META_MODEL_ROOT/scripts/usgs/baseflow_stats.R "$BASEFLOW_EVENTS_FILE" "FALSE" "$BASEFLOW_STATS_FILE" "$BASEFLOW_MIN_EVENT_LENGTH"
 # note: the install -D command create the destination directory path if it doesn't exist
 echo "Running: install -D $BASEFLOW_STATS_FILE ${USGS_DATA_DIR}/agws/${BASEFLOW_STATS_FILE}"
 install -D $BASEFLOW_STATS_FILE "${USGS_DATA_DIR}/agws/${BASEFLOW_STATS_FILE}"
