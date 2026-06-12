@@ -3,12 +3,12 @@
 #group ids
 #For local testing:
 # commandArgs <- function(...){
-#   c("strasEvent.csv", "Date", "Flow", "Strasburg", "strasBF.csv")
+#   c("strasEvent.csv", "Date", "Flow", "Strasburg", "strasBF.csv", 5)
 # }
 
 args <- commandArgs(trailingOnly = T)
 if (length(args) < 5){
-  message("Use Rscript baseflow_events.R input_file date_column flow_column site_name output_file")
+  message("Use Rscript baseflow_events.R input_file date_column flow_column site_name output_file min_event_length")
   q()
 }
 
@@ -24,6 +24,7 @@ flow_col <- paste0(args[3])
 gage_name <- as.character(args[4])
 end_path <- paste0(args[5])
 site_no_col <- paste0(args[6])
+min_event_length <- paste0(args[7])
 
 message(paste0("DEBUG with: args <- c('",paste(args,collapse="', '")),"')")
 
@@ -40,7 +41,7 @@ sites <- list(
 )
 
 results <- imap(sites, function(site, abbrev) {
-  result <- analyze_recession(site$data, site$name, min_len = 14)
+  result <- analyze_recession(site$data, site$name, min_len = min_event_length)
   df <- result$df
   summary_df <- result$summary
   
