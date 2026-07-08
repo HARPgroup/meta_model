@@ -1,7 +1,7 @@
 #Trim a series of baseflow events
 #Local Testing:
 # commandArgs <- function(...){
-#   c("strasstats.csv", "strasTrim.csv")
+#   c("https://deq1.bse.vt.edu/usgs/agws/baseflow_stats_01672500.csv", "strasTrim.csv")
 # }
 # dependencies 
 suppressPackageStartupMessages(library(dplyr))

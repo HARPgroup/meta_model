@@ -9,5 +9,5 @@ fi
 
 echo "Importing regression coefficients for ${coverage} to ${db_host}"
 
-echo "Calling: Rscript $META_MODEL_ROOT/scripts/usgs/usgs_post_regression.R \"$GAGEID\" $COVERAGE_BUNDLE \"$COVERAGE_FTYPE\" \"$MODEL_VERSION\" \"$SCENARIO_PROPNAME\" \"${BASEFLOW_REGRESSION_DF}\""
-Rscript $META_MODEL_ROOT/scripts/usgs/usgs_post_regression.R "$GAGEID" "$COVERAGE_BUNDLE" "$COVERAGE_FTYPE" $MODEL_VERSION $SCENARIO_PROPNAME $BASEFLOW_REGRESSION_DF
+echo "Calling: Rscript $META_MODEL_ROOT/scripts/usgs/usgs_post_regression.R \"$GAGEID\" $COVERAGE_BUNDLE \"$COVERAGE_FTYPE\" \"$MODEL_VERSION\" NA \"${BASEFLOW_REGRESSION_DF}\""
+Rscript $META_MODEL_ROOT/scripts/usgs/usgs_post_regression.R "$GAGEID" "$COVERAGE_BUNDLE" "$COVERAGE_FTYPE" $MODEL_VERSION NA $BASEFLOW_REGRESSION_DF

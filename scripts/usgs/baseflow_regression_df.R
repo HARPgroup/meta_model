@@ -42,7 +42,9 @@ points_df <- bf_standardize_analysis_df(points_df, gage_id = gage_id)
 #Convert flow to inches per day on user request
 if (add_inches_day || regression_flow_col == "flow_in_day") {
   #Get drainage area from hydrotools::WaterGageBase()
-  area_sqmi <- get_drainage_area_sqmi(gage_id)
+  gage_obj <- WaterGageBase$new(config = list(gage_id = gage_id))
+  gage_obj$load_sf_da()
+  area_sqmi <- gage_obj$drainage_area
   
   points_df <- add_flow_in_day(
     points_df = points_df,

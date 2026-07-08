@@ -3,7 +3,7 @@
 #incorporated)
 #For local testing:
 # commandArgs <- function(...){
-#   c("strasSummaryStats.csv", "01634000", "strasAGWRCRegression.csv")
+#   c("https://deq1.bse.vt.edu/usgs/agws/baseflow_summary_df_01634000.csv", "01634000", "strasAGWRCRegression.csv")
 # }
 args <- commandArgs(trailingOnly = T)
 if (length(args) < 2){
@@ -14,8 +14,7 @@ if (length(args) < 2){
 suppressPackageStartupMessages(library(dplyr))
 suppressPackageStartupMessages(library(stringr))
 suppressPackageStartupMessages(library(hydrotools))
-
-source("https://raw.githubusercontent.com/HARPgroup/baseflow_storage/main/FinalRegression.R")
+suppressPackageStartupMessages(library(agws))
 
 # get arguments
 input_file <- paste0(args[1])
@@ -32,7 +31,7 @@ if (length(args) > 3) {
 #Read in summarized baseflow recession stats 
 event_df <- read.csv(input_file)
 #Create regression from all events
-model <- fit_agwrc_regression(event_df)
+model <- agws::fit_agwrc_regression(event_df)
 model_summary <- summary(model)
 
 #Output data frame
@@ -43,7 +42,11 @@ out <- data.frame(
   b = coef(model)[1],
   m_pvalue = model_summary$coefficients[2,4],
   b_pvalue = model_summary$coefficients[1,4],
-  Rsq = model_summary$r.squared
+  Rsq = model_summary$r.squared,
+  low_Q = exp(min(model$model$logQ)),
+  low_Q_agwrc = model$model$event_AGWRC[which.min(model$model$logQ)],
+  high_Q = exp(max(model$model$logQ)),
+  high_Q_agwrc = model$model$event_AGWRC[which.max(model$model$logQ)]
 )
 message(paste0("Found coefficients m = ",out$m," and b = ",out$b," with R Squared of ",out$Rsq))
 # Write final csvs out
