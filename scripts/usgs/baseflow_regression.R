@@ -5,8 +5,8 @@
 # commandArgs <- function(...){
 #   c("https://deq1.bse.vt.edu/usgs/agws/baseflow_summary_df_01634000.csv", "01634000", "strasAGWRCRegression.csv")
 # }
-args <- commandArgs(trailingOnly = T)
-if (length(args) < 2){
+argst <- commandArgs(trailingOnly = T)
+if (length(argst) < 2){
   message("Use Rscript baseflow_regression_df.R input_file gage_id output_file [regression_flow_col='Flow']")
   q()
 }
@@ -17,13 +17,13 @@ suppressPackageStartupMessages(library(hydrotools))
 suppressPackageStartupMessages(library(agws))
 
 # get arguments
-input_file <- paste0(args[1])
+input_file <- paste0(argst[1])
 input_file <- str_replace_all(input_file, '\"', '') # quotes coming in give troubles
-gage_id <- args[2]
-end_path <- paste0(args[3])
+gage_id <- argst[2]
+end_path <- paste0(argst[3])
 #Check if regression_flow_col was input or if default should be used
-if (length(args) > 4) {
-  regression_flow_col <- paste0(args[4])
+if (length(argst) > 4) {
+  regression_flow_col <- paste0(argst[4])
 } else {
   regression_flow_col <- "Flow"
 }

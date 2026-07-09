@@ -15,5 +15,5 @@ DATECOL='obs_date'
 echo "Calling: Rscript $META_MODEL_ROOT/scripts/usgs/event_identification.R \"$COVERAGE_FLOW_FILE\" \"$DATECOL\" \"$FLOWCOL\" \"FALSE\" \"$EVENTS_FILE\""
 Rscript $META_MODEL_ROOT/scripts/usgs/event_identification.R "$COVERAGE_FLOW_FILE" "$DATECOL" "$FLOWCOL" "FALSE" "$EVENTS_FILE"
 # note: the install -D command create the destination directory path if it doesn't exist
-#echo "Running: install -D $EVENTS_FILE ${USGS_DATA_DIR}/agws/${EVENTS_FILE}"
-#install -D $EVENTS_FILE "${USGS_DATA_DIR}/agws/${EVENTS_FILE}"
+echo "Running: install -D $EVENTS_FILE ${USGS_DATA_DIR}/agws/${EVENTS_FILE}"
+install -D $EVENTS_FILE "${USGS_DATA_DIR}/agws/${EVENTS_FILE}"

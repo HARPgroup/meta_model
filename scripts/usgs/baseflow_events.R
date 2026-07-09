@@ -6,8 +6,8 @@
 #   c("strasEvent.csv", "Date", "Flow", "Strasburg", "strasBF.csv", 5)
 # }
 
-args <- commandArgs(trailingOnly = T)
-if (length(args) < 5){
+argst <- commandArgs(trailingOnly = T)
+if (length(argst) < 5){
   message("Use Rscript baseflow_events.R input_file date_column flow_column site_name output_file min_event_length")
   q()
 }
@@ -17,16 +17,16 @@ suppressPackageStartupMessages(library(purrr))
 suppressPackageStartupMessages(library(stringr))
 suppressPackageStartupMessages(library(dplyr))
 # get arguments
-input_file <- as.character(args[1])
+input_file <- as.character(argst[1])
 input_file <- str_replace_all(input_file, '\"', '') # quotes coming in give troubles
-date_col <- as.character(args[2])
-flow_col <- as.character(args[3])
-gage_name <- as.character(args[4])
-end_path <- as.character(args[5])
-site_no_col <- as.character(args[6])
-min_event_length <- as.numeric(args[7])
+date_col <- as.character(argst[2])
+flow_col <- as.character(argst[3])
+gage_name <- as.character(argst[4])
+end_path <- as.character(argst[5])
+site_no_col <- as.character(argst[6])
+min_event_length <- as.numeric(argst[7])
 
-message(paste0("DEBUG with: args <- c('",paste(args,collapse="', '")),"')")
+message(paste0("DEBUG with: argst <- c('",paste(argst,collapse="', '")),"')")
 
 message(paste("Reading", input_file))
 
