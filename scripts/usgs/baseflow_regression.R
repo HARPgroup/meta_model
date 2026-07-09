@@ -7,7 +7,7 @@
 # }
 args <- commandArgs(trailingOnly = T)
 if (length(args) < 2){
-  message("Use Rscript baseflow_regression_df.R input_file output_file gage_id [regression_flow_col='Flow']")
+  message("Use Rscript baseflow_regression_df.R input_file gage_id output_file [regression_flow_col='Flow']")
   q()
 }
 
@@ -22,7 +22,7 @@ input_file <- str_replace_all(input_file, '\"', '') # quotes coming in give trou
 gage_id <- args[2]
 end_path <- paste0(args[3])
 #Check if regression_flow_col was input or if default should be used
-if (length(args) > 3) {
+if (length(args) > 4) {
   regression_flow_col <- paste0(args[4])
 } else {
   regression_flow_col <- "Flow"
@@ -44,10 +44,11 @@ out <- data.frame(
   b_pvalue = model_summary$coefficients[1,4],
   Rsq = model_summary$r.squared,
   low_Q = exp(min(model$model$logQ)),
-  low_Q_agwrc = model$model$event_AGWRC[which.min(model$model$logQ)],
+  low_Q_agwrc = model$fitted.values[which.min(model$model$logQ)],
   high_Q = exp(max(model$model$logQ)),
-  high_Q_agwrc = model$model$event_AGWRC[which.max(model$model$logQ)]
+  high_Q_agwrc = model$fitted.values[which.max(model$model$logQ)]
 )
 message(paste0("Found coefficients m = ",out$m," and b = ",out$b," with R Squared of ",out$Rsq))
 # Write final csvs out
 write.csv(out, end_path,row.names = FALSE)
+
