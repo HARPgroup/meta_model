@@ -3,11 +3,12 @@
 # commandArgs <- function(...){
 #   c("https://deq1.bse.vt.edu/usgs/agws/baseflow_stats_01672500.csv", "strasTrim.csv")
 # }
-# dependencies 
+# dependencies
 suppressPackageStartupMessages(library(dplyr))
 suppressPackageStartupMessages(library(tidyr))
 suppressPackageStartupMessages(library(purrr))
-library(Kendall)
+suppressPackageStartupMessages(library(Kendall))
+suppressPackageStartupMessages(library(agws))
 
 #set up command Args
 argst <- commandArgs(trailingOnly = T)
@@ -23,13 +24,11 @@ output_file <- argst[2]
 #Load data to trim
 csv1 <- read.csv(csv1_path)
 
-# load MK trimming function
-source("https://raw.githubusercontent.com/HARPgroup/baseflow_storage/refs/heads/main/will_mk_trim.R")
 
 #1. Trim the Data with trim_event_mk
 csv1_trimmed <- csv1 %>%
   dplyr::group_by(GroupID) %>%
-  dplyr::group_modify(~ trim_event_mk(.x, alpha = 0.3)) %>%
+  dplyr::group_modify(~ agws::trim_event_mk(.x, alpha = 0.3)) %>%
   dplyr::ungroup() %>%
   dplyr::filter(kept == TRUE, met_alpha == TRUE)
 

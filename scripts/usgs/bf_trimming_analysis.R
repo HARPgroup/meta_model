@@ -1,8 +1,8 @@
-# dependencies 
+# dependencies
 suppressPackageStartupMessages(library(dplyr))
 suppressPackageStartupMessages(library(tidyr))
 suppressPackageStartupMessages(library(purrr))
-
+suppressPackageStartupMessages(library(agws))
 
 
 #set up command Args
@@ -21,17 +21,12 @@ output_file <- argst[2]
 csv1_trimmed <- read.csv(csv1_path)
 
 
-
-#load bf_event_stats
-source("https://raw.githubusercontent.com/HARPgroup/baseflow_storage/refs/heads/main/bf_event_stats.R")
-
-
 #1. Apply bf_event_stats to determine post trimming values of AGWRC and R Squared
 csv1_event_stats <- csv1_trimmed %>%
   group_by(GroupID) %>%
   group_split() %>%
   map_df(~ {
-    res <- bf_event_stats(.x)
+    res <- agws::bf_event_stats(.x)
     .x %>% mutate(
       AGWRC = res$AGWRC,
       R_squared = res$R_squared
