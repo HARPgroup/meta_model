@@ -7,9 +7,8 @@ suppressPackageStartupMessages(library(lubridate))
 suppressPackageStartupMessages(library(sqldf))
 suppressPackageStartupMessages(library(dplyr))
 args <- commandArgs(trailingOnly = TRUE)
-if (length(args) != 2) {
-  message("Usage: Rscript usgsdata.R gage_id output_path [dataRetrieval_version = 'auto']")
-  q()
+if (length(args) < 2) {
+  stop("Usage: Rscript usgsdata.R gage_id output_path [dataRetrieval_version = 'auto']")
 }
 
 gage_id <- args[1]
