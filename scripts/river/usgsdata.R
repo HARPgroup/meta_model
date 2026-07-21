@@ -8,16 +8,23 @@ suppressPackageStartupMessages(library(sqldf))
 suppressPackageStartupMessages(library(dplyr))
 args <- commandArgs(trailingOnly = TRUE)
 if (length(args) != 2) {
-  message("Usage: Rscript usgsdata.R gage_id output_path")
+  message("Usage: Rscript usgsdata.R gage_id output_path [dataRetrieval_version = 'auto']")
   q()
 }
 
 gage_id <- args[1]
 write_path <- args[2]
 
+if(length(args) > 2){
+  dataRetrieval_version <- args[3]
+}else{
+  dataRetrieval_version <- "auto"
+}
+
 print("Pull csv from input file path")
 
-gage_obj <- hydrotools::WaterGageDaily$new(gage_id = gage_id)
+gage_obj <- hydrotools::WaterGageDaily$new(gage_id = gage_id,
+                                           dataRetrieval_version = dataRetrieval_version)
 gage_obj$load_sf_da()
 
 flow_data <- gage_obj$gage_data

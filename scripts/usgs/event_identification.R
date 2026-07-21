@@ -23,6 +23,14 @@ date_col <- as.character(agst[2])
 flow_col <- as.character(agst[3])
 manual_opt <- as.logical(agst[4])
 end_path <- as.character(agst[5])
+#If user wants to input the maximum number of days for gap filling, set it.
+#Otherwise, default to just three days.
+if(length(agst) > 5){
+  gap_days <- as.character(agst[6])
+}else{
+  gap_days <- 3
+}
+
 
 message(paste0("DEBUG with: agst <- c('",paste(agst,collapse = "', '")),"')")
 
@@ -45,7 +53,7 @@ if(manual_opt == TRUE){
   flow_csv$RecessionDay <- TRUE
 }else{
   #Identify when flow is in recession
-  flow_csv <- agws::flag_stable_baseflow(flow_csv, flow_csv[[flow_col]])
+  flow_csv <- agws::flag_stable_baseflow(flow_csv, flow_csv[[flow_col]], max_gap = gap_days)
 }
 
 #remove NAs
