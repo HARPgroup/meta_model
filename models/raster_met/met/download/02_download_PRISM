@@ -25,8 +25,8 @@ if [ ! -d "$base_dir/$yr/$jday" ]; then
     echo "Doing: mkdir $base_dir/$yr/$jday"
     mkdir $base_dir/$yr/$jday
 fi  
-echo "Changing to temp dir: cd $tempdir "
-# Use this as temp dir, so now we will have a copy of the download
+echo "Changing to data archive dir: cd $base_dit/$yr/$jday"
+# Use main instead temp dir, so now we will have a copy of the download
 cd $base_dir/$yr/$jday
 # Check the file date from a previous download, do NOT double up as we can be banned for such things!
 pfile="$base_dir/$yr/$jday/prism_downloaded"
@@ -40,6 +40,8 @@ if [ "$pexist_date" == "$todays_date" ]; then
   echo "PRISM file for ${yr}-${mo}-${da} has already been downloaded today, and cannot be downloaded twice in a day. Skipping."
   exit
 fi
+# remove all previous prism files
+rm * -f
 echo "Getting data for month ${yr}-${mo}-${da}..."
 #Download the daily PRISM data for target day, reporject, and crop
 echo "Calling: downloadPRISM $yr $mo $da $BASE_URI"

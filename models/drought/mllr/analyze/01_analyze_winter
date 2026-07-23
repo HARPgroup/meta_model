@@ -1,4 +1,4 @@
-#!/bin//bash
+#!/bin/bash
 # loads the met specific config
 mllr_config=`find_config mllr.config`
 if [ "$mllr_config" = "" ]; then

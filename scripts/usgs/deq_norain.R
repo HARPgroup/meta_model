@@ -7,26 +7,28 @@ source(paste(basepath,'config.R',sep='/'))
 
 argst <- commandArgs(trailingOnly=T)
 # Ex:
-# argst = c("02065500,02059500,02056000,02054530,02056900,02058400,02071000,02061500,02064000", '/tmp/test.csv')
+# argst = c("02065500,02059500,02056000,02054530,02056900,02058400,02071000,02061500,02064000", '/tmp', 'norain_roanoke')
 # argst = c("02065500,02059500,02056000,02054530,02056900", '/tmp/test.csv', "2002-07-10")
 # argst = c("03524000,03167000,01674500,01667500,01654000,01634000,02016000,02039500,02042500,02051500,02059500,02056650", '/tmp/test.csv')
 
 message(paste("length of argst = ", length(argst)))
-if (length(argst) < 2) {
-  message(paste("Use: deq_norain.R output_file gages( \"02065500,02059500,...\") [start_date] [end_date]"))
+if (length(argst) < 3) {
+  message(paste("Use: deq_norain.R gages( \"02065500,02059500,...\") output_path scenario [start_date] [end_date]"))
   q()
 }
 gages <- as.character(argst[1])
+gages <- stringr::str_replace_all(gages,'"', '')
 glist <- stringr::str_split(gages,",",simplify=TRUE)
 # get or guess the date to aim for projection
-save_path = argst[2]
-if (length(argst) > 2) {
-  proj_start_date = argst[3]
+save_path = as.character(argst[2])
+scenario = as.character(argst[3])
+if (length(argst) > 3) {
+  proj_start_date = argst[4]
 } else {
   proj_start_date = format(Sys.time(), "%Y-%m-%d")
 }
-if (length(argst) > 3) { 
-  proj_end_date = argst[4]
+if (length(argst) > 4) { 
+  proj_end_date = argst[5]
 } else {
   proj_end_date = format(as.Date(proj_start_date) + 90, "%Y-%m-%d")
 }
@@ -131,7 +133,7 @@ for (gage_id in glist) {
     AGWRC = AGWRC
   )
   print(bff) # display ggplot
-  fpath = paste0(save_directory, "/Q90_norain_log_", gage_id, yr, "_", ".png")
+  fpath = paste0(save_path, "/Q90_norain_log_", gage_id, '_', yr, ".png")
   ggplot2::ggsave(fpath)
   if (!is.na(Ce)) {
     if (method != 'regression_limit') {
@@ -149,16 +151,20 @@ for (gage_id in glist) {
   Q90 = fc[90,]$Forecast
   end_date <- fc[90,]$Date
   is_emerg = 'No' 
+  is_emerg_int = 0
   is_hist = 'No'
+  is_hist_int = 0
   Qmin = min(omgage$low_flows$n1Q10_annDate$minFlow)
   if (Q90 <= Qmin) {
     is_hist = 'Yes' # look up from percentile tables
+    is_hist_int = 1
   }
   ntab <- omgage$nep_table()
   emo <- month(end_date)
   emo_em <- ntab[emo,3]
   if (Q90 <= emo_em) {
     is_emerg = 'Yes'
+    is_emerg_int = 1
   }
   yscale = max(fc$Forecast,na.rm=TRUE)
   yinc = yscale / 10
@@ -168,7 +174,7 @@ for (gage_id in glist) {
   )
   text(as.Date(end_date - 10), Q90 + yinc * 2, paste("Q90 =", round(Q90,1), "cfs"))
   text(as.Date(end_date - 10), Q90 + yinc * 3, paste("Qmin =", round(Qmin,1), "cfs"))
-  fpath = paste0(save_directory, "/Q90_norain_", gage_id, yr, "_", ".png")
+  fpath = paste0(save_path, "/Q90_norain_", gage_id, "_", yr, ".png")
   png(fpath)
   # now save the same thing
   plot(
@@ -194,6 +200,26 @@ for (gage_id in glist) {
     odf,
     odl
   )
+  # scenario is 
+  # norain_[yr]_[mo]_[da]
+  #scenario = paste('norain', year(start_date), month(start_date), day(start_date), sep='_')
+  # GETTING SCENARIO PROPERTY FROM VA HYDRO
+  sceninfo <- list(
+    varkey = 'om_scenario',
+    propname = scenario,
+    featureid = model$pid,
+    entity_type = "dh_properties",
+    bundle = "dh_properties"
+  )
+  scenprop <- RomProperty$new( ds, sceninfo, TRUE)
+  scenprop$startdate <- start_date
+  scenprop$enddate <- end_date
+  scenprop$save(TRUE)
+  scenprop$set_prop(propname="is_emerg", propvalue=is_emerg_int, propcode=is_emerg)
+  scenprop$set_prop(propname="is_hist", propvalue=is_hist_int, propcode=is_hist)
+  scenprop$set_prop(propname="Q90", propvalue=Q90)
+  scenprop$set_prop(propname="Qmin", propvalue=Qmin)
+  
 }
 
 
@@ -202,4 +228,4 @@ for (gage_id in glist) {
 
 # other functions:
 # agws::fit_agwrc_regression(events)
-write.csv(odf,file=save_path)
+write.csv(odf,file=paste0(save_path, "/", scenario, "_Q90_", yr, ".csv"))
