@@ -12,7 +12,17 @@ if [ "$datasource" != "noaa_drought" ]; then
   exit
 fi
 
-# make sure we have our data dirs
+# make sure we have our data dirs for the base noaa datasource in which a tiff is downloaded and shared for noaa subdatasets
+if [ ! -d "${MET_EXPORT_DIR}/${datasource}/$yr" ]; then
+    echo "Doing: mkdir ${MET_EXPORT_DIR}/${datasource}/$yr"
+    mkdir ${MET_EXPORT_DIR}/${datasource}/$yr
+fi
+if [ ! -d "${MET_EXPORT_DIR}/${datasource}/$yr/$jday" ]; then
+    echo "Doing: mkdir ${MET_EXPORT_DIR}/${datasource}/$yr/$jday"
+    mkdir ${MET_EXPORT_DIR}/${datasource}/$yr/$jday
+fi
+
+# make sure we have our data dirs for this noaa subprocess
 if [ ! -d "$base_dir/$yr" ]; then
     echo "Doing: mkdir $base_dir/$yr"
     mkdir $base_dir/$yr
@@ -20,7 +30,7 @@ fi
 if [ ! -d "$base_dir/$yr/$jday" ]; then
     echo "Doing: mkdir $base_dir/$yr/$jday"
     mkdir $base_dir/$yr/$jday
-fi  
+fi
 
 url="${BASE_URI}/$yr/$mo/$da/nws_precip_wytd_$yr$mo${da}_conus.tif"
 
