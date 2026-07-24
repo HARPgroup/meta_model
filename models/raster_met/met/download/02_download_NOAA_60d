@@ -22,6 +22,9 @@ if [ ! -d "$base_dir/$yr/$jday" ]; then
     mkdir $base_dir/$yr/$jday
 fi  
 
+# remove all previous files
+rm * -f
+
 url="${BASE_URI}/$yr/$mo/$da/nws_precip_last60days_$yr$mo${da}_conus.tif"
 
 wget $url -O "${src_dir}/noaa_60d_$jday.tif"
