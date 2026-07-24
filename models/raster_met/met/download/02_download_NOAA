@@ -25,7 +25,7 @@ fi
 url="${BASE_URI}/$yr/$mo/$da/nws_precip_wytd_$yr$mo${da}_conus.tif"
 
 #Only download if file does not yet exist OR if the download date does not match today's date.
-pfile="${src_dir}/noaa_raster_$jday.tif"
+pfile="${MET_EXPORT_DIR}/${datasource}/noaa_raster_$jday.tif"
 pexist_date=""
 todays_date=`date +"%Y-%m-%d"`
 if [ -e "$pfile" ]; then
