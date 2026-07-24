@@ -26,6 +26,9 @@ if [ ! -d "$base_dir/$yr/$jday" ]; then
     mkdir $base_dir/$yr/$jday
 fi  
 
+# remove all previous files
+rm $src_dir/* -f 
+
 echo "Getting data for month ${yr}-${mo}-${da}..."
 #Download the daily PRISM data for target day, reporject, and crop
 if [ "$jday" == "001" ]; then
