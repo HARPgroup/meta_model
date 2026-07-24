@@ -24,4 +24,19 @@ fi
 
 url="${BASE_URI}/$yr/$mo/$da/nws_precip_wytd_$yr$mo${da}_conus.tif"
 
+#Only download if file does not yet exist OR if the download date does not match today's date.
+pfile="${src_dir}/noaa_raster_$jday.tif"
+pexist_date=""
+todays_date=`date +"%Y-%m-%d"`
+if [ -e "$pfile" ]; then
+  # check the date
+  pexist_date=`date -r $pfile +"%Y-%m-%d"`
+fi
+if [ "$pexist_date" == "$todays_date" ]; then
+  echo "NOAA multiband raster for ${yr}-${mo}-${da} has already been downloaded today. Skipping."
+  exit
+fi
+# remove all previous prism files
+rm * -f
+# This multi-banded tif is used in other meta model workflow as well
 wget $url -O "${src_dir}/noaa_raster_$jday.tif"
