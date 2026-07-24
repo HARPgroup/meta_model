@@ -1,0 +1,25 @@
+#!/bin/bash
+# loads the args, raster & geo specific config AND CHANGE TO TEMPDIR
+response_config=`find_config response.config`
+if [ "$response_config" = "" ]; then
+  response_config="$META_MODEL_ROOT/models/drought/response/response.config"
+fi
+. $response_config
+# BEGIN - actually loading local data
+
+echo "Doing no rain projection for ${GAGES}"
+NORAINFILE="${scenario}_norain90.csv"
+if [ "$NORAINDATE" == "" ]; then
+  NORAINDATE=`date +"%Y"`
+fi
+# TODO: put FLOWCOL in con file somewhere so we can run model info through this?
+# Note: the $GAGES variable comes in with quotes around it, so it appears we do not need them
+#       but sometimes quotes are weird so let this be a warning.
+cd $tempdir
+echo "Calling: Rscript $META_MODEL_ROOT/scripts/usgs/deq_norain.R $GAGES $tempdir $SCENARIO_NAME "
+Rscript $META_MODEL_ROOT/scripts/usgs/deq_norain.R $GAGES $tempdir $SCENARIO_NAME
+# note: the install -D command create the destination directory path if it doesn't exist
+echo "Running: install -D *.csv \"${USGS_DATA_DIR}/agws/\""
+install -D *.csv "${USGS_DATA_DIR}/agws/"
+echo "Running: install -D *.png \"${USGS_DATA_DIR}/agws/\""
+install -D *.png "${USGS_DATA_DIR}/agws/"
