@@ -23,7 +23,7 @@ if [ ! -d "$base_dir/$yr/$jday" ]; then
 fi  
 
 # remove all previous files
-rm * -f
+rm $src_dir/* -f 
 
 url="${BASE_URI}/${yr}${mo}${da}_0000_sport_lis_vsm0-100cm_percentile_conus3km_float_wgs84.tif"
 

@@ -37,6 +37,6 @@ if [ "$pexist_date" == "$todays_date" ]; then
   exit
 fi
 # remove all previous files
-rm * -f
+rm $src_dir/* -f 
 # This multi-banded tif is used in other meta model workflow as well
 wget $url -O "${src_dir}/noaa_raster_$jday.tif"
