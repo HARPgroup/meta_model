@@ -36,7 +36,7 @@ fi
 if [ "$pexist_date" == "$todays_date" ]; then
   echo "NOAA multiband raster for ${yr}-${mo}-${da} has already been downloaded today. Skipping."
   #This multibanded raster is used in multiple workflows. create links when called by non-noaa_drought workflows
-  if [ -e "${src_dir}/noaa_raster_$jday.tif" ]; then
+  if [ ! -e "${src_dir}/noaa_raster_$jday.tif" ]; then
      echo "Trying ln -s ${pfile} ${src_dir}/noaa_raster_$jday.tif to put file in local dir for noaa"
 	 ln -s "${pfile}" "${src_dir}/noaa_raster_$jday.tif"
   fi
@@ -50,7 +50,7 @@ rm $src_dir/* -f
 wget $url -O "${pfile}"
 
 #This multibanded raster is used in multiple workflows. create links when called by non-noaa_drought workflows
-if [ -e "${src_dir}/noaa_raster_$jday.tif" ]; then
+if [ ! -e "${src_dir}/noaa_raster_$jday.tif" ]; then
    echo "Trying ln -s ${pfile} ${src_dir}/noaa_raster_$jday.tif to put file in local dir for noaa"
    ln -s "${pfile}" "${src_dir}/noaa_raster_$jday.tif"
 fi
