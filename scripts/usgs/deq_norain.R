@@ -11,7 +11,7 @@ argst <- commandArgs(trailingOnly=T)
 # argst = c("02065500,02059500,02056000,02054530,02056900", '/tmp/test.csv', "2002-07-10")
 # argst = c("03524000,03167000,01674500,01667500,01654000,01634000,02016000,02039500,02042500,02051500,02059500,02056650", '/tmp/test.csv')
 # argst = c("02059500", '/tmp', "norain_2002", "2002-07-10")
-
+# argst = c("02054530", '/tmp', "norain_1981", "1981-07-10")
 message(paste("length of argst = ", length(argst)))
 if (length(argst) < 3) {
   message(paste("Use: deq_norain.R gages( \"02065500,02059500,...\") output_path scenario [start_date] [end_date]"))
@@ -26,7 +26,7 @@ scenario = as.character(argst[3])
 if (length(argst) > 3) {
   proj_start_date = argst[4]
 } else {
-  proj_start_date = format(Sys.time(), "%Y-%m-%d")
+  proj_start_date = as.Date(format(Sys.time(), "%Y-%m-%d")) - 1
 }
 if (length(argst) > 4) { 
   proj_end_date = argst[5]
@@ -55,6 +55,9 @@ for (gage_id in glist) {
   omgage <- hydrotools::WaterGageDaily$new(ds_in = ds, gage_id = gage_id)
   omgage$load_wshd_feat()
   omgage$get_gage_data_old(start_date = '1900-01-01', end_date=proj_end_date, approval_status = 'all')
+  if (nrow(omgage$gage_data) == 0) {
+    next
+  }
   omgage$plot_low_flows()
   omgage$low_flows
   # Load model object for retrieving BPJ AGWRC
@@ -88,10 +91,14 @@ for (gage_id in glist) {
     Flow ~ Date, 
     data=omgage$gage_data[omgage$gage_data$Date >= (as.Date(proj_start_date) - 30),],
     main=paste("Observed", model$feature$name),
-    ylim=c(0, max(omgage$gage_data[omgage$gage_data$Date >= (as.Date(proj_start_date) - 30),]$Flow))
+    ylim=c(0, max(omgage$gage_data[omgage$gage_data$Date >= (as.Date(proj_start_date) - 30),]$Flow, na.rm=TRUE))
   )
   days = nrow(omgage$gage_data)
-  minus30 = which(omgage$gage_data$Date == (as.Date(proj_start_date) - 30))
+  minus30 = which(omgage$gage_data$Date == (as.Date(proj_start_date))) - 30
+  if (length(minus30) == 0) {
+    # we are outside the date range of the gage, skip
+    next
+  }
   last30 = omgage$gage_data[minus30:(minus30 + 30),]
   Q0 = min(last30$Flow)
   start_date = max(last30[last30$Flow == Q0,]$Date)
@@ -196,6 +203,7 @@ for (gage_id in glist) {
     gage_id = gage_id,
     gage_name = model$feature$name,
     norain_90 = Q90,
+    hist_min = Qmin,
     proj_date = end_date,
     proj_emerg = is_emerg,
     record_low = is_hist,
