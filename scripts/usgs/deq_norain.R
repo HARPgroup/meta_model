@@ -8,10 +8,11 @@ source(paste(basepath,'config.R',sep='/'))
 argst <- commandArgs(trailingOnly=T)
 # Ex:
 # argst = c("02065500,02059500,02056000,02054530,02056900,02058400,02071000,02061500,02064000", '/tmp', 'norain_2026')
+# argst = c("02065500,02059500,02056000,02054530,02056900,02058400,02071000,02061500,02064000", '/tmp', 'norain_2008', '2008-07-01')
 # argst = c("02065500,02059500,02056000,02054530,02056900", '/tmp/test.csv', "2002-07-10")
 # argst = c("03524000,03167000,01674500,01667500,01654000,01634000,02016000,02039500,02042500,02051500,02059500,02056650", '/tmp/test.csv')
 # argst = c("02059500", '/tmp', "norain_2002", "2002-07-10")
-
+# argst = c("02054530", '/tmp', "norain_1981", "1981-07-10")
 message(paste("length of argst = ", length(argst)))
 if (length(argst) < 3) {
   message(paste("Use: deq_norain.R gages( \"02065500,02059500,...\") output_path scenario [start_date] [end_date]"))
@@ -26,7 +27,7 @@ scenario = as.character(argst[3])
 if (length(argst) > 3) {
   proj_start_date = argst[4]
 } else {
-  proj_start_date = format(Sys.time(), "%Y-%m-%d")
+  proj_start_date = as.Date(format(Sys.time(), "%Y-%m-%d")) - 1
 }
 if (length(argst) > 4) { 
   proj_end_date = argst[5]
@@ -55,6 +56,9 @@ for (gage_id in glist) {
   omgage <- hydrotools::WaterGageDaily$new(ds_in = ds, gage_id = gage_id)
   omgage$load_wshd_feat()
   omgage$get_gage_data_old(start_date = '1900-01-01', end_date=proj_end_date, approval_status = 'all')
+  if (nrow(omgage$gage_data) == 0) {
+    next
+  }
   omgage$plot_low_flows()
   omgage$low_flows
   # Load model object for retrieving BPJ AGWRC
@@ -82,17 +86,21 @@ for (gage_id in glist) {
   # agwrc_reg_clow$propvalue = 0.986
   # agwrc_reg_clow$varid = l90_agwrc$get_vardef(config = list(varkey='om_class_Constant'))$hydroid
   # agwrc_reg_clow$save(TRUE)
-  
+  clean_data <- omgage$gage_data[which(!is.na(omgage$gage_data$Flow)),]
   # inspect for start date
   plot(
     Flow ~ Date, 
-    data=omgage$gage_data[omgage$gage_data$Date >= (as.Date(proj_start_date) - 30),],
+    data=clean_data[clean_data$Date >= (as.Date(proj_start_date) - 30),],
     main=paste("Observed", model$feature$name),
-    ylim=c(0, max(omgage$gage_data[omgage$gage_data$Date >= (as.Date(proj_start_date) - 30),]$Flow))
+    ylim=c(0, max(clean_data[clean_data$Date >= (as.Date(proj_start_date) - 30),]$Flow, na.rm=TRUE))
   )
-  days = nrow(omgage$gage_data)
-  minus30 = which(omgage$gage_data$Date == (as.Date(proj_start_date) - 30))
-  last30 = omgage$gage_data[minus30:(minus30 + 30),]
+  days = nrow(clean_data)
+  minus30 = which(clean_data$Date == (as.Date(proj_start_date))) - 30
+  if (length(minus30) == 0) {
+    # we are outside the date range of the gage, skip
+    next
+  }
+  last30 = clean_data[minus30:(minus30 + 30),]
   Q0 = min(last30$Flow)
   start_date = max(last30[last30$Flow == Q0,]$Date)
   points(start_date, Q0, col="red", bg="red", pch = 21, cex = 2)
@@ -106,7 +114,7 @@ for (gage_id in glist) {
     method = 'manual'
   }
   # now check for a minimum valid Q to regress against
-  if (!is.na(agwrc_reg_qlow$propvalue) && Q0 < agwrc_reg_qlow$propvalue) {
+  if (!(method == 'manual') && !is.na(agwrc_reg_qlow$propvalue) && Q0 < agwrc_reg_qlow$propvalue) {
     Ce = agwrc_reg_clow$propvalue
     method = 'regression_limit'
   }
@@ -153,7 +161,7 @@ for (gage_id in glist) {
     fc = bff[["plot_env"]][["all_forecasts"]][["lm_variable"]]
   }
   
-  fc$Date <- as.Date(start_date + fc$Day)
+  #fc$Date <- as.Date(start_date + fc$Day)
   Q90 = fc[90,]$Forecast
   end_date <- fc[90,]$Date
   is_emerg = 'No' 
@@ -190,12 +198,13 @@ for (gage_id in glist) {
   text(as.Date(end_date - 10), Q90 + yinc * 2, paste("Q90 =", round(Q90,1), "cfs"))
   text(as.Date(end_date - 10), Q90 + yinc * 3, paste("Qmin =", round(Qmin,1), "cfs"))
   dev.off()
-    Ce = median(fc$AGWRC)
+  Ce = median(fc$AGWRC)
   odl <- data.frame (
     hydroid = omgage$gage_feature$hydroid,
     gage_id = gage_id,
     gage_name = model$feature$name,
     norain_90 = Q90,
+    hist_min = Qmin,
     proj_date = end_date,
     proj_emerg = is_emerg,
     record_low = is_hist,
