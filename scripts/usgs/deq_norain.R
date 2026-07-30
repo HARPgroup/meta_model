@@ -227,8 +227,8 @@ for (gage_id in glist) {
     bundle = "dh_properties"
   )
   scenprop <- RomProperty$new( ds, sceninfo, TRUE)
-  scenprop$startdate <- start_date
-  scenprop$enddate <- end_date
+  scenprop$startdate <- as.numeric(as.POSIXct(start_date,tz="America/New_York"))
+  scenprop$enddate <- as.numeric(as.POSIXct(end_date,tz="America/New_York"))
   scenprop$save(TRUE)
   scenprop$set_prop(propname="is_emerg", propvalue=is_emerg_int, propcode=is_emerg)
   scenprop$set_prop(propname="is_hist", propvalue=is_hist_int, propcode=is_hist)
