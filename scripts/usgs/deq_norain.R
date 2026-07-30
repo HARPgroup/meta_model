@@ -86,21 +86,21 @@ for (gage_id in glist) {
   # agwrc_reg_clow$propvalue = 0.986
   # agwrc_reg_clow$varid = l90_agwrc$get_vardef(config = list(varkey='om_class_Constant'))$hydroid
   # agwrc_reg_clow$save(TRUE)
-  
+  clean_data <- omgage$gage_data[which(!is.na(omgage$gage_data$Flow)),]
   # inspect for start date
   plot(
     Flow ~ Date, 
-    data=omgage$gage_data[omgage$gage_data$Date >= (as.Date(proj_start_date) - 30),],
+    data=clean_data[clean_data$Date >= (as.Date(proj_start_date) - 30),],
     main=paste("Observed", model$feature$name),
-    ylim=c(0, max(omgage$gage_data[omgage$gage_data$Date >= (as.Date(proj_start_date) - 30),]$Flow, na.rm=TRUE))
+    ylim=c(0, max(clean_data[clean_data$Date >= (as.Date(proj_start_date) - 30),]$Flow, na.rm=TRUE))
   )
-  days = nrow(omgage$gage_data)
-  minus30 = which(omgage$gage_data$Date == (as.Date(proj_start_date))) - 30
+  days = nrow(clean_data)
+  minus30 = which(clean_data$Date == (as.Date(proj_start_date))) - 30
   if (length(minus30) == 0) {
     # we are outside the date range of the gage, skip
     next
   }
-  last30 = omgage$gage_data[minus30:(minus30 + 30),]
+  last30 = clean_data[minus30:(minus30 + 30),]
   Q0 = min(last30$Flow)
   start_date = max(last30[last30$Flow == Q0,]$Date)
   points(start_date, Q0, col="red", bg="red", pch = 21, cex = 2)
