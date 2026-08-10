@@ -33,8 +33,8 @@ if [ -e "$pfile" ]; then
   # check the date
   pexist_date=`date -r $pfile +"%Y-%m-%d"`
 fi
-
-if [ "$pexist_date" == "$todays_date" ]; then
+echo "pexist date is now ${pexist_date}"
+if [ "${pexist_date}" == "${todays_date}" ]; then
   echo "NOAA multiband raster for ${yr}-${mo}-${da} has already been downloaded today. Skipping."
   exit
 fi
