@@ -41,6 +41,6 @@ fi
 echo "Rm stuff from ${src_dir}"
 # remove all previous files
 rm $src_dir/* -f 
-
+echo "Do wget ${url} to ${pfile}"
 # This multi-banded tif is used in other meta model workflow as well
 wget $url -O "${pfile}"
