@@ -28,6 +28,7 @@ url="${BASE_URI}/$yr/$mo/$da/nws_precip_wytd_$yr$mo${da}_conus.tif"
 pfile="${base_dir}/${datasource}/${yr}/${jday}/noaa_raster_${jday}.tif"
 pexist_date=""
 todays_date=`date +"%Y-%m-%d"`
+echo "check existance"
 if [ -e "$pfile" ]; then
   # check the date
   pexist_date=`date -r $pfile +"%Y-%m-%d"`
