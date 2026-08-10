@@ -12,16 +12,6 @@ if [ "$datasource" != "noaa_drought" ]; then
   exit
 fi
 
-# make sure we have our data dirs for the base noaa datasource in which a tiff is downloaded and shared for noaa subdatasets
-if [ ! -d "${MET_EXPORT_DIR}/${datasource}/$yr" ]; then
-    echo "Doing: mkdir ${MET_EXPORT_DIR}/${datasource}/$yr"
-    mkdir ${MET_EXPORT_DIR}/${datasource}/$yr
-fi
-if [ ! -d "${MET_EXPORT_DIR}/${datasource}/$yr/$jday" ]; then
-    echo "Doing: mkdir ${MET_EXPORT_DIR}/${datasource}/$yr/$jday"
-    mkdir ${MET_EXPORT_DIR}/${datasource}/$yr/$jday
-fi
-
 # make sure we have our data dirs for this noaa subprocess
 if [ ! -d "$base_dir/$yr" ]; then
     echo "Doing: mkdir $base_dir/$yr"
@@ -35,7 +25,7 @@ fi
 url="${BASE_URI}/$yr/$mo/$da/nws_precip_wytd_$yr$mo${da}_conus.tif"
 
 #Only download if file does not yet exist OR if the download date does not match today's date.
-pfile="${MET_EXPORT_DIR}/${datasource}/$yr/$jday/noaa_raster_$jday.tif"
+pfile="${base_dir}/${datasource}/$yr/$jday/noaa_raster_$jday.tif"
 pexist_date=""
 todays_date=`date +"%Y-%m-%d"`
 if [ -e "$pfile" ]; then
@@ -45,12 +35,6 @@ fi
 
 if [ "$pexist_date" == "$todays_date" ]; then
   echo "NOAA multiband raster for ${yr}-${mo}-${da} has already been downloaded today. Skipping."
-  #This multibanded raster is used in multiple workflows. create links when called by non-noaa_drought workflows
-  if [ ! -e "${src_dir}/noaa_raster_$jday.tif" ]; then
-     echo "Trying ln -s ${pfile} ${src_dir}/noaa_raster_$jday.tif to put file in local dir for noaa"
-	 ln -s "${pfile}" "${src_dir}/noaa_raster_$jday.tif"
-  fi
-  exit
 fi
 
 # remove all previous files
@@ -58,9 +42,3 @@ rm $src_dir/* -f
 
 # This multi-banded tif is used in other meta model workflow as well
 wget $url -O "${pfile}"
-
-#This multibanded raster is used in multiple workflows. create links when called by non-noaa_drought workflows
-if [ ! -e "${src_dir}/noaa_raster_$jday.tif" ]; then
-   echo "Trying ln -s ${pfile} ${src_dir}/noaa_raster_$jday.tif to put file in local dir for noaa"
-   ln -s "${pfile}" "${src_dir}/noaa_raster_$jday.tif"
-fi

@@ -13,19 +13,19 @@ if [ "$datasource" != "PRISM_normal" ]; then
 fi
 
 # Changing to load the functions used herein
-echo "Verifying $base_dir/$yr and $base_dir/$yr/$jday" 
+echo "Verifying $base_dir/PRISMnormals and $base_dir/PRISMnormals/$jday" 
 # make sure we have our data dirs
-if [ ! -d "$base_dir/$yr" ]; then
-    echo "Doing: mkdir $base_dir/$yr"
-    mkdir $base_dir/$yr
+if [ ! -d "$base_dir/PRISMnormals" ]; then
+    echo "Doing: mkdir $base_dir/PRISMnormals"
+    mkdir $base_dir/PRISMnormals
 fi
-if [ ! -d "$base_dir/$yr/$jday" ]; then
-    echo "Doing: mkdir $base_dir/$yr/$jday"
-    mkdir $base_dir/$yr/$jday
+if [ ! -d "$base_dir/PRISMnormals/$jday" ]; then
+    echo "Doing: mkdir $base_dir/PRISMnormals/$jday"
+    mkdir $base_dir/PRISMnormals/$jday
 fi  
 
 # Check the file date from a previous download, do NOT double up as we can be banned for such things!
-pfile="$base_dir/$yr/$jday/prism_norm_downloaded"
+pfile="$base_dir/PRISMnormals/$jday/prism_norm_downloaded"
 pexist_date=""
 todays_date=`date +"%Y-%m-%d"`
 if [ -e "$pfile" ]; then
@@ -37,7 +37,7 @@ if [ "$pexist_date" == "$todays_date" ]; then
   exit
 fi
 # remove all previous prism files
-rm "$base_dir/$yr/$jday/*" -f
+rm "$base_dir/PRISMnormals/$jday/*" -f
 
 echo "Getting data for month ${yr}-${mo}-${da}..."
 
