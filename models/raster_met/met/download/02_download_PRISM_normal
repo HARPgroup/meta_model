@@ -13,19 +13,19 @@ if [ "$datasource" != "PRISM_normal" ]; then
 fi
 
 # Changing to load the functions used herein
-echo "Verifying $base_dir/PRISMnormals and $base_dir/PRISMnormals/$jday" 
+echo "Verifying $base_dir/PRISM_normal and $src_dir" 
 # make sure we have our data dirs
-if [ ! -d "$base_dir/PRISMnormals" ]; then
-    echo "Doing: mkdir $base_dir/PRISMnormals"
-    mkdir $base_dir/PRISMnormals
+if [ ! -d "$base_dir/PRISM_normal" ]; then
+    echo "Doing: mkdir $base_dir/PRISM_normal"
+    mkdir "$base_dir/PRISM_normal"
 fi
-if [ ! -d "$base_dir/PRISMnormals/$jday" ]; then
-    echo "Doing: mkdir $base_dir/PRISMnormals/$jday"
-    mkdir $base_dir/PRISMnormals/$jday
+if [ ! -d "$src_dir" ]; then
+    echo "Doing: mkdir $src_dir"
+    mkdir $src_dir
 fi  
 
 # Check the file date from a previous download, do NOT double up as we can be banned for such things!
-pfile="$base_dir/PRISMnormals/$jday/prism_norm_downloaded"
+pfile="$src_dir/prism_norm_downloaded"
 pexist_date=""
 todays_date=`date +"%Y-%m-%d"`
 if [ -e "$pfile" ]; then
@@ -33,22 +33,23 @@ if [ -e "$pfile" ]; then
   pexist_date=`date -r $pfile +"%Y-%m-%d"`
 fi
 if [ "$pexist_date" == "$todays_date" ]; then
-  echo "PRISM file for ${yr}-${mo}-${da} has already been downloaded today, and cannot be downloaded twice in a day. Skipping."
+  echo "PRISM file for ${mo}-${da} has already been downloaded today, and cannot be downloaded twice in a day. Skipping."
   exit
 fi
 # remove all previous prism files
-rm "$base_dir/PRISMnormals/$jday/*" -f
+rm "$src_dir/*" -f
 
-echo "Getting data for month ${yr}-${mo}-${da}..."
+echo "Getting data for month ${mo}-${da}..."
 
 
 echo "Getting data from PRISM REST service..."
-echo "Trying: wget $BASE_URI/$YYYY$MM$DD "
+echo "Trying: wget ${BASE_URI}${FILE_BASE}2020${mo}${da}_avg_30y.zip ${src_dir}/${FILE_BASE}2020${mo}${da}_avg_30y.zip"
 #Download and unzip the raster from the PRISM webservices
-wget "$BASE_URI/prism_ppt_us_25m_2020$MM$DD_avg_30y.zip"
-unzip "prism_ppt_us_25m_2020$MM$DD_avg_30y.zip"
+wget "${BASE_URI}${FILE_BASE}2020${mo}${da}_avg_30y.zip" -O "${src_dir}/${FILE_BASE}2020${mo}${da}_avg_30y.zip"
+echo "Unzipping"
+unzip "${src_dir}/${FILE_BASE}2020${mo}${da}_avg_30y.zip" -d "${src_dir}/"
 
-download_name="prism_ppt_us_25m_2020${MM}${DD}_avg_30y.${FILE_EXT}"
+download_name="${src_dir}/${FILE_BASE}2020${mo}${da}_avg_30y.zip"
 
 if [ ! -e "$download_name" ]; then
   echo "PRISM download could not find $download_name ... exiting. " > problem
