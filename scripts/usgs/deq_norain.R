@@ -15,7 +15,7 @@ argst <- commandArgs(trailingOnly=T)
 # argst = c("02054530", '/tmp', "norain_1981", "1981-07-10")
 message(paste("length of argst = ", length(argst)))
 if (length(argst) < 3) {
-  message(paste("Use: deq_norain.R gages( \"02065500,02059500,...\") output_path scenario [start_date] [end_date]"))
+  message(paste("Use: deq_norain.R gages( \"02065500,02059500,...\") output_path scenario [csv_name] [start_date] [end_date]"))
   q()
 }
 gages <- as.character(argst[1])
@@ -25,12 +25,17 @@ glist <- stringr::str_split(gages,",",simplify=TRUE)
 save_path = as.character(argst[2])
 scenario = as.character(argst[3])
 if (length(argst) > 3) {
-  proj_start_date = argst[4]
+  csv_name = as.character(argst[4])
+  } else {
+  csv_name = paste0(scenario, "_Q90_", yr, ".csv")
+}
+if (length(argst) > 4) {
+  proj_start_date = argst[5]
 } else {
   proj_start_date = as.Date(format(Sys.time(), "%Y-%m-%d")) - 1
 }
-if (length(argst) > 4) { 
-  proj_end_date = argst[5]
+if (length(argst) > 5) { 
+  proj_end_date = argst[6]
 } else {
   proj_end_date = format(as.Date(proj_start_date) + 90, "%Y-%m-%d")
 }
@@ -243,4 +248,5 @@ for (gage_id in glist) {
 
 # other functions:
 # agws::fit_agwrc_regression(events)
-write.csv(odf,file=paste0(save_path, "/", scenario, "_Q90_", yr, ".csv"))
+write.csv(odf,file=csv_name)
+
