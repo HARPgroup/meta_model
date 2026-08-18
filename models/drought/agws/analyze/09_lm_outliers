@@ -11,5 +11,5 @@ echo "Calling: Rscript $META_MODEL_ROOT/scripts/usgs/regression_outliers.R \"$BA
 Rscript $META_MODEL_ROOT/scripts/usgs/regression_outliers.R "$BASEFLOW_SUMMARY_PREQC_DF" "$BASEFLOW_SUMMARY_DF"
 
 # note: the install -D command create the destination directory path if it doesn't exist
-echo "Running: install -D $BASEFLOW_SUMMARY_OUTLIERS_DF ${USGS_DATA_DIR}/agws/${BASEFLOW_SUMMARY_OUTLIERS_DF}"
-install -D $BASEFLOW_SUMMARY_OUTLIERS_DF "${USGS_DATA_DIR}/agws/${BASEFLOW_SUMMARY_OUTLIERS_DF}"
+echo "Running: install -D $BASEFLOW_SUMMARY_DF ${USGS_DATA_DIR}/agws/${BASEFLOW_SUMMARY_DF}"
+install -D $BASEFLOW_SUMMARY_DF "${USGS_DATA_DIR}/agws/${BASEFLOW_SUMMARY_DF}"

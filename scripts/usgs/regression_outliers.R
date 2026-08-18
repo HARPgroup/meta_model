@@ -25,12 +25,13 @@ lm_model <- agws::fit_agwrc_regression(event_df)
 ### These two functions flags outliers ###
 # IQR uses boundaries to detect unusually high or low values in the data
 # Cook's distance detects influential observations that affect the model fit
-IQR_outlier_flags <- agws::flag_outliers_IQR(c(lm_model$model$logQ,0.001))
+IQR_outlier_flags <- agws::flag_outliers_IQR(lm_model$model$logQ)
 cooks_outlier_flags <- agws::flag_cooks(lm_model)
 
 #Write to output df
 event_df$IQR_outlier_flags <- IQR_outlier_flags
-event_df$cooks_outlier_flags <- cooks_outlier_flags
+event_df$cooks_outlier_flags <- cooks_outlier_flags$cooks_flagged
+event_df$cooks_outlier_dist <- cooks_outlier_flags$cooks_d
 
 # Write final csvs out
 write.csv(event_df, end_path, row.names = FALSE)
