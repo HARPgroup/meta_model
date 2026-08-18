@@ -21,6 +21,18 @@ if [ "$datasource" == "PRISM" ]; then
             $gdal_cmd $gdal_meta_switch "TIFFTAG_DATETIME=${TIFFTAG_DATETIME}" $fname
         fi
     done
+elif [ "$datasource" == "PRISM_normal" ]; then
+    # single day files only,
+    echo "datasource is $datasource, checking $src_dir for $import_files"
+    for fname in $import_files; do
+        if [ -e $fname ]; then
+            eval `gdalinfo $fname |grep TIFFTAG_DATETIME`
+            TIFFTAG_DATETIME="2020-${mo}-${da}T${tz_hr}:00:00"
+            echo "Setting TIFFTAG_DATETIME: $gdal_cmd $gdal_meta_switch \"TIFFTAG_DATETIME=${TIFFTAG_DATETIME}\" $fname"
+            $gdal_cmd $gdal_meta_switch "TIFFTAG_DATETIME=${TIFFTAG_DATETIME}" $fname
+        fi
+    done
+
 elif [ "$datasource" == "daymet" ]; then
     # single day files only,
     for fname in $import_files; do

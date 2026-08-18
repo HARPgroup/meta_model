@@ -1,0 +1,60 @@
+#!/bin/bash
+# loads the met specific config
+met_config=`find_config met.config`
+if [ "$met_config" = "" ]; then
+  met_config="$META_MODEL_ROOT/models/raster_met/met/met.config"
+fi
+echo "Loading met_config from $met_config"
+. $met_config
+
+
+if [ "$datasource" != "PRISM_normal" ]; then
+  exit
+fi
+
+# Changing to load the functions used herein
+echo "Verifying $base_dir/PRISM_normal and $src_dir" 
+# make sure we have our data dirs
+if [ ! -d "$base_dir/PRISM_normal" ]; then
+    echo "Doing: mkdir $base_dir/PRISM_normal"
+    mkdir "$base_dir/PRISM_normal"
+fi
+if [ ! -d "$src_dir" ]; then
+    echo "Doing: mkdir $src_dir"
+    mkdir $src_dir
+fi  
+
+# Check the file date from a previous download, do NOT double up as we can be banned for such things!
+pfile="$src_dir/prism_norm_downloaded"
+pexist_date=""
+todays_date=`date +"%Y-%m-%d"`
+if [ -e "$pfile" ]; then
+  # check the date
+  pexist_date=`date -r $pfile +"%Y-%m-%d"`
+fi
+if [ "$pexist_date" == "$todays_date" ]; then
+  echo "PRISM file for ${mo}-${da} has already been downloaded today, and cannot be downloaded twice in a day. Skipping."
+  exit
+fi
+# remove all previous prism files
+rm "$src_dir/*" -f
+
+echo "Getting data for month ${mo}-${da}..."
+
+
+echo "Getting data from PRISM REST service..."
+echo "Trying: wget ${BASE_URI}${FILE_BASE}2020${mo}${da}_avg_30y.zip ${src_dir}/${FILE_BASE}2020${mo}${da}_avg_30y.zip"
+#Download and unzip the raster from the PRISM webservices
+wget "${BASE_URI}${FILE_BASE}2020${mo}${da}_avg_30y.zip" -O "${src_dir}/${FILE_BASE}2020${mo}${da}_avg_30y.zip"
+echo "Unzipping"
+unzip "${src_dir}/${FILE_BASE}2020${mo}${da}_avg_30y.zip" -d "${src_dir}/"
+
+download_name="${src_dir}/${FILE_BASE}2020${mo}${da}_avg_30y.zip"
+
+if [ ! -e "$download_name" ]; then
+  echo "PRISM download could not find $download_name ... exiting. " > problem
+  exit
+fi
+
+# set a file with the date that we downloaded for future reference.
+touch $pfile
