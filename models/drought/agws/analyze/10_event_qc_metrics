@@ -8,4 +8,4 @@ fi
 echo "Finding number of events for QC ${coverage}"
 
 echo "Calling: Rscript $META_MODEL_ROOT/scripts/misc/numevents_qc.R \"$BASEFLOW_SUMMARY_DF\" \"$NUMEVENTS_QC_DF\""
-Calling: Rscript $META_MODEL_ROOT/scripts/misc/numevents_qc.R $BASEFLOW_SUMMARY_DF $NUMEVENTS_QC_DF
+Rscript $META_MODEL_ROOT/scripts/misc/numevents_qc.R $BASEFLOW_SUMMARY_DF $NUMEVENTS_QC_DF
