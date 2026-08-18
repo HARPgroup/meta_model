@@ -7,8 +7,8 @@ fi
 
 echo "Calculating QC metrics on regression from previous step for ${coverage}"
 
-echo "Calling: Rscript $META_MODEL_ROOT/scripts/usgs/regression_QC.R \"$BASEFLOW_SUMMARY_DF\" \"$BASEFLOW_REGRESSION_PREQC_DF\" $BASEFLOW_REGRESSION_DF"
-Rscript $META_MODEL_ROOT/scripts/usgs/regression_QC.R "${BASEFLOW_SUMMARY_DF}" "${BASEFLOW_REGRESSION_PREQC_DF}" "${BASEFLOW_REGRESSION_DF}"
+echo "Calling: Rscript $META_MODEL_ROOT/scripts/usgs/regression_QC.R \"$BASEFLOW_SUMMARY_PREQC_DF\" \"$BASEFLOW_REGRESSION_PREQC_DF\" $BASEFLOW_REGRESSION_DF"
+Rscript $META_MODEL_ROOT/scripts/usgs/regression_QC.R "${BASEFLOW_SUMMARY_PREQC_DF}" "${BASEFLOW_REGRESSION_PREQC_DF}" "${BASEFLOW_REGRESSION_DF}"
 
 # note: the install -D command create the destination directory path if it doesn't exist
 echo "Running: install -D $BASEFLOW_REGRESSION_DF ${USGS_DATA_DIR}/agws/${BASEFLOW_REGRESSION_DF}"
