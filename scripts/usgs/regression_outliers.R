@@ -20,13 +20,13 @@ end_path <- argst[2]
 #Read in summarized baseflow recession stats
 event_df <- read.csv(reg_event_file)
 #Create regression from all events
-model <- agws::fit_agwrc_regression(event_df)
+lm_model <- agws::fit_agwrc_regression(event_df)
 
 ### These two functions flags outliers ###
 # IQR uses boundaries to detect unusually high or low values in the data
 # Cook's distance detects influential observations that affect the model fit
 IQR_outlier_flags <- agws::flag_outliers_IQR(c(lm_model$model$logQ,0.001))
-cooks_outlier_flags <- agws::flag_cooks(model)
+cooks_outlier_flags <- agws::flag_cooks(lm_model)
 
 #Write to output df
 event_df$IQR_outlier_flags <- IQR_outlier_flags
