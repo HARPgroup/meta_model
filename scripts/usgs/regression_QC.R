@@ -28,7 +28,7 @@ model <- agws::fit_agwrc_regression(event_df)
 model_summary <- summary(model)
 
 # run function
-hetero_df <- agws::heteroscedasticity(model = lm_model)
+hetero_df <- agws::heteroscedasticity(model = model)
 
 reg_summary_df <- cbind(reg_summary_df, hetero_df)
 
