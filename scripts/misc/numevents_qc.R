@@ -31,7 +31,7 @@ if(file.exists(input_06_file)){
   reg_df <- read.csv(input_06_file)
   # get event counts (monthly and gage total)
   monthly_events <- agws::monthly_group_count(reg_df,
-                                              date_col = start_date,
+                                              date_col = date_col,
                                               group_col = group_col)
 }else{
   monthly_events <- data.frame(
