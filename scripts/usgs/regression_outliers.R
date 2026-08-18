@@ -10,6 +10,7 @@ if (length(argst) < 2){
 }
 
 suppressPackageStartupMessages(library(agws))
+suppressPackageStartupMessages(library(stringr))
 
 # get arguments
 reg_event_file <- argst[1]
