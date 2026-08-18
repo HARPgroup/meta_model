@@ -5,7 +5,7 @@ if [ "$agws_config" = "" ]; then
 fi
 . $agws_config
 
-echo "Finding number of events for QC ${coverage}"
+echo "Finding number of non-NA flow for ${coverage}"
 
 echo "Calling: Rscript $META_MODEL_ROOT/scripts/misc/filelength_qc.R \"$GAGEID\" \"$COVERAGE_FLOW_FILE\" \"$GAGE_QC_DF\""
 Rscript $META_MODEL_ROOT/scripts/misc/filelength_qc.R $GAGEID $COVERAGE_FLOW_FILE $GAGE_QC_DF
