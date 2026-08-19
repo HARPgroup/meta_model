@@ -11,9 +11,9 @@ suppressPackageStartupMessages(library(stringr))
 basepath='/var/www/R'
 source('/var/www/R/config.R')
 
-message(paste0("DEBUG with: args <- c('",paste(args,collapse="', '")),"')")
 
 argst <- commandArgs(trailingOnly = T)
+message(paste0("DEBUG with: args <- c('",paste(args,collapse="', '")),"')")
 #The USGS gage id
 gage_id <- argst[1]
 #For USGS watersheds, this is 'watershed'
