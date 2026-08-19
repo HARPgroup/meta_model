@@ -75,7 +75,7 @@ postValue <- function(propname, value, target_prop){
                  " on parent entity pid = ",target_prop$pid))
 }
 
-if(exists(wshd_slope_df)){
+if(exists("wshd_slope_df")){
   #Post the average watershed slope
   postValue(propname = "wshd_slope",value = wshd_slope_df$slope,
             parent_prop = this_feature)
