@@ -78,7 +78,7 @@ postValue <- function(propname, value, target_prop){
 
 if(exists("wshd_slope_df")){
   #Post the average watershed slope
-  postValue(propname = "wshd_slope",value = wshd_slope_df$slope,
+  postValue(propname = "wshd_slope",value = wshd_slope_df$x,
             target_prop = this_feature)
 }
 
