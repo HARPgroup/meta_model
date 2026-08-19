@@ -13,7 +13,7 @@ source('/var/www/R/config.R')
 
 
 argst <- commandArgs(trailingOnly = T)
-message(paste0("DEBUG with: args <- c('",paste(argst,collapse="', '")),"')")
+message(paste0("DEBUG with: argst <- c('",paste(argst,collapse="', '")),"')")
 #The USGS gage id
 gage_id <- argst[1]
 #For USGS watersheds, this is 'watershed'
@@ -86,7 +86,7 @@ if(exists("wshd_slope_df")){
 postValue(propname = "non_na_flow_count",value = filelength_df$x,
           target_prop = parent_prop)
 #Post the number of events
-postValue(propname = "total_bf_events",value = numevents_df$gage_total,
+postValue(propname = "total_bf_events",value = numevents_df$gage_total[1],
           target_prop = parent_prop)
 
 #post monthly event totals
