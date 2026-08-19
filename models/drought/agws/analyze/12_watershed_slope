@@ -5,7 +5,7 @@ if [ "$agws_config" = "" ]; then
 fi
 . $agws_config
 
-if [[ "$FIND_SLOPE" != "TRUE" ]]; then
+if [[ "$FIND_SLOPE" == "FALSE" ]]; then
   exit
 fi
 
