@@ -13,7 +13,7 @@ source('/var/www/R/config.R')
 
 
 argst <- commandArgs(trailingOnly = T)
-message(paste0("DEBUG with: args <- c('",paste(args,collapse="', '")),"')")
+message(paste0("DEBUG with: args <- c('",paste(argst,collapse="', '")),"')")
 #The USGS gage id
 gage_id <- argst[1]
 #For USGS watersheds, this is 'watershed'
