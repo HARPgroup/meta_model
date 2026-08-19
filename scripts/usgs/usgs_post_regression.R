@@ -97,9 +97,9 @@ postValue(propname = "agwrc_reg_chigh",value = regression_coeff$high_Q_agwrc,
           parent_prop = parent_prop)
 
 #Post the results of heteroscedasticity testing
-postValue(propname = "white_test_p ",value = regression_coeff$white_test_p,
+postValue(propname = "white_test_p",value = regression_coeff$white_test_p,
           parent_prop = parent_prop)
-postValue(propname = "breusch_pagan_p ",value = regression_coeff$breusch_pagan_p,
+postValue(propname = "breusch_pagan_p",value = regression_coeff$breusch_pagan_p,
           parent_prop = parent_prop)
 
 
