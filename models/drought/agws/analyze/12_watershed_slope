@@ -1,0 +1,15 @@
+#!/bin/bash
+agws_config=`find_config agws.config`
+if [ "$agws_config" = "" ]; then
+  agws_config="$META_MODEL_ROOT/models/drought/agws/agws.config"
+fi
+. $agws_config
+
+if [[ "$FIND_SLOPE" == "FALSE" ]]; then
+  exit
+fi
+
+echo "Finding watershed slope of ${coverage}"
+
+echo "Calling: Rscript $META_MODEL_ROOT/scripts/usgs/watershed_slope.R \"$GAGEID\" \"$WSHED_SLOPE_DF\""
+Rscript $META_MODEL_ROOT/scripts/usgs/watershed_slope.R $GAGEID $WSHED_SLOPE_DF

@@ -1,0 +1,11 @@
+#!/bin/bash
+agws_config=`find_config agws.config`
+if [ "$agws_config" = "" ]; then
+  agws_config="$META_MODEL_ROOT/models/drought/agws/agws.config"
+fi
+. $agws_config
+
+echo "Finding number of events for QC ${coverage}"
+
+echo "Calling: Rscript $META_MODEL_ROOT/scripts/misc/numevents_qc.R \"$BASEFLOW_SUMMARY_DF\" \"$NUMEVENTS_QC_DF\""
+Rscript $META_MODEL_ROOT/scripts/misc/numevents_qc.R $BASEFLOW_SUMMARY_DF $NUMEVENTS_QC_DF
