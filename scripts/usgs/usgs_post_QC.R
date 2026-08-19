@@ -11,6 +11,7 @@ suppressPackageStartupMessages(library(stringr))
 basepath='/var/www/R'
 source('/var/www/R/config.R')
 
+message(paste0("DEBUG with: args <- c('",paste(args,collapse="', '")),"')")
 
 argst <- commandArgs(trailingOnly = T)
 #The USGS gage id
