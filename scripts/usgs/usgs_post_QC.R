@@ -82,12 +82,34 @@ if(exists(wshd_slope_df)){
 }
 
 #Post the number of non-NA values from the gage record used in the AGWS workflow
-postValue(propname = "non_na_flow_count",value = filelength_df$total,
+postValue(propname = "non_na_flow_count",value = filelength_df$x,
           parent_prop = parent_prop)
 #Post the number of events
-postValue(propname = "total_bf_events",value = numevents_df$total,
+postValue(propname = "total_bf_events",value = numevents_df$gage_total,
           parent_prop = parent_prop)
 
 #post monthly event totals
-postValue(propname = "total_bf_events",value = numevents_df[1,2],
-          parent_prop = parent_prop)
+postValue(propname = "jan_bf_events", parent_prop = parent_prop,
+          value = numevents_df$event_cnt[numevents_df$month == 1])
+postValue(propname = "feb_bf_events", parent_prop = parent_prop,
+          value = numevents_df$event_cnt[numevents_df$month == 2])
+postValue(propname = "mar_bf_events", parent_prop = parent_prop,
+          value = numevents_df$event_cnt[numevents_df$month == 3])
+postValue(propname = "apr_bf_events", parent_prop = parent_prop,
+          value = numevents_df$event_cnt[numevents_df$month == 4])
+postValue(propname = "may_bf_events", parent_prop = parent_prop,
+          value = numevents_df$event_cnt[numevents_df$month == 5])
+postValue(propname = "jun_bf_events", parent_prop = parent_prop,
+          value = numevents_df$event_cnt[numevents_df$month == 6])
+postValue(propname = "jul_bf_events", parent_prop = parent_prop,
+          value = numevents_df$event_cnt[numevents_df$month == 7])
+postValue(propname = "aug_bf_events", parent_prop = parent_prop,
+          value = numevents_df$event_cnt[numevents_df$month == 8])
+postValue(propname = "sep_bf_events", parent_prop = parent_prop,
+          value = numevents_df$event_cnt[numevents_df$month == 9])
+postValue(propname = "oct_bf_events", parent_prop = parent_prop,
+          value = numevents_df$event_cnt[numevents_df$month == 10])
+postValue(propname = "nov_bf_events", parent_prop = parent_prop,
+          value = numevents_df$event_cnt[numevents_df$month == 11])
+postValue(propname = "dec_bf_events", parent_prop = parent_prop,
+          value = numevents_df$event_cnt[numevents_df$month == 12])
