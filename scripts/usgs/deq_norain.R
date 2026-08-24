@@ -1,7 +1,9 @@
 #Calculate 90-day forecasts at input gages with an auto-selected start date as
 #the minimum flow between May and July and either a BPJ or regression
 #methodology based on database input 
-#TO DO: Move the start date selection into object. Verify that reg with limit
+#TO DO: Move the start date selection into object allowing for May - July start
+#or one tied to forecast end date (perhaps, choose a date that ensures forecast
+#ends by Sep 15 - forecast length). Verify that reg with limit
 #chooses the correct AGWRC on day one if initial flow is below limit
 # Initialize ####
 library(hydrotools)
