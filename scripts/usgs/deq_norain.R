@@ -1,10 +1,8 @@
+# Description ####
 #Calculate 90-day forecasts at input gages with an auto-selected start date as
 #the minimum flow between May and July and either a BPJ or regression
 #methodology based on database input 
-#TO DO: Move the start date selection into object allowing for May - July start
-#or one tied to forecast end date (perhaps, choose a date that ensures forecast
-#ends by Sep 15 - forecast length). Verify that reg with limit
-#chooses the correct AGWRC on day one if initial flow is below limit
+
 # Initialize ####
 library(hydrotools)
 library(agws)
@@ -63,7 +61,7 @@ if(is.na(csv_name)){
   csv_name <- paste0(scenario, "_Q90_", yr, ".csv")
 }
 
-# Notes:
+# Allocate results data frame
 odf <- data.frame(
   hydroid = integer(),
   gage_id = character(),
@@ -80,8 +78,9 @@ odf <- data.frame(
 for (gage_id in glist) {
   ## Gage Object ####
   #Load in hydrotools gage object
-  omgage <- hydrotools::WaterGageDaily$new(ds_in = ds, gage_id = gage_id, 
-                                           end_date = proj_end_date,
+  omgage <- hydrotools::WaterGageDaily$new(ds_in = ds, gage_id = gage_id,
+                                           start_date = (proj_start_date - 365),
+                                           end_date = (proj_end_date + 365),
                                            approval_status = 'all')
   #Try to load the gage feature
   omgage$load_wshd_feat()
@@ -130,28 +129,22 @@ for (gage_id in glist) {
   ## Adjust Start Date ####
   #Get the day index that is 30 rows behind the start date (if data is
   #contiguous, this is the date 30-days prior to the start date)
-  minus30 <- which(clean_data$Date == proj_start_date) - 30
-  
-  #If minus30 is of length 0, we are outside the date range of the gage, skip
-  if (length(minus30) == 0) {
-    next
-  }
-  
-  #Identify the lowest flow within the past 30 rows of data and begin forecast
-  #from that low point
-  last30 <- clean_data[minus30:(minus30 + 30),]
-  #Minimum flow during period
-  Q0 <- min(last30$Flow)
-  #Adjusted start date
-  start_date <- max(last30$Date[last30$Flow == Q0])
+  start_date <- hydrotools::bf_forecast_start_date(
+    start_date = proj_start_date,
+    date_col = "Date",
+    flow_col = "Flow",
+    gage_data = clean_data,
+    adjust_start_date = c(paste0(yr,"-05-01"), paste0(yr,"-07-03"))
+  )
   
   ## Plot Start Date ####
   # inspect for start date
   plot(
     Flow ~ Date, 
-    data=last30,
+    data=clean_data[clean_data$Date <= (start_date + 30) & 
+                      clean_data$Date >= (start_date - 30),],
     main=paste("Observed", omgage$gage_feature$name),
-    ylim=c(0, max(last30$Flow))
+    ylim=c(0, max(clean_data$Flow))
   )
   points(start_date, Q0, col="red", bg="red", pch = 21, cex = 2)
   
