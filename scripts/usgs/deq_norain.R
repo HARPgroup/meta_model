@@ -137,6 +137,8 @@ for (gage_id in glist) {
     adjust_start_date = c(paste0(yr,"-05-01"), paste0(yr,"-07-03"))
   )
   
+  Q0 <- clean_data$Flow[clean_data$Date == start_date]
+  
   ## Plot Start Date ####
   # inspect for start date
   plot(
@@ -146,7 +148,8 @@ for (gage_id in glist) {
     main=paste("Observed", omgage$gage_feature$name),
     ylim=c(0, max(clean_data$Flow))
   )
-  points(start_date, Q0, col="red", bg="red", pch = 21, cex = 2)
+  points(start_date, Q0,
+         col="red", bg="red", pch = 21, cex = 2)
   
   
   ## Regression limits ####
