@@ -1,5 +1,6 @@
 #Creates the appropriate model and scenario properties for a USGS feature and
-#stores regression coefficients
+#stores regression coefficients. Makes NO updates for gages with custom
+#regressions
 #For local testing:
 # commandArgs <- function(...){
 #   c("01613900", "watershed", "usgs_full_drainage", "AGWRC-1.0", 'NA', "https://deq1.bse.vt.edu/usgs/agws/baseflow_regression_df_01613900.csv")
@@ -66,40 +67,58 @@ postValue <- function(propname, value, parent_prop){
   message(paste0("Stored ",propname," in pid = ",new_prop$pid,
                  " on parent entity pid = ",parent_prop$pid))
 }
-#Post the slope
-postValue(propname = "regression_m",value = regression_coeff$m,
-          parent_prop = parent_prop)
-#Post the intercept
-postValue(propname = "regression_b",value = regression_coeff$b,
-          parent_prop = parent_prop)
-#Post the R Squared of the regression
-postValue(propname = "regression_Rsq",value = regression_coeff$Rsq,
-          parent_prop = parent_prop)
-#Post the slope p value
-postValue(propname = "regression_m_pvalue",value = regression_coeff$m_pvalue,
-          parent_prop = parent_prop)
-#Post the intercept p value
-postValue(propname = "regression_b_pvalue",value = regression_coeff$b_pvalue,
-          parent_prop = parent_prop)
 
-#Post the lowest event median Q
-postValue(propname = "agwrc_reg_qlow",value = regression_coeff$low_Q,
-          parent_prop = parent_prop)
-#Post the AGWRC of the lowest event median Q
-postValue(propname = "agwrc_reg_clow",value = regression_coeff$low_Q_agwrc,
-          parent_prop = parent_prop)
-
-#Post the highest event median Q
-postValue(propname = "agwrc_reg_qhigh",value = regression_coeff$high_Q,
-          parent_prop = parent_prop)
-#Post the AGWRC of the highest event median Q
-postValue(propname = "agwrc_reg_chigh",value = regression_coeff$high_Q_agwrc,
-          parent_prop = parent_prop)
-
-#Post the results of heteroscedasticity testing
-postValue(propname = "white_test_p",value = regression_coeff$white_test_p,
-          parent_prop = parent_prop)
-postValue(propname = "breusch_pagan_p",value = regression_coeff$breusch_pagan_p,
-          parent_prop = parent_prop)
+#What is the current gage rating/status? If the user has saved a custom
+#regression, do not update values. If the user has selected a BPJ coefficient,
+#do not overwrite the agwrc_low
+rating_class <- model_prop$get_prop("rating_class")$propvalue
+if(is.na(rating_class) || rating_class != 4){
+  #Post the lowest valid AGWRC UNLESS a BPJ rating has been set
+  if( is.na(rating_class) || rating_class != 3 ){
+    postValue(propname = "agwrc_low",value = regression_coeff$low_Q_agwrc,
+              parent_prop = parent_prop)
+  }else{
+    message("No agwrc_low set as rating_class is 3")
+  }
+  
+  #Post the slope
+  postValue(propname = "regression_m",value = regression_coeff$m,
+            parent_prop = parent_prop)
+  #Post the intercept
+  postValue(propname = "regression_b",value = regression_coeff$b,
+            parent_prop = parent_prop)
+  #Post the R Squared of the regression
+  postValue(propname = "regression_Rsq",value = regression_coeff$Rsq,
+            parent_prop = parent_prop)
+  #Post the slope p value
+  postValue(propname = "regression_m_pvalue",value = regression_coeff$m_pvalue,
+            parent_prop = parent_prop)
+  #Post the intercept p value
+  postValue(propname = "regression_b_pvalue",value = regression_coeff$b_pvalue,
+            parent_prop = parent_prop)
+  
+  #Post the lowest event median Q
+  postValue(propname = "agwrc_reg_qlow",value = regression_coeff$low_Q,
+            parent_prop = parent_prop)
+  #Post the AGWRC of the lowest event median Q
+  postValue(propname = "agwrc_reg_clow",value = regression_coeff$low_Q_agwrc,
+            parent_prop = parent_prop)
+  
+  #Post the highest event median Q
+  postValue(propname = "agwrc_reg_qhigh",value = regression_coeff$high_Q,
+            parent_prop = parent_prop)
+  #Post the AGWRC of the highest event median Q
+  postValue(propname = "agwrc_reg_chigh",value = regression_coeff$high_Q_agwrc,
+            parent_prop = parent_prop)
+  
+  #Post the results of heteroscedasticity testing
+  postValue(propname = "white_test_p",value = regression_coeff$white_test_p,
+            parent_prop = parent_prop)
+  postValue(propname = "breusch_pagan_p",value = regression_coeff$breusch_pagan_p,
+            parent_prop = parent_prop)
+  
+}else{
+  message("No regression values POSTed as rating_class is 4")
+}
 
 
