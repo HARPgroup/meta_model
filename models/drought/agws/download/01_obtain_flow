@@ -16,6 +16,12 @@ outfile="${coverage}-flow.csv"
 
 echo "Calling: Rscript $META_MODEL_ROOT/scripts/river/usgsdata.R $gageid $outfile $USGS_VERSION"
 Rscript $META_MODEL_ROOT/scripts/river/usgsdata.R $gageid $outfile $USGS_VERSION
+
+if [ ! -e "$outfile" ]; then
+  echo "USGS data retrieval failed; could not generate $outfile ... exiting. " > problem
+  exit 1
+fi
+
 # note: the install -D command create the destination directory path if it doesn't exist
 echo "Running: install -D $outfile $COVERAGE_FLOW_FILE"
 install -D $outfile $COVERAGE_FLOW_FILE

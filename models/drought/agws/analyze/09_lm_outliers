@@ -10,6 +10,11 @@ echo "Looking for potential outliers in regression for ${coverage}"
 echo "Calling: Rscript $META_MODEL_ROOT/scripts/usgs/regression_outliers.R \"$BASEFLOW_SUMMARY_PREQC_DF\" \"$BASEFLOW_SUMMARY_DF\""
 Rscript $META_MODEL_ROOT/scripts/usgs/regression_outliers.R "$BASEFLOW_SUMMARY_PREQC_DF" "$BASEFLOW_SUMMARY_DF"
 
+if [ ! -e "$BASEFLOW_SUMMARY_DF" ]; then
+  echo "Event QC failed; could not generated $BASEFLOW_SUMMARY_DF ... exiting. " > problem
+  exit 1
+fi
+
 # note: the install -D command create the destination directory path if it doesn't exist
 echo "Running: install -D $BASEFLOW_SUMMARY_DF ${USGS_DATA_DIR}/agws/${BASEFLOW_SUMMARY_DF}"
 install -D $BASEFLOW_SUMMARY_DF "${USGS_DATA_DIR}/agws/${BASEFLOW_SUMMARY_DF}"

@@ -13,4 +13,10 @@ echo "Calling: Rscript $META_MODEL_ROOT/scripts/usgs/baseflow_stats.R \"$BASEFLO
 Rscript $META_MODEL_ROOT/scripts/usgs/baseflow_stats.R "$BASEFLOW_EVENTS_FILE" "FALSE" "$BASEFLOW_STATS_FILE"
 # note: the install -D command create the destination directory path if it doesn't exist
 echo "Running: install -D $BASEFLOW_STATS_FILE ${USGS_DATA_DIR}/agws/${BASEFLOW_STATS_FILE}"
+
+if [ ! -e "$BASEFLOW_STATS_FILE" ]; then
+  echo "Baseflow stats failed; could not generated $BASEFLOW_STATS_FILE ... exiting. " > problem
+  exit 1
+fi
+
 install -D $BASEFLOW_STATS_FILE "${USGS_DATA_DIR}/agws/${BASEFLOW_STATS_FILE}"

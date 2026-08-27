@@ -12,3 +12,8 @@ echo "Identifying and analyzing baseflow events for ${coverage}"
 #cp ${USGS_DATA_DIR}/agws/${eventfile} ./
 echo "Calling: Rscript $META_MODEL_ROOT/scripts/usgs/baseflow_regression.R \"$BASEFLOW_SUMMARY_PREQC_DF\" $GAGEID \"$BASEFLOW_REGRESSION_PREQC_DF\""
 Rscript $META_MODEL_ROOT/scripts/usgs/baseflow_regression.R "$BASEFLOW_SUMMARY_PREQC_DF" "$GAGEID" "$BASEFLOW_REGRESSION_PREQC_DF"
+
+if [ ! -e "$BASEFLOW_REGRESSION_PREQC_DF" ]; then
+  echo "AGWRC regression failed; could not generated $BASEFLOW_REGRESSION_PREQC_DF ... exiting. " > problem
+  exit 1
+fi

@@ -10,6 +10,11 @@ echo "Calculating QC metrics on regression from previous step for ${coverage}"
 echo "Calling: Rscript $META_MODEL_ROOT/scripts/usgs/regression_QC.R \"$BASEFLOW_SUMMARY_PREQC_DF\" \"$BASEFLOW_REGRESSION_PREQC_DF\" $BASEFLOW_REGRESSION_DF"
 Rscript $META_MODEL_ROOT/scripts/usgs/regression_QC.R "${BASEFLOW_SUMMARY_PREQC_DF}" "${BASEFLOW_REGRESSION_PREQC_DF}" "${BASEFLOW_REGRESSION_DF}"
 
+if [ ! -e "$BASEFLOW_REGRESSION_DF" ]; then
+  echo "AGWRC regression QC failed; could not generated $BASEFLOW_REGRESSION_DF ... exiting. " > problem
+  exit 1
+fi
+
 # note: the install -D command create the destination directory path if it doesn't exist
 echo "Running: install -D $BASEFLOW_REGRESSION_DF ${USGS_DATA_DIR}/agws/${BASEFLOW_REGRESSION_DF}"
 install -D $BASEFLOW_REGRESSION_DF "${USGS_DATA_DIR}/agws/${BASEFLOW_REGRESSION_DF}"

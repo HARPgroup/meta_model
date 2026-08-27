@@ -12,6 +12,12 @@ echo "Trimming baseflow events for ${coverage}"
 #cp ${USGS_DATA_DIR}/agws/${eventfile} ./
 echo "Calling: Rscript $META_MODEL_ROOT/scripts/usgs/bf_trimming.R \"$BASEFLOW_STATS_FILE\" \"$BASEFLOW_TRIM_FILE\""
 Rscript $META_MODEL_ROOT/scripts/usgs/bf_trimming.R "$BASEFLOW_STATS_FILE" "$BASEFLOW_TRIM_FILE"
+
+if [ ! -e "$BASEFLOW_TRIM_FILE" ]; then
+  echo "Baseflow trimming failed; could not generated $BASEFLOW_TRIM_FILE ... exiting. " > problem
+  exit 1
+fi
+
 # note: the install -D command create the destination directory path if it doesn't exist
 #echo "Running: install -D $BASEFLOW_TRIM_FILE ${USGS_DATA_DIR}/agws/${BASEFLOW_TRIM_FILE}"
 #install -D $BASEFLOW_TRIM_FILE "${USGS_DATA_DIR}/agws/${BASEFLOW_TRIM_FILE}"

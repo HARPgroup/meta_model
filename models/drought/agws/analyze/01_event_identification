@@ -14,6 +14,12 @@ FLOWCOL='obs_flow' # for now we assume the standard obs_flow from the previous w
 DATECOL='obs_date'
 echo "Calling: Rscript $META_MODEL_ROOT/scripts/usgs/event_identification.R \"$COVERAGE_FLOW_FILE\" \"$DATECOL\" \"$FLOWCOL\" \"FALSE\" \"$EVENTS_FILE\""
 Rscript $META_MODEL_ROOT/scripts/usgs/event_identification.R "$COVERAGE_FLOW_FILE" "$DATECOL" "$FLOWCOL" "FALSE" "$EVENTS_FILE"
+
+if [ ! -e "$EVENTS_FILE" ]; then
+  echo "Event identification failed; could not generated $EVENTS_FILE ... exiting. " > problem
+  exit 1
+fi
+
 # note: the install -D command create the destination directory path if it doesn't exist
 #echo "Running: install -D $EVENTS_FILE ${USGS_DATA_DIR}/agws/${EVENTS_FILE}"
 #install -D $EVENTS_FILE "${USGS_DATA_DIR}/agws/${EVENTS_FILE}"

@@ -9,3 +9,8 @@ echo "Finding number of non-NA flow for ${coverage}"
 
 echo "Calling: Rscript $META_MODEL_ROOT/scripts/misc/filelength_qc.R \"$GAGEID\" \"$COVERAGE_FLOW_FILE\" \"$GAGE_QC_DF\""
 Rscript $META_MODEL_ROOT/scripts/misc/filelength_qc.R $GAGEID $COVERAGE_FLOW_FILE $GAGE_QC_DF
+
+if [ ! -e "$GAGE_QC_DF" ]; then
+  echo "General QC failed; could not generated $GAGE_QC_DF ... exiting. " > problem
+  exit 1
+fi
