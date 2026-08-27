@@ -6,6 +6,7 @@ fi
 . $agws_config
 
 if [[ "$FIND_SLOPE" == "FALSE" ]]; then
+  echo "Skipping step based on value of FIND_SLOPE from config"
   exit
 fi
 
