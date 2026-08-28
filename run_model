@@ -87,8 +87,32 @@ if ( -d $model_plugins ) then
             $model_plugins/$module/$step/$plugin $scenario $segment $work_path
             if ( -f $work_path/problem ) then
               if ( ! ( $IGNORE_PROBLEMS ) ) then
-                echo "Error: Problem found in step $model => $module / $step / $plugin "
+				echo "Error: Problem found in step $model => $module / $step / $plugin "
                 echo "       See $work_path/problem "
+				
+				#Try to run an appropriate error handler (or default) if exists
+				set error_code = $?
+				set error_code = `printf "%02d" $error_code`
+				
+				if ( -d $work_path/exit_handlers/ ) then
+					set exit_code_files = ( `find $work_path/exit_handlers/ -name "${error_code}_*" -type f` )
+					set exit_default_files = ( `find $work_path/exit_handlers/ -name "00_*" -type f` )
+					if ( $#exit_code_files > 0 ) then
+						#Run each error handler with this exit code
+						foreach file ($exit_code_files)
+							echo "Running: $model_plugins/$module/exit_handlers/${file}"
+							$model_plugins/$module/exit_handlers/${file}
+						end
+					else if ( $#exit_default_files > 0 ) then
+						#Run each error handler with this exit code
+						foreach file ($exit_default_files)
+							echo "Running: $model_plugins/$module/exit_handlers/${file}"
+							$model_plugins/$module/exit_handlers/${file}
+						end
+					else
+						echo "No default (00_*) or scripts with names like ${error_code}_* found in $model_plugins/$module/exit_handlers/."
+					endif
+				endif
                 exit 1
               else 
                 mv $work_path/problem $work_path/problem.${step}.${plugin}
