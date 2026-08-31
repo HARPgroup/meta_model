@@ -7,4 +7,4 @@ fi
 . $agws_config
 
 echo "Calling: Rscript $META_MODEL_ROOT/scripts/qa/R/agws_01_exithandler.R \"$GAGEID\""
-#Rscript $META_MODEL_ROOT/scripts/qa/R/agws_01_exithandler.R "$GAGEID"
+Rscript $META_MODEL_ROOT/scripts/qa/R/agws_01_exithandler.R "$GAGEID"
