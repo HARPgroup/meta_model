@@ -26,7 +26,7 @@ if(all(agws_props$propname != "rating_class")){
                                  study_context = "No baseflow events over minimum
                                  threshold found. Workflow failed in Analyze Step 01 - 03.")
 }else{
-  message("No exit_handler rating_class property set as rating_class is already set as",
+  message("No exit_handler rating_class property set as rating_class is already set as ",
           agws_props$propvalue[agws_props$propname == "rating_class"])
 }
 

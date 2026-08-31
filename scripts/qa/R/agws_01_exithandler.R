@@ -28,7 +28,7 @@ if(all(agws_props$propname != "rating_class")){
                                  by AGWS workflow, resulting in failed workflow
                                  run in step Download 01.")
 }else{
-  message("No exit_handler rating_class property set as rating_class is already set as",
+  message("No exit_handler rating_class property set as rating_class is already set as ",
           agws_props$propvalue[agws_props$propname == "rating_class"])
 }
 

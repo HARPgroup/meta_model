@@ -28,7 +28,7 @@ if(all(agws_props$propname != "rating_class")){
                                  low baseflow count or quality.
                                  Workflow failed in Analyze Step 04 - 05.")
 }else{
-  message("No exit_handler rating_class property set as rating_class is already set as",
+  message("No exit_handler rating_class property set as rating_class is already set as ",
           agws_props$propvalue[agws_props$propname == "rating_class"])
 }
 

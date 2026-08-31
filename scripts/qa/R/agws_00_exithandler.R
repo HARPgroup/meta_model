@@ -28,7 +28,7 @@ if(all(agws_props$propname != "rating_class")){
                                  study_agwrc_method = 7,
                                  study_context = "AGWS workflow failed.")
 }else{
-  message("No exit_handler rating_class property set as rating_class is already set as",
+  message("No exit_handler rating_class property set as rating_class is already set as ",
           agws_props$propvalue[agws_props$propname == "rating_class"])
 }
 
