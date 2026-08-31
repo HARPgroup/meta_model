@@ -6,5 +6,5 @@ if [ "$agws_config" = "" ]; then
 fi
 . $agws_config
 
-echo "Calling: Rscript $META_MODEL_ROOT/scripts/qa/R/agws_00_exithandler.R \"$GAGEID\""
-#Rscript $META_MODEL_ROOT/scripts/qa/R/agws_00_exithandler.R "$GAGEID"
+echo "Calling: Rscript $META_MODEL_ROOT/scripts/qa/R/agws_05_exithandler.R \"$GAGEID\""
+#Rscript $META_MODEL_ROOT/scripts/qa/R/agws_05_exithandler.R "$GAGEID"

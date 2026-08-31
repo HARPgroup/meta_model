@@ -13,5 +13,5 @@ Rscript $META_MODEL_ROOT/scripts/usgs/baseflow_regression_df.R "$BASEFLOW_TRIM_S
 
 if [ ! -e "$BASEFLOW_SUMMARY_PREQC_DF" ]; then
   echo "Baseflow summary failed; could not generated $BASEFLOW_SUMMARY_PREQC_DF ... exiting. " > problem
-  exit 1
+  exit 4
 fi

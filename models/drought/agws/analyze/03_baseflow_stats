@@ -16,7 +16,7 @@ echo "Running: install -D $BASEFLOW_STATS_FILE ${USGS_DATA_DIR}/agws/${BASEFLOW_
 
 if [ ! -e "$BASEFLOW_STATS_FILE" ]; then
   echo "Baseflow stats failed; could not generated $BASEFLOW_STATS_FILE ... exiting. " > problem
-  exit 1
+  exit 2
 fi
 
 install -D $BASEFLOW_STATS_FILE "${USGS_DATA_DIR}/agws/${BASEFLOW_STATS_FILE}"

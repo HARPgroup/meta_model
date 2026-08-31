@@ -12,5 +12,5 @@ Rscript $META_MODEL_ROOT/scripts/misc/numevents_qc.R $BASEFLOW_SUMMARY_DF $NUMEV
 
 if [ ! -e "$NUMEVENTS_QC_DF" ]; then
   echo "General QC failed; could not generated $NUMEVENTS_QC_DF ... exiting. " > problem
-  exit 1
+  exit 6
 fi

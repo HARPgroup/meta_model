@@ -17,7 +17,7 @@ Rscript $META_MODEL_ROOT/scripts/usgs/event_identification.R "$COVERAGE_FLOW_FIL
 
 if [ ! -e "$EVENTS_FILE" ]; then
   echo "Event identification failed; could not generated $EVENTS_FILE ... exiting. " > problem
-  exit 1
+  exit 2
 fi
 
 # note: the install -D command create the destination directory path if it doesn't exist

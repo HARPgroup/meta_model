@@ -17,5 +17,5 @@ Rscript $META_MODEL_ROOT/scripts/usgs/watershed_slope.R $GAGEID $WSHED_SLOPE_DF
 
 if [ ! -e "$WSHED_SLOPE_DF" ]; then
   echo "Watershed slope summary failed; could not generated $WSHED_SLOPE_DF ... exiting. " > problem
-  exit 1
+  exit 6
 fi
