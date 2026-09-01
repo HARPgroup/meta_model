@@ -12,5 +12,5 @@ Rscript $META_MODEL_ROOT/scripts/misc/filelength_qc.R $GAGEID $COVERAGE_FLOW_FIL
 
 if [ ! -e "$GAGE_QC_DF" ]; then
   echo "General QC failed; could not generated $GAGE_QC_DF ... exiting. " > problem
-  exit 1
+  exit 6
 fi

@@ -18,7 +18,7 @@ Rscript $META_MODEL_ROOT/scripts/usgs/baseflow_events.R "$EVENTS_FILE" "$DATECOL
 
 if [ ! -e "$BASEFLOW_EVENTS_FILE" ]; then
   echo "Baseflow event summary failed; could not generated $BASEFLOW_EVENTS_FILE ... exiting. " > problem
-  exit 1
+  exit 2
 fi
 
 # note: the install -D command create the destination directory path if it doesn't exist

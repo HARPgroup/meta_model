@@ -16,7 +16,7 @@ Rscript $META_MODEL_ROOT/scripts/usgs/bf_trimming_analysis.R "$BASEFLOW_TRIM_FIL
 
 if [ ! -e "$BASEFLOW_TRIM_STATS_FILE" ]; then
   echo "Baseflow stats for trimmed file failed; could not generated $BASEFLOW_TRIM_STATS_FILE ... exiting. " > problem
-  exit 1
+  exit 3
 fi
 
 # note: the install -D command create the destination directory path if it doesn't exist
