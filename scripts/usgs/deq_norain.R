@@ -91,33 +91,18 @@ for (gage_id in glist) {
   }
   ## Obj QC ####
   #Check QC properties - skip if fewer than 10 events found UNLESS rating set
-  agwrc_props <- omgage$get_model_or_scenario_props(model_prop_code = "AGWRC-1.0")
+  #Get regression limits and set on object
+  reg_coeff <- omgage$agwrc_fun()
   #Get prop
   total_bf_events <- agwrc_props$propvalue[agwrc_props$propname == "total_bf_events"]
   rating_class <- agwrc_props[agwrc_props$propname == "rating_class",]
   #Skip if QC failed (no total events) or if there are fewer than 10 events and
   #no set rating class
-  if(length(total_bf_events) == 0 || 
-     (total_bf_events < 10 & nrow(rating_class) == 0) && rating_class <= 4){
+  if(
+    (nrow(rating_class) > 0 && rating_class$propvalue > 4) ||
+    (total_bf_events < 10 && nrow(rating_class) == 0)
+  ){
     next
-  }
-  
-  ## BPJ AGWRC Check ####
-  # get bounds on relationship if set
-  method <- 'regression'
-  Ce <- NA
-  if(nrow(rating_class) > 0 && rating_class$propvalue == 3){
-    #Set BPJ agwrc and 
-    method <- 'bpj'
-    Ce <- as.numeric(rating_class$propcode)
-  }else{
-    ## AGWRC Regression ####
-    #Get regression limits and set on object
-    reg_coeff <- omgage$agwrc_fun()
-    agwrc_reg_qlow <- omgage$agwrc_lm_limit$agwrc_reg_qlow
-    agwrc_reg_clow <- omgage$agwrc_lm_limit$agwrc_reg_clow
-    agwrc_reg_qhigh <- omgage$agwrc_lm_limit$agwrc_reg_qhigh
-    agwrc_reg_chigh <- omgage$agwrc_lm_limit$agwrc_reg_chigh
   }
   
   ## clean_data ####
@@ -134,7 +119,7 @@ for (gage_id in glist) {
     date_col = "Date",
     flow_col = "Flow",
     gage_data = clean_data,
-    adjust_start_date = c(paste0(yr,"-05-01"), paste0(yr,"-07-03"))
+    adjust_start_date = c(paste0(yr,"-05-01"), paste0(yr,"-07-15"))
   )
   
   Q0 <- clean_data$Flow[clean_data$Date == start_date]
@@ -152,37 +137,15 @@ for (gage_id in glist) {
          col="red", bg="red", pch = 21, cex = 2)
   
   
-  ## Regression limits ####
-  # Adjust the initial AGWRC Ce for regression limits
-  if ( !(method == 'bpj') ) {
-    if(!is.na(agwrc_reg_qlow) && 
-       Q0 < agwrc_reg_qlow){
-      Ce <- agwrc_reg_clow
-      method <- 'regression_limit'
-    }else if(!is.na(agwrc_reg_qlow) && 
-             Q0 > agwrc_reg_qhigh){
-      Ce <- agwrc_reg_chigh
-      method <- 'regression_limit'
-    }
-  }
-  
   ## Forecast Inputs ####
   #Select forecast methods for plotting. If Ce is not NA, it is either BPJ or
   #regression limited. Otherwise, use regression.
-  if (!is.na(Ce)) {
-    if (method != 'regression_limit') {
-      AGWRC <- list(
-        "lm_constant" = "lm_constant",
-        "lm_variable" = "lm_variable",
-        "BPJ" = Ce
-      )
-    } else {
-      AGWRC <- list(
-        "lm_constant" = "lm_constant",
-        "lm_variable" = "lm_variable",
-        "Reg Limit" = Ce
-      )
-    }
+  if (!is.na(omgage$agwrc_default$method)) {
+    AGWRC <- list(
+      "lm_constant" = "lm_constant",
+      "lm_variable" = "lm_variable",
+      "WSPA Method" = "default"
+    )
   } else {
     AGWRC <- list(
       "lm_constant" = "lm_constant",
@@ -200,17 +163,29 @@ for (gage_id in glist) {
   )
   
   ### Forecast Data ####
-  if (!is.na(Ce)) {
-    if (method != 'regression_limit') {
-      # use a manually defined constant C
-      fc <- bff$forecast[bff$forecast$name == "BPJ",]
-    } else {
-      fc <- bff$forecast[bff$forecast$name == "Reg Limit",]
-    }
+  #If a rating class is set, use the recommended forecast. Otherwise, use a
+  #variably calculated AGWRC
+  if (!is.na(omgage$agwrc_default$method)) {
+    #Use the default:
+    fc <- bff$forecast[bff$forecast$name == "WSPA Method",]
+    method <- omgage$agwrc_default$method
   } else {
     # use the algorithmic regression C
     fc <- bff$forecast[bff$forecast$name == "lm_variable",]
+    method <- "lm_variable"
   }
+  
+  #Make method more specific
+  if(method == "lm_variable"){
+    method <- "regression_limited"
+    if(!is.na(omgage$agwrc_default$use_limits) %%
+       !omgage$agwrc_default$use_limits ){
+        method <- "regression"
+    }
+  }else if(is.numeric(method)){
+    method <- "BPJ"
+  }
+  
   
   ### Save Forecast Plot ####
   # display ggplot
