@@ -92,7 +92,7 @@ for (gage_id in glist) {
   ## Obj QC ####
   #Check QC properties - skip if fewer than 10 events found UNLESS rating set
   #Get regression limits and set on object
-  reg_coeff <- omgage$agwrc_fun()
+  agwrc_props <- omgage$agwrc_fun()
   #Get prop
   total_bf_events <- agwrc_props$propvalue[agwrc_props$propname == "total_bf_events"]
   rating_class <- agwrc_props[agwrc_props$propname == "rating_class",]
