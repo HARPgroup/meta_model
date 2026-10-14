@@ -178,7 +178,7 @@ for (gage_id in glist) {
   #Make method more specific
   if(method == "lm_variable"){
     method <- "regression_limited"
-    if(!is.na(omgage$agwrc_default$use_limits) %%
+    if(!is.na(omgage$agwrc_default$use_limits) &&
        !omgage$agwrc_default$use_limits ){
         method <- "regression"
     }
