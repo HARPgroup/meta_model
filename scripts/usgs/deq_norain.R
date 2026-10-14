@@ -26,6 +26,7 @@ if (length(argst) < 3) {
   message(paste("Use: deq_norain.R gages( \"02065500,02059500,...\") output_path scenario adjust_start [csv_name] [start_date] [end_date]"))
   q()
 }
+
 # Inputs ####
 #Allow users to input one or multiple gages via a large comma separated sting
 gages <- as.character(argst[1])
@@ -137,7 +138,6 @@ for (gage_id in glist) {
       adjust_start_date = as.numeric(adjust_start)
     )
   }
-  
   
   Q0 <- clean_data$Flow[clean_data$Date == start_date]
   
