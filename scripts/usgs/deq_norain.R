@@ -116,7 +116,7 @@ for (gage_id in glist) {
   names(clean_data)[names(clean_data) == omgage$date_col] <- "Date"
   
   ## Adjust Start Date ####
-  if(!is.na(as.logical(adjust_start)) && as.logical(adjust_start)){
+  if(!is.na(as.logical(paste(adjust_start))) && as.logical(adjust_start)){
     #Get the day index that is 30 rows behind the start date (if data is
     #contiguous, this is the date 30-days prior to the start date)
     start_date <- hydrotools::bf_forecast_start_date(
