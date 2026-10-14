@@ -23,7 +23,7 @@ argst <- commandArgs(trailingOnly=T)
 # argst = c("02059500", '/tmp', "norain_2002", "norain_2002.csv", "2002-07-10")
 # argst = c("02054530", '/tmp', "norain_1981", "norain_1981.csv", "1981-07-10")
 if (length(argst) < 3) {
-  message(paste("Use: deq_norain.R gages( \"02065500,02059500,...\") output_path scenario [csv_name] [start_date] [end_date]"))
+  message(paste("Use: deq_norain.R gages( \"02065500,02059500,...\") output_path scenario adjust_start [csv_name] [start_date] [end_date]"))
   q()
 }
 # Inputs ####
@@ -36,21 +36,25 @@ save_path <- as.character(argst[2])
 
 #Set the file path name by user input or default
 scenario <- as.character(argst[3])
-if (length(argst) > 3) {
-  csv_name <- as.character(argst[4])
+
+#Should the start date be adjusted automatically?
+adjust_start <- argst[4]
+
+if (length(argst) > 4) {
+  csv_name <- as.character(argst[5])
 }else{
   csv_name <- NA
 }
 
 # get or guess the date to aim for projection
-if (length(argst) > 4) {
-  proj_start_date <- as.Date(argst[5])
+if (length(argst) > 5) {
+  proj_start_date <- as.Date(argst[6])
 } else {
   proj_start_date <- as.Date(format(Sys.time(), "%Y-%m-%d")) - 1
 }
 
-if (length(argst) > 5) { 
-  proj_end_date <- as.Date(argst[6])
+if (length(argst) > 6) { 
+  proj_end_date <- as.Date(argst[7])
 } else {
   proj_end_date <- as.Date(proj_start_date) + 90
 }
@@ -112,15 +116,28 @@ for (gage_id in glist) {
   names(clean_data)[names(clean_data) == omgage$date_col] <- "Date"
   
   ## Adjust Start Date ####
-  #Get the day index that is 30 rows behind the start date (if data is
-  #contiguous, this is the date 30-days prior to the start date)
-  start_date <- hydrotools::bf_forecast_start_date(
-    start_date = proj_start_date,
-    date_col = "Date",
-    flow_col = "Flow",
-    gage_data = clean_data,
-    adjust_start_date = c(paste0(yr,"-05-01"), paste0(yr,"-07-15"))
-  )
+  if(!is.na(as.logical(adjust_start)) && as.logical(adjust_start)){
+    #Get the day index that is 30 rows behind the start date (if data is
+    #contiguous, this is the date 30-days prior to the start date)
+    start_date <- hydrotools::bf_forecast_start_date(
+      start_date = proj_start_date,
+      date_col = "Date",
+      flow_col = "Flow",
+      gage_data = clean_data,
+      adjust_start_date = c(paste0(yr,"-05-01"), paste0(yr,"-07-15"))
+    )
+  }else if(!is.na(as.numeric(adjust_start)) && as.numeric(adjust_start) > 0){
+    #Get the day index that is 30 rows behind the start date (if data is
+    #contiguous, this is the date 30-days prior to the start date)
+    start_date <- hydrotools::bf_forecast_start_date(
+      start_date = proj_start_date,
+      date_col = "Date",
+      flow_col = "Flow",
+      gage_data = clean_data,
+      adjust_start_date = as.numeric(adjust_start)
+    )
+  }
+  
   
   Q0 <- clean_data$Flow[clean_data$Date == start_date]
   

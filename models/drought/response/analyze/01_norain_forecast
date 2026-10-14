@@ -16,8 +16,8 @@ fi
 # Note: the $GAGES variable comes in with quotes around it, so it appears we do not need them
 #       but sometimes quotes are weird so let this be a warning.
 cd $tempdir
-echo "Calling: Rscript $META_MODEL_ROOT/scripts/usgs/deq_norain.R $GAGE $tempdir $SCENARIO_NAME $NORAINFILE $START_DATE"
-Rscript $META_MODEL_ROOT/scripts/usgs/deq_norain.R $GAGE $tempdir $SCENARIO_NAME $NORAINFILE $START_DATE
+echo "Calling: Rscript $META_MODEL_ROOT/scripts/usgs/deq_norain.R $GAGE $tempdir $SCENARIO_NAME $ADJUST_START_DATE $NORAINFILE $START_DATE"
+Rscript $META_MODEL_ROOT/scripts/usgs/deq_norain.R $GAGE $tempdir $SCENARIO_NAME $ADJUST_START_DATE $NORAINFILE $START_DATE
 # note: the install -D command create the destination directory path if it doesn't exist
 echo "Running: install -D *.csv \"${USGS_DATA_DIR}/agws/\""
 install -D *.csv "${USGS_DATA_DIR}/agws/"
