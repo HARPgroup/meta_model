@@ -25,6 +25,8 @@ fi
 if [ ! -e $base_path/get_work_path ]; then
    cp $META_MODEL_ROOT/scripts/get_work_path_template $base_path/get_work_path
 fi
+# This creates a simple config file and then also 
+# adds a line to the bottom setting the modules to iterate through
 if [ ! -e $base_path/model_config ]; then
    echo "Add model_config: cp $META_MODEL_ROOT/scripts/model_config_template $base_path/model_config"
    cp $META_MODEL_ROOT/scripts/model_config_template $base_path/model_config
