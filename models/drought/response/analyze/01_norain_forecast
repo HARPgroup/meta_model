@@ -19,7 +19,17 @@ cd $tempdir
 echo "Calling: Rscript $META_MODEL_ROOT/scripts/usgs/deq_norain.R $GAGE $tempdir $SCENARIO_NAME $ADJUST_START_DATE $NORAINFILE $START_DATE"
 Rscript $META_MODEL_ROOT/scripts/usgs/deq_norain.R $GAGE $tempdir $SCENARIO_NAME $ADJUST_START_DATE $NORAINFILE $START_DATE
 # note: the install -D command create the destination directory path if it doesn't exist
+if [ ! -e "$NORAINFILE" ]; then
+  echo "No file generated; could not find $NORAINFILE... exiting. " > problem
+  exit 1
+fi
 echo "Running: install -D *.csv \"${USGS_DATA_DIR}/agws/\""
 install -D *.csv "${USGS_DATA_DIR}/agws/"
+
+pngFiles=`find . -name "*.png" | wc -l`
+if [ $pngFiles -eq 0 ]; then
+  echo "No plots generated; could not find any PNG files in ${tempdir}... exiting. " > problem
+  exit 2
+fi
 echo "Running: install -D *.png \"${USGS_DATA_DIR}/agws/\""
 install -D *.png "${USGS_DATA_DIR}/agws/"
