@@ -56,10 +56,15 @@ sceninfo <- list(
 scenprop <- RomProperty$new(ds, sceninfo, TRUE)
 scenprop$save(TRUE)
 
+#Delete ex properties
+scenprop$get_prop(propname = "is_emerg")$delete(TRUE)
+scenprop$get_prop(propname = "is_hist")$delete(TRUE)
+scenprop$get_prop(propname = "norain_fc")$delete(TRUE)
+scenprop$get_prop(propname = "hist_Qmin")$delete(TRUE)
 #Set forecast statuses including flags, minimum flow, and 90-day forecast to
 #NULL to indicate failure:
-scenprop$set_prop(propname = "is_emerg", propvalue = NA, propcode = "")
-scenprop$set_prop(propname = "is_hist", propvalue  = NA, propcode = "")
-scenprop$set_prop(propname = "norain_fc", propvalue = NA)
-scenprop$set_prop(propname = "hist_Qmin", propvalue = NA)
+scenprop$set_prop(propname = "is_emerg")
+scenprop$set_prop(propname = "is_hist")
+scenprop$set_prop(propname = "norain_fc")
+scenprop$set_prop(propname = "hist_Qmin")
 
