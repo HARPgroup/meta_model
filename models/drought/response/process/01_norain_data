@@ -18,9 +18,6 @@ if [ ! -e "$NORAINFILE" ]; then
   exit 1
 fi
 
-# note: the install -D command create the destination directory path if it doesn't exist
-echo "Running: install -D *.csv \"${USGS_DATA_DIR}/norain/\""
-install -D *.csv "${USGS_DATA_DIR}/norain/"
 
 pngFiles=`find . -name "*.png" | wc -l`
 if [ $pngFiles -eq 0 ]; then
