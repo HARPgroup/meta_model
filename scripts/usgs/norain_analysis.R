@@ -69,7 +69,8 @@ analysis_out <- cbind(
 )
 
 # Results Plot ####
-fpath <- paste0(save_path, "/norain_", gage_id, "_", yr, ".png")
+fpath <- paste0(save_path, "/norain_", gage_id, "_",
+                format(results$proj_end_date,"%Y"), ".png")
 yinc <- max(fc$Forecast) / 10
 png(fpath)
 plot(

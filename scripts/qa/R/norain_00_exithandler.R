@@ -16,7 +16,7 @@ argst <- commandArgs(trailingOnly=T)
 # Ex:
 # argst = c("analysis.csv")
 if (length(argst) < 3) {
-  stop(paste("Use: deq_norain.R gageid scenario"))
+  stop(paste("Use: norain_00_exithandler gageid scenario"))
 }
 
 # Inputs ####
