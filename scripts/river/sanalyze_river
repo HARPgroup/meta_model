@@ -1,5 +1,8 @@
 #!/bin/bash
 
+if [ $# -1t 2 ]; then
+  echo "Use: sanalyze_river scenario basin [segment] [step]" 2>&1
+fi
 . hspf_config
 scenario=$1
 basin=$2
