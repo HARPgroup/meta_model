@@ -27,9 +27,11 @@ if (length(argst) > 2) {
 #If file exists, replace key row. Otherwise write out file of analysis for this
 #gage.
 if(file.exists( argst[2] )){
+  message("Editing file")
   full_analysis_df <- read.csv( argst[2] )
   full_analysis_df[,pkcol == analysis_df[, pkcol]] <- analysis_df[, pkcol]
 }else{
+  message("Creating file")
   full_analysis_df <- analysis_df
 }
 
