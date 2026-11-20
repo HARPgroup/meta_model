@@ -11,7 +11,7 @@ argst <- commandArgs(trailingOnly=T)
 # Ex:
 # argst = c("analysis.csv")
 if (length(argst) < 1) {
-  stop(paste("Use: norain_post analysis_csv"))
+  stop(paste("Length args found is",length(argst),"Use: norain_post analysis_csv"))
 }
 
 # Inputs ####
