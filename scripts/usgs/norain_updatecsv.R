@@ -17,7 +17,6 @@ if (length(argst) < 2) {
 # Inputs ####
 analysis_df <- read.csv( argst[1] )
 output_file <- argst[2]
-full_analysis_df <- read.csv( argst[2] )
 
 if (length(argst) > 2) {
   pkcol <- argst[4]
@@ -25,6 +24,14 @@ if (length(argst) > 2) {
   pkcol <- "hydroid"
 }
 
-full_analysis_df[,pkcol == analysis_df[, pkcol]] <- analysis_df[, pkcol]
+#If file exists, replace key row. Otherwise write out file of analysis for this
+#gage.
+if(file.exists( argst[2] )){
+  full_analysis_df <- read.csv( argst[2] )
+  full_analysis_df[,pkcol == analysis_df[, pkcol]] <- analysis_df[, pkcol]
+}else{
+  full_analysis_df <- analysis_df
+}
+
 
 write.csv(full_analysis_df, output_file, row.names = FALSE)
