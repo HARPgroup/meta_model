@@ -58,8 +58,8 @@ scenprop$save(TRUE)
 
 #Set forecast statuses including flags, minimum flow, and 90-day forecast to
 #NULL to indicate failure:
-scenprop$set_prop(propname = "is_emerg", propvalue = "", propcode = NA)
-scenprop$set_prop(propname = "is_hist", propvalue = "", propcode = NA)
+scenprop$set_prop(propname = "is_emerg", propvalue = NA, propcode = "")
+scenprop$set_prop(propname = "is_hist", propvalue  = NA, propcode = "")
 scenprop$set_prop(propname = "norain_fc", propvalue = NA)
 scenprop$set_prop(propname = "hist_Qmin", propvalue = NA)
 
