@@ -1,0 +1,28 @@
+#!/bin/bash
+# loads the args, raster & geo specific config AND CHANGE TO TEMPDIR
+response_config=`find_config response.config`
+if [ "$response_config" = "" ]; then
+  response_config="$META_MODEL_ROOT/models/drought/response/response.config"
+fi
+. $response_config
+# BEGIN - actually loading local data
+
+echo "Getting and processing gage data for no rain projection of ${GAGE}"
+
+cd $tempdir
+echo "Calling: Rscript $META_MODEL_ROOT/scripts/usgs/deq_norain.R $GAGE $tempdir $SCENARIO_NAME $ADJUST_START_DATE $NORAINFILE $FCFILE $START_DATE"
+Rscript $META_MODEL_ROOT/scripts/usgs/deq_norain.R $GAGE $tempdir $SCENARIO_NAME $ADJUST_START_DATE $NORAINFILE $FCFILE $START_DATE
+
+if [ ! -e "$NORAINFILE" ]; then
+  echo "No file generated; could not find $NORAINFILE... exiting. " > problem
+  exit 1
+fi
+
+
+pngFiles=`find . -name "*.png" | wc -l`
+if [ $pngFiles -eq 0 ]; then
+  echo "No plots generated; could not find any PNG files in ${tempdir}... exiting. " > problem
+  exit 2
+fi
+echo "Running: install -D *.png \"${USGS_DATA_DIR}/norain/\""
+install -D *.png "${USGS_DATA_DIR}/norain/"

@@ -7,4 +7,8 @@ fi
 . $response_config
 # BEGIN - actually loading local data
 
-echo "Not currently functional. TBD."
+echo "POSTing analysis results of no rain projection for ${GAGE}"
+
+cd $tempdir
+echo "Calling: Rscript $META_MODEL_ROOT/scripts/usgs/norain_post.R $ANALYSISFILE"
+Rscript $META_MODEL_ROOT/scripts/usgs/norain_post.R $ANALYSISFILE
