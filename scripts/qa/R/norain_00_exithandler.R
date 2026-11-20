@@ -26,7 +26,7 @@ scenario <- argst[2]
 
 # Gage ####
 omgage <- hydrotools::WaterGageDaily$new(
-  ds_in = ds, gage_id = gage_id,
+  ds_in = ds, gage_id = gageid,
   approval_status = 'all')
 #Try to load the gage feature
 omgage$load_wshd_feat()
