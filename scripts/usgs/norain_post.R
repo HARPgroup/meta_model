@@ -10,8 +10,8 @@ argst <- commandArgs(trailingOnly=T)
 
 # Ex:
 # argst = c("analysis.csv")
-if (length(argst) < 2) {
-  stop(paste("Use: deq_norain.R analysis_csv"))
+if (length(argst) < 1) {
+  stop(paste("Use: norain_post analysis_csv"))
 }
 
 # Inputs ####
