@@ -20,4 +20,4 @@ fi
 
 # note: the install -D command create the destination directory path if it doesn't exist
 echo "Running: install -D *.csv \"${USGS_DATA_DIR}/norain/$ANALYSISFILE\""
-install -D *.csv "${USGS_DATA_DIR}/norain/"
+install -D $ANALYSISFILE "${USGS_DATA_DIR}/norain/$ANALYSISFILE"
