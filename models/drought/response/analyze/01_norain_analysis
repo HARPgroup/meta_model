@@ -14,6 +14,7 @@ echo "Calling: Rscript $META_MODEL_ROOT/scripts/usgs/norain_analysis.R $GAGE $NO
 Rscript $META_MODEL_ROOT/scripts/usgs/norain_analysis.R $GAGE $NORAINFILE $FCFILE $tempdir $ANALYSISFILE
 
 if [ ! -e "${ANALYSISFILE}" ]; then
+  echo "No file found for ${ANALYSISFILE}"
   echo "No analysis generated; could not find ${ANALYSISFILE}... exiting. " > problem
   exit 3
 fi
