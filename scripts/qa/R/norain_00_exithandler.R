@@ -16,6 +16,7 @@ argst <- commandArgs(trailingOnly=T)
 # Ex:
 # argst = c("analysis.csv")
 if (length(argst) < 3) {
+  message("Args are:",argst[1]," ", argst[2])
   stop(paste("Use: norain_00_exithandler gageid scenario"))
 }
 
