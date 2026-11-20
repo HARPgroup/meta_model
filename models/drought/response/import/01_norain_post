@@ -11,4 +11,4 @@ echo "POSTing analysis results of no rain projection for ${GAGE}"
 
 cd $tempdir
 echo "Calling: Rscript $META_MODEL_ROOT/scripts/usgs/norain_post.R $ANALYSISFILE"
-Rscript $META_MODEL_ROOT/scripts/usgs/norain_post.R $ANALYSIS_CSV
+Rscript $META_MODEL_ROOT/scripts/usgs/norain_post.R $ANALYSISFILE
