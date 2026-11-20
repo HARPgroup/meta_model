@@ -7,4 +7,9 @@ fi
 . $response_config
 # BEGIN - actually loading local data
 
-echo "Not currently functional. TBD."
+echo "Response default error handler called"
+
+cd $tempdir
+
+echo "Calling: Rscript $META_MODEL_ROOT/scripts/qa/R/norain_00_exithandler.R $GAGE $scenario"
+Rscript $META_MODEL_ROOT/scripts/qa/R/norain_00_exithandler.R $GAGE $scenario

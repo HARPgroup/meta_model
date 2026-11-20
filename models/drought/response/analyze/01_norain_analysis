@@ -1,0 +1,23 @@
+#!/bin/bash
+# loads the args, raster & geo specific config AND CHANGE TO TEMPDIR
+response_config=`find_config response.config`
+if [ "$response_config" = "" ]; then
+  response_config="$META_MODEL_ROOT/models/drought/response/response.config"
+fi
+. $response_config
+# BEGIN - actually loading local data
+
+echo "Analyzing no rain projection of ${GAGE} for historic context"
+
+cd $tempdir
+echo "Calling: Rscript $META_MODEL_ROOT/scripts/usgs/norain_analysis.R $GAGE $NORAINFILE $FCFILE $tempdir $ANALYSISFILE"
+Rscript $META_MODEL_ROOT/scripts/usgs/norain_analysis.R $GAGE $NORAINFILE $FCFILE $tempdir $ANALYSISFILE
+
+if [ ! -e "$ANALYSISFILE" ]; then
+  echo "No analysis generated; could not find $ANALYSISFILE... exiting. " > problem
+  exit 3
+fi
+
+# note: the install -D command create the destination directory path if it doesn't exist
+echo "Running: install -D *.csv \"${USGS_DATA_DIR}/agws/\""
+install -D *.csv "${USGS_DATA_DIR}/agws/"

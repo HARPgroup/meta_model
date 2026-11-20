@@ -18,8 +18,7 @@ argst <- commandArgs(trailingOnly=T)
 # Ex:
 # argst = c("02065500", '/tmp/',"norain_2002", TRUE, "norain_2002.csv","norainfc_2002.csv", "2002-07-10")
 if (length(argst) < 6) {
-  message(paste("Use: deq_norain.R gages( \"02065500\") output_path scenario adjust_start results_csv_name fc_csv_name [start_date] [end_date]"))
-  q()
+  stop(paste("Use: deq_norain.R gages( \"02065500\") output_path scenario adjust_start results_csv_name fc_csv_name [start_date] [end_date]"))
 }
 
 # Inputs ####

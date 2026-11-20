@@ -11,11 +11,20 @@ argst <- commandArgs(trailingOnly=T)
 # Ex:
 # argst = c("analysis.csv")
 if (length(argst) < 2) {
-  message(paste("Use: deq_norain.R analysis_csv full_analysis_csv"))
-  q()
+  stop(paste("Use: deq_norain.R analysis_csv full_analysis_csv"))
 }
 
 # Inputs ####
-analysis_df <- argst[1]
-full_analysis_df <- argst[2]
+analysis_df <- read.csv( argst[1] )
+output_file <- argst[2]
+full_analysis_df <- read.csv( argst[2] )
 
+if (length(argst) > 2) {
+  pkcol <- argst[4]
+}else{
+  pkcol <- "hydroid"
+}
+
+full_analysis_df[,pkcol == analysis_df[, pkcol]] <- analysis_df[, pkcol]
+
+write.csv(full_analysis_df, output_file, row.names = FALSE)
