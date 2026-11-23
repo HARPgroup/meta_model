@@ -41,7 +41,7 @@ is_hist <- 'No'
 is_hist_int <- 0
 
 # Historic Min Flow ####
-Qmin <- min(omgage$gage_data[,omgage$flow_col])
+Qmin <- min(omgage$gage_data[,omgage$flow_col], na.rm = TRUE)
 if (results$norain_fc <= Qmin) {
   is_hist <- 'Yes'
   is_hist_int <- 1
