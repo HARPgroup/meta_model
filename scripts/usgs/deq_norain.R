@@ -177,6 +177,7 @@ if(method == "lm_variable"){
 
 
 ### Save Forecast Plot ####
+message("Saving plots in R")
 # display ggplot
 print(bff$plot) 
 fpath <- paste0(save_path, "/norain_log_", gage_id, '_', yr, ".png")
@@ -201,6 +202,7 @@ odf <- data.frame (
 )
 
 # Write files out ####
+message("Writing files in R")
 write.csv(odf, paste0(save_path, results_csv_name), row.names = FALSE)
 write.csv(fc, paste0(save_path, fc_csv_name), row.names = FALSE)
 
