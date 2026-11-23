@@ -202,7 +202,7 @@ odf <- data.frame (
 )
 
 # Write files out ####
-message("Writing files in R" to paste0(save_path, results_csv_name)," and ",paste0(save_path, fc_csv_name))
+message("Writing files in R to ",paste0(save_path, results_csv_name)," and ",paste0(save_path, fc_csv_name))
 write.csv(odf, paste0(save_path, results_csv_name), row.names = FALSE)
 write.csv(fc, paste0(save_path, fc_csv_name), row.names = FALSE)
 
